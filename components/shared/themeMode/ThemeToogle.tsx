@@ -2,8 +2,8 @@
 
 import { useTheme } from 'next-themes'
 import { useEffect, useState } from 'react'
-import { Dark } from "@/components/ui/icons/Dark"
-import { Ligth } from "@/components/ui/icons/Ligth"
+import { Dark } from "@/components/icons/Dark"
+import { Ligth } from "@/components/icons/Ligth"
 
 export function ThemeToggle({className}: {className?: string}) {
   const { theme, setTheme } = useTheme()

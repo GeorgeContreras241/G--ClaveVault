@@ -1,6 +1,6 @@
-import GitHub from "../ui/icons/GitHub";
-import Linkedin from "../ui/icons/LinKedin";
-import { ThemeToggle } from "@/components/ui/themeMode/ThemeToogle";
+import GitHub from "../icons/GitHub";
+import Linkedin from "../icons/LinKedin";
+import { ThemeToggle } from "@/components/shared/themeMode/ThemeToogle";
 
 type SeccionSocialProps = {
   className?: string;

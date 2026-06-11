@@ -7,11 +7,11 @@ import { copyToClipboard } from '@/lib/utils/Gestor/copyToClipboard'
 import { AddPasswords } from '@/features/manager/components/AddPasswords'
 import { EditPassword } from '@/features/manager/components/EditPassword'
 
-import { Web } from '@/components/ui/icons/Web'
-import { App } from '@/components/ui/icons/App'
-import { Card } from '@/components/ui/icons/Card'
-import { Lock } from '@/components/ui/icons/Lock'
-import { LockEmpty } from '@/components/ui/icons/LockEmpty'
+import { Web } from '@/components/icons/Web'
+import { App } from '@/components/icons/App'
+import { Card } from '@/components/icons/Card'
+import { Lock } from '@/components/icons/Lock'
+import { LockEmpty } from '@/components/icons/LockEmpty'
 
 import { PasswordCard } from './components/PasswordCard'
 

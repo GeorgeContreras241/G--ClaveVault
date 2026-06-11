@@ -1,8 +1,8 @@
 import { Suspense } from "react";
-import Archive from "../components/ui/icons/Archive";
+import Archive from "../components/icons/Archive";
 import SeccionSocial from "../components/Social/SocialSeccion";
 import Link from "next/link";
-import { Target } from "@/components/ui/Target";
+import { Target } from "@/components/shared/Target";
 import { target } from "@/const/target";
 import { WebAuthnAction } from "@/components/home/WebAuthnAction";
 import {

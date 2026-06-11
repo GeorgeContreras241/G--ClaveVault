@@ -1,11 +1,11 @@
 "use client"
 import { useLocalContext } from "@/context/useLocalContext"
-import { Exit } from "@/components/ui/icons/Exit";
-import { Export } from "@/components/ui/icons/Export" 
-import { Search } from "@/components/ui/icons/Search";
-import { Button } from "@/components/ui/Button";
+import { Exit } from "@/components/icons/Exit";
+import { Export } from "@/components/icons/Export" 
+import { Search } from "@/components/icons/Search";
+import { Button } from "@/components/shared/Button";
 import { useStoragePass } from "@/storage/useStoragePass";
-import { ThemeToggle } from "@/components/ui/themeMode/ThemeToogle";
+import { ThemeToggle } from "@/components/shared/themeMode/ThemeToogle";
 import { CATEGORY_BUTTONS } from "@/const/buttonsNavegations";
 import { HeaderGestorProps } from "@/types";
 import { useRouter } from "next/navigation";

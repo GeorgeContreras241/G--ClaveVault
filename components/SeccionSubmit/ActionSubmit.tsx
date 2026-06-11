@@ -1,14 +1,14 @@
 "use client"
 import { useEffect, Suspense } from "react"
 import { useLocalContext } from "@/context/useLocalContext"
-import Add from "../ui/icons/Add";
+import Add from "../icons/Add";
 import { sileoWarning, sileoError } from "@/const/sileoConfig";
 import { sileo, Toaster } from "sileo"
 import { useState } from "react";
 import { useStoragePass } from "@/storage/useStoragePass";
 import { validateVaultInputs } from "@/lib/utils/SeccionSubmit/validateVaultInputs";
-import { Eye } from "../ui/icons/Eye";
-import { EyeClose } from "../ui/icons/EyeClose";
+import { Eye } from "../icons/Eye";
+import { EyeClose } from "../icons/EyeClose";
 import { validatePassword } from "@/lib/utils/SeccionSubmit/validatePassword";
 import type { ActionSubmitProps } from "@/types";
 import SeccionSocial from "../Social/SocialSeccion";
@@ -16,7 +16,7 @@ import { generateSalt } from "@/lib/crypto/genereteSalt";
 import { deriveKey } from "@/lib/crypto/kdfKey";
 import { SocialFallback } from "@/components/home/HomeFallbacks";
 import Link from "next/link";
-import { Arrow } from "../ui/icons/Arrow";
+import { Arrow } from "../icons/Arrow";
 
 //   i need review sileo alerts styles and refactor styles - Pending 
 

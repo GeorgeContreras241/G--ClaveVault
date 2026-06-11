@@ -1,6 +1,6 @@
 "use client"
-import { Button } from "@/components/ui/Button"
-import { Copy } from "@/components/ui/icons/Copy"
+import { Button } from "@/components/shared/Button"
+import { Copy } from "@/components/icons/Copy"
 import { useState } from "react"
 import { useStoragePass } from "@/storage/useStoragePass"
 import { generatePassword } from "@/lib/utils/Gestor/generatePassword"

@@ -1,11 +1,11 @@
 "use client"
-import { Copy } from "@/components/ui/icons/Copy"
-import { Eye } from "@/components/ui/icons/Eye"
-import { EyeClose } from "@/components/ui/icons/EyeClose"
-import { Edit } from "@/components/ui/icons/Edit"
-import { Delete } from "@/components/ui/icons/Delete"
-import { Star } from "@/components/ui/icons/Star"
-import { StarFilled } from "@/components/ui/icons/StarFilled"
+import { Copy } from "@/components/icons/Copy"
+import { Eye } from "@/components/icons/Eye"
+import { EyeClose } from "@/components/icons/EyeClose"
+import { Edit } from "@/components/icons/Edit"
+import { Delete } from "@/components/icons/Delete"
+import { Star } from "@/components/icons/Star"
+import { StarFilled } from "@/components/icons/StarFilled"
 import type { PasswordEntry, PasswordCardProps } from "@/types"
 
 // Ajustar tamaño icons 

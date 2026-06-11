@@ -1,6 +1,6 @@
 "use client";
 
-import WebAuthn from "@/components/ui/icons/WebAuthn";
+import WebAuthn from "@/components/icons/WebAuthn";
 import { sileo } from "sileo";
 
 export function WebAuthnAction() {

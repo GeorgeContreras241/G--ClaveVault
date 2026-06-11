@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Arrow } from "./icons/Arrow";
+import { Arrow } from "../icons/Arrow";
 
 export const Exit = () => {
     return (

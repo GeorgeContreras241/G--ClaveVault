@@ -14,3 +14,4 @@ export const Target = ({ text }: { text: string }) => {
     </article>
   );
 };
+// quitar demaciado generico
