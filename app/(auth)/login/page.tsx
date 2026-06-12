@@ -1,7 +1,14 @@
-export default function Login() {
+import { WebAuthnLogin } from "@/components/auth/WebAuthnLogin";
+
+export const metadata = {
+    title: "Iniciar Sesión",
+    description: "Inicia sesión en ClaveVault con WebAuthn",
+};
+
+export default function LoginPage() {
     return (
-        <div>
-            <h1>Login</h1>
-        </div>
+        <main className="flex-1 flex items-center justify-center">
+            <WebAuthnLogin />
+        </main>
     );
 }

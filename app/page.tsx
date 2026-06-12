@@ -1,14 +1,13 @@
 import { Suspense } from "react";
 import Archive from "../components/icons/Archive";
-import SeccionSocial from "../components/Social/SocialSeccion";
 import Link from "next/link";
 import { Target } from "@/components/shared/Target";
 import { target } from "@/const/target";
 import { WebAuthnAction } from "@/components/home/WebAuthnAction";
-import {
-  SocialFallback,
-  WebAuthnFallback,
-} from "@/components/home/HomeFallbacks";
+import { WebAuthnFallback } from "@/components/home/HomeFallbacks";
+import { Footer } from "@/components/layout/Footer";
+
+
 
 // Remember i have to do  a border animation - completed
 
@@ -93,9 +92,7 @@ export default function Home() {
           </section>
 
           <div className="vault-rise vault-rise-delay-4 w-full">
-            <Suspense fallback={<SocialFallback />}>
-              <SeccionSocial />
-            </Suspense>
+            <Footer />
           </div>
         </div>
       </main>

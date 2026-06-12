@@ -1,7 +1,14 @@
-export default function Register() {
+import { WebAuthnRegister } from "@/components/auth/WebAuthnRegister";
+
+export const metadata = {
+    title: "Registrarse",
+    description: "Crea una cuenta en ClaveVault con WebAuthn",
+};
+
+export default function RegisterPage() {
     return (
-        <div>
-            <h1>Register</h1>
-        </div>
+        <main className="flex-1 flex items-center justify-center">
+            <WebAuthnRegister />
+        </main>
     );
 }
