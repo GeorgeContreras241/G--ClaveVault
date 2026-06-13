@@ -1,7 +1,8 @@
 "use client"
 
-import Link from "next/link"
-import WebAuthnIcon from "../icons/WebAuthn"
+import WebAuthnIcon from "@/components/icons/WebAuthn"
+import { WebAuthnRegister } from "@/components/auth/WebAuthnRegister"
+import { WebAuthnLogin } from "@/components/auth/WebAuthnLogin"
 
 export const WebAuthn = () => {
     return (
@@ -23,20 +24,10 @@ export const WebAuthn = () => {
                 </div>
 
                 <div className="w-full flex flex-col gap-3 mt-6">
-                    <Link
-                        href="/register"
-                        className="w-full bg-blue-600 dark:bg-slate-900 hover:bg-blue-700 dark:hover:bg-slate-800/70 text-white rounded-lg p-3 cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] focus:outline-none focus:ring-1 focus:ring-blue-500/20 shadow-lg font-medium font-mono"
-                    >
-                        Registrarse
-                    </Link>
-
-                    <Link
-                        href="/login"
-                        className="w-full bg-zinc-200 dark:bg-zinc-800 hover:bg-zinc-300 dark:hover:bg-zinc-700 text-zinc-900 dark:text-zinc-100 rounded-lg p-3 cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 hover:scale-[1.02] focus:outline-none focus:ring-1 focus:ring-zinc-500/20 shadow-lg font-medium font-mono"
-                    >
-                        Iniciar sesión
-                    </Link>
+                    <WebAuthnRegister text="Registrarse" className="w-full bg-blue-500 text-white hover:bg-blue-600" />
+                    <WebAuthnLogin text="Iniciar sesión" className="w-full bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700" />
                 </div>
+
             </div>
         </div>
     )
