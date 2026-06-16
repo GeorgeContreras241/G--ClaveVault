@@ -10,7 +10,7 @@ import { toPasswordEntry } from "@/lib/utils/Gestor/toPasswordEntry"
 
 
 
-export const AddPasswords = () => {
+export const AddPassword = () => {
     const [isFormVisible, setIsFormVisible] = useState(false);
     const [isConfigVisible, setIsConfigVisible] = useState(false);
     const [showPassword, setShowPassword] = useState(false);

@@ -4,7 +4,7 @@ import { useState, use } from 'react'
 import { useStoragePass } from '@/storage/useStoragePass'
 import { Header_Gestor } from "@/features/manager/components/Header_Gestor"
 import { copyToClipboard } from '@/lib/utils/Gestor/copyToClipboard'
-import { AddPasswords } from '@/features/manager/components/AddPasswords'
+import { AddPassword } from '@/features/manager/components/AddPassword'
 import { EditPassword } from '@/features/manager/components/EditPassword'
 
 import { Web } from '@/components/icons/Web'
@@ -74,7 +74,7 @@ export const Gestor = () => {
                 onClose={() => setEditingPassword(null)}
               />
             ) : (
-              <AddPasswords />
+              <AddPassword />
             )}
           </section>
 
