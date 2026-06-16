@@ -19,21 +19,28 @@ export const WebAuthnRegister = ({ email, validateForm }: WebAuthnRegisterProps)
         setIsError(false)
 
         try {
-            const res = await fetch('/api/generate-options')
+            const res = await fetch('/api/generate-options', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email })
+            })
             const data = await res.json()
             if (!data.ok) {
                 throw new Error(data.error)
             }
-            const asseResp = await startRegistration(data.options)
-            const verificationResp = await fetch('/api/verify-registration', {
+
+            const attResp = await startRegistration({ optionsJSON: data.options })
+
+            const verifyRes = await fetch('/api/verify-registration', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ ...asseResp, email: email.trim() })
+                body: JSON.stringify({ attResp, email })
             })
-            const verificationData = await verificationResp.json()
-            if (!verificationData.ok) {
-                throw new Error(verificationData.error)
+            const verifyData = await verifyRes.json()
+            if (!verifyData.ok) {
+                throw new Error(verifyData.error)
             }
+
             alert('Registro exitoso')
         } catch {
             setIsError(true)
