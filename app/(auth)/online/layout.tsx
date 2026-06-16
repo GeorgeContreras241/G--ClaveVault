@@ -1,18 +1,21 @@
+import { Header } from "@/components/layout/Header";
+import { Footer } from "@/components/layout/Footer";
+
 export const metadata = {
     title: "Online",
-    description: "Online",
+    description: "ClaveVault Online - Autenticación WebAuthn",
 };
 
 export default function OnlineLayout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="min-h-dvh flex flex-col">
-            <header className="py-4 text-center">
-                <h1>Header</h1>
-            </header>
-            {children}
-            <footer className="mt-auto py-4 text-center">
-                <p>Footer</p>
-            </footer>
-        </div>
+        <main className="min-h-dvh w-full grid place-items-center gap-4 p-4 md:p-6">
+            <div className="w-full max-w-5xl">
+                <Header />
+                <main className="flex-1 flex items-center justify-center">
+                    {children}
+                </main>
+                <Footer />
+            </div>
+        </main>
     );
 }
