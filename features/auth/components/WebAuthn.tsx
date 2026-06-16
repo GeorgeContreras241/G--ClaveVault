@@ -78,9 +78,9 @@ export const WebAuthn = () => {
                                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
                             </svg>
                         </div>
-                        <div className="h-4">
+                        <div className="h-2">
                             {errors.email && (
-                                <p className="text-[11px] text-red-500 leading-none">{errors.email}</p>
+                                <p className="text-[11px] text-red-500 leading-none text-end">{errors.email}</p>
                             )}
                         </div>
                     </div>
