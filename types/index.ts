@@ -121,14 +121,6 @@ export interface ThemeToggleProps {
   className?: string;
 }
 
-export interface ButtonProps {
-  children: React.ReactNode;
-  onClick?: () => void;
-  className?: string;
-  disabled?: boolean;
-  type?: "button" | "submit" | "reset";
-}
-
 export type VaultCipherPayload = {
   iv: Uint8Array | number[];
   data: Uint8Array | number[];
