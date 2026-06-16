@@ -8,14 +8,14 @@ export const metadata = {
 
 export default function OnlineLayout({ children }: { children: React.ReactNode }) {
     return (
-        <main className="min-h-dvh w-full grid place-items-center gap-4 p-4 md:p-6">
-            <div className="w-full max-w-5xl">
-                <Header />
-                <main className="flex-1 flex items-center justify-center">
+        <div className="min-h-dvh w-full flex flex-col bg-gradient-to-b from-background via-background to-muted/20">
+            <Header />
+            <main className="flex-1 flex items-center justify-center px-4 py-12 md:py-20">
+                <div className="w-full max-w-md">
                     {children}
-                </main>
-                <Footer />
-            </div>
-        </main>
+                </div>
+            </main>
+            <Footer />
+        </div>
     );
 }

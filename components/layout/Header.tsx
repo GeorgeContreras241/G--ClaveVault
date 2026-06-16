@@ -11,6 +11,9 @@ export const Header = ({ className }: { className?: string }) => {
             }
             aria-label="Navegación principal"
         >
+            <p className="font-sora text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+                ClaveVault
+            </p>
             <Link
                 href="/"
                 className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors duration-300"
@@ -24,9 +27,7 @@ export const Header = ({ className }: { className?: string }) => {
                     Volver
                 </span>
             </Link>
-            <p className="font-sora text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-                ClaveVault
-            </p>
+
         </header>
     );
 };
