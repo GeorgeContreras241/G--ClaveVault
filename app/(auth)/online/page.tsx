@@ -1,4 +1,4 @@
-import { WebAuthn } from "@/components/auth/WebAuthn";
+import { WebAuthn } from "@/features/auth/components/WebAuthn";
 
 export default function Online() {
     return (
