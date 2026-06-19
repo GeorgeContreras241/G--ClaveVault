@@ -1,5 +1,6 @@
 import { verifyRegistrationResponse } from '@simplewebauthn/server'
-import { challenges, credentials } from '@/lib/webauthn-store'
+import { prisma } from '@/lib/db'
+import { challenges } from '@/lib/webauthn-store'
 
 export async function POST(request: Request) {
   try {
@@ -27,12 +28,23 @@ export async function POST(request: Request) {
 
     const { credential } = verification.registrationInfo
 
-    credentials.set(email, {
-      credentialID: Buffer.from(credential.id).toString('base64url'),
-      credentialPublicKey: Buffer.from(credential.publicKey).toString('base64url'),
-      counter: credential.counter,
+    // Buscar usuario
+    const user = await prisma.user.findUnique({ where: { email } })
+    if (!user) {
+      return Response.json({ ok: false, error: 'Usuario no encontrado' }, { status: 404 })
+    }
+
+    // Guardar credencial en la base de datos
+    await prisma.webAuthnCredential.create({
+      data: {
+        userId: user.id,
+        credentialId: Buffer.from(credential.id).toString('base64url'),
+        publicKey: Buffer.from(credential.publicKey),
+        counter: BigInt(credential.counter),
+      }
     })
 
+    // Borrar challenge usado
     challenges.delete(email)
 
     return Response.json({ ok: true })
