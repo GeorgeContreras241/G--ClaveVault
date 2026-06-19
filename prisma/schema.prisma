@@ -12,6 +12,7 @@ datasource db {
   provider = "postgresql"
 }
 
+
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -20,6 +21,7 @@ model User {
 
   credentials WebAuthnCredential[]
   vault       Vault?
+  auditLogs   AuditLog[]
 
   @@map("users")
 }
@@ -52,7 +54,6 @@ model Vault {
   @@map("vaults")
 }
 
-
 model AuditLog {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
@@ -61,7 +62,7 @@ model AuditLog {
   userAgent String?  @map("user_agent") @db.Text
   createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz()
 
-  
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, createdAt(sort: Desc)])
   @@map("audit_logs")
