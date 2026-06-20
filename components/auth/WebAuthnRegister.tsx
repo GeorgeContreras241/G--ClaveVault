@@ -19,7 +19,7 @@ export const WebAuthnRegister = ({ email, validateForm }: WebAuthnRegisterProps)
         setIsError(false)
 
         try {
-            const res = await fetch('/api/generate-options', {
+            const res = await fetch('/api/auth/register/options', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
@@ -28,10 +28,8 @@ export const WebAuthnRegister = ({ email, validateForm }: WebAuthnRegisterProps)
             if (!data.ok) {
                 throw new Error(data.error)
             }
-
             const attResp = await startRegistration({ optionsJSON: data.options })
-
-            const verifyRes = await fetch('/api/verify-registration', {
+            const verifyRes = await fetch('/api/auth/register/verify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ attResp, email })

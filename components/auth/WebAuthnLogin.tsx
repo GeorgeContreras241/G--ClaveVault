@@ -19,7 +19,7 @@ export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
         setIsError(false)
 
         try {
-            const res = await fetch('/api/generate-authentication-option', {
+            const res = await fetch('/api/auth/login/options', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
@@ -29,7 +29,7 @@ export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
                 throw new Error(data.error)
             }
             const asseResp = await startAuthentication(data.options)
-            const verificationResp = await fetch('/api/verify-authentication', {
+            const verificationResp = await fetch('/api/auth/login/verify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(asseResp)

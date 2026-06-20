@@ -1,5 +1,6 @@
 import { generateRegistrationOptions } from '@simplewebauthn/server'
 import { prisma } from '@/lib/db'
+import { Challenge } from '@/server/models'
 import { challenges } from '@/lib/webauthn-store'
 
 export async function POST(request: Request) {
@@ -10,41 +11,36 @@ export async function POST(request: Request) {
       return Response.json({ ok: false, error: 'Email es requerido' }, { status: 400 })
     }
 
-    // creacion de usuario si no existe
-    const user = await prisma.user.upsert({
-      where: { email },
-      create: { email },
-      update: {}
-    })
+    // Verificar si el email ya está registrado
+    const existingUser = await prisma.user.findUnique({ where: { email } })
 
-    // buscar credenciales existentes
-    const existingCredentials = await prisma.webAuthnCredential.findMany({
-      where: { userId: user.id },
-      select: {
-        credentialId: true
-      }
-    })
+    if (existingUser) {
+      return Response.json(
+        { ok: false, error: 'Este email ya está registrado. Inicia sesión para agregar un nuevo authenticator.' },
+        { status: 409 }
+      )
+    }
 
+    // Crear usuario nuevo
+    const user = await prisma.user.create({ data: { email } })
+
+    // Generar opciones WebAuthn
     const options = await generateRegistrationOptions({
       rpName: 'ClaveVault',
       rpID: process.env.RP_ID || 'localhost',
       userName: email,
       timeout: 60000,
       attestationType: 'none',
-      excludeCredentials: existingCredentials.map((cred) => ({
-        id: cred.credentialId,
-        type: 'public-key' as const
-      })),
+      excludeCredentials: [],
       authenticatorSelection: {
         userVerification: 'required',
         residentKey: 'preferred'
       }
     })
 
-    challenges.set(email, options.challenge)
-
-
-
+    // Guardar challenge con expiración
+    const challenge = new Challenge(email, options.challenge)
+    challenges.set(email, challenge)
 
     return Response.json({ ok: true, options })
   } catch (error) {
