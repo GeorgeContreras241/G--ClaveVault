@@ -5,14 +5,16 @@ export class WebAuthnCredential {
     public readonly credentialId: string,
     public readonly publicKey: Uint8Array,
     public readonly counter: number,
-    public readonly createdAt: Date
-  ) { }
+    public readonly createdAt: Date,
+    public readonly transports?: string
+  ) {}
 
   static create(data: {
     userId: string
     credentialId: string
     publicKey: Uint8Array
     counter: number
+    transports?: string
   }): WebAuthnCredential {
     return new WebAuthnCredential(
       crypto.randomUUID(),
@@ -20,7 +22,8 @@ export class WebAuthnCredential {
       data.credentialId,
       data.publicKey,
       data.counter,
-      new Date()
+      new Date(),
+      data.transports
     )
   }
 
@@ -28,17 +31,19 @@ export class WebAuthnCredential {
     id: string
     userId: string
     credentialId: string
-    publicKey: Buffer
+    publicKey: Uint8Array | Buffer
     counter: bigint
     createdAt: Date
+    transports?: string | null
   }): WebAuthnCredential {
     return new WebAuthnCredential(
       data.id,
       data.userId,
       data.credentialId,
-      new Uint8Array(data.publicKey),
+      data.publicKey instanceof Uint8Array ? data.publicKey : new Uint8Array(data.publicKey),
       Number(data.counter),
-      data.createdAt
+      data.createdAt,
+      data.transports ?? undefined
     )
   }
 
@@ -49,7 +54,8 @@ export class WebAuthnCredential {
       this.credentialId,
       this.publicKey,
       this.counter + 1,
-      this.createdAt
+      this.createdAt,
+      this.transports
     )
   }
 
