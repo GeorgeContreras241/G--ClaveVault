@@ -97,6 +97,36 @@ export class AuthService {
     if (!existingUser) {
       throw new RegistrationError('Usuario no registrado', 404)
     }
+    // Genera opciones de Autentificaion
+    const options = generateAuthenticationOptions({
+      rpID: webauthnConfig.rpID,
+      timeout: webauthnConfig.timeout,
+      allowCredentials: [],
+      userVerification: webauthnConfig.authenticatorSelection.userVerification,
+    })
+
+    return options
+  }
+
+  async verifyAuthentication(email: string, attResp: any) {
+    // verificar autentigifacion
+    try {
+      const verification = await verifyAuthenticationResponse({
+        response: attResp,
+        expectedChallenge: '',
+        expectedOrigin: webauthnConfig.origin,
+        expectedRPID: webauthnConfig.rpID,
+        credential: {
+          id: '',
+          publicKey: new Uint8Array(),
+          counter: 0,
+        },
+        requireUserVerification: true,
+      })
+      return verification
+    } catch (error) {
+      throw new RegistrationError('Verificación fallida', 400)
+    }
   }
 
 
