@@ -13,6 +13,8 @@ datasource db {
 }
 
 
+
+// Model user
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
@@ -22,10 +24,12 @@ model User {
   credentials WebAuthnCredential[]
   vault       Vault?
   auditLogs   AuditLog[]
+  secciones   Seccion[]
 
   @@map("users")
 }
 
+// Model webauthn credential
 model WebAuthnCredential {
   id           String   @id @default(cuid())
   userId       String
@@ -41,6 +45,7 @@ model WebAuthnCredential {
   @@map("webauthn_credentials")
 }
 
+// Model vault
 model Vault {
   id            String   @id @default(uuid()) @db.Uuid
   userId        String   @unique @map("user_id") @db.Uuid
@@ -54,6 +59,7 @@ model Vault {
   @@map("vaults")
 }
 
+// Model audit log
 model AuditLog {
   id        String   @id @default(uuid()) @db.Uuid
   userId    String   @map("user_id") @db.Uuid
@@ -66,4 +72,16 @@ model AuditLog {
 
   @@index([userId, createdAt(sort: Desc)])
   @@map("audit_logs")
+}
+
+// create model Seccion  for control access
+model Seccion {
+  id String  @id
+  userId String 
+  expiresAt DateTime 
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("secciones")
 }
