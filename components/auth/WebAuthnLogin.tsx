@@ -10,13 +10,13 @@ interface WebAuthnLoginProps {
 
 export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
     const [isLoading, setIsLoading] = useState(false)
-    const [isError, setIsError] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     const handleLoginWebauthn = async () => {
         if (!validateForm()) return
 
         setIsLoading(true)
-        setIsError(false)
+        setError(null)
 
         try {
             const res = await fetch('/api/auth/login/options', {
@@ -28,19 +28,21 @@ export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
             if (!data.ok) {
                 throw new Error(data.error)
             }
-            const asseResp = await startAuthentication(data.options)
+
+            const asseResp = await startAuthentication({ optionsJSON: data.options })
+
             const verificationResp = await fetch('/api/auth/login/verify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(asseResp)
+                body: JSON.stringify({ attResp: asseResp, email })
             })
             const verificationData = await verificationResp.json()
             if (!verificationData.ok) {
                 throw new Error(verificationData.error)
             }
             alert('WebAuthn login exitoso')
-        } catch {
-            setIsError(true)
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Error al iniciar sesión')
         } finally {
             setIsLoading(false)
         }
@@ -63,7 +65,7 @@ export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
                 ) : 'Acceder'}
             </Button>
             <div className="h-3 flex items-center justify-center">
-                {isError && <p className="text-[10px] text-red-500 leading-none">Error al iniciar sesión</p>}
+                {error && <p className="text-[10px] text-red-500 leading-none">{error}</p>}
             </div>
         </div>
     )

@@ -10,13 +10,13 @@ interface WebAuthnRegisterProps {
 
 export const WebAuthnRegister = ({ email, validateForm }: WebAuthnRegisterProps) => {
     const [isLoading, setIsLoading] = useState(false)
-    const [isError, setIsError] = useState(false)
+    const [error, setError] = useState<string | null>(null)
 
     const handleRegisterWebauthn = async () => {
         if (!validateForm()) return
 
         setIsLoading(true)
-        setIsError(false)
+        setError(null)
 
         try {
             const res = await fetch('/api/auth/register/options', {
@@ -40,8 +40,8 @@ export const WebAuthnRegister = ({ email, validateForm }: WebAuthnRegisterProps)
             }
 
             alert('Registro exitoso')
-        } catch {
-            setIsError(true)
+        } catch (err) {
+            setError(err instanceof Error ? err.message : 'Error al registrarse')
         } finally {
             setIsLoading(false)
         }
@@ -63,7 +63,7 @@ export const WebAuthnRegister = ({ email, validateForm }: WebAuthnRegisterProps)
                 ) : 'Registrarse'}
             </Button>
             <div className="h-3 flex items-center justify-center">
-                {isError && <p className="text-[10px] text-red-500 leading-none">Error al registrarse</p>}
+                {error && <p className="text-[10px] text-red-500 leading-none">{error}</p>}
             </div>
         </div>
     )

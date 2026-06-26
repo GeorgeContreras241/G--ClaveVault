@@ -1,4 +1,4 @@
-import { AuthService, RegistrationError } from '@/server/services/AuthService'
+import { AuthService, RegistrationError } from '@/server/services'
 import { UserRepository, CredentialRepository } from '@/server/repositories'
 
 const userRepo = new UserRepository()
@@ -19,6 +19,9 @@ export async function POST(request: Request) {
     return Response.json({ ok: true, options })
 
   } catch (error) {
+    if (error instanceof RegistrationError) {
+      return Response.json({ ok: false, error: error.message }, { status: error.statusCode })
+    }
     return Response.json({ ok: false, error: 'Error al generar opciones' }, { status: 500 })
   }
 }
