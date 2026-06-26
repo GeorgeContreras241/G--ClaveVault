@@ -24,7 +24,7 @@ model User {
   credentials WebAuthnCredential[]
   vault       Vault?
   auditLogs   AuditLog[]
-  secciones   Seccion[]
+  sessions    Session[]
 
   @@map("users")
 }
@@ -74,14 +74,14 @@ model AuditLog {
   @@map("audit_logs")
 }
 
-// create model Seccion  for control access
-model Seccion {
-  id String  @id
-  userId String 
-  expiresAt DateTime 
+// Model session for access control
+model Session {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
-  @@map("secciones")
+  @@map("sessions")
 }
