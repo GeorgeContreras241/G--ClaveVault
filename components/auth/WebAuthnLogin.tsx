@@ -1,6 +1,7 @@
 "use client"
 import { startAuthentication } from "@simplewebauthn/browser"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 
 interface WebAuthnLoginProps {
@@ -11,6 +12,7 @@ interface WebAuthnLoginProps {
 export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
+    const router = useRouter()
 
     const handleLoginWebauthn = async () => {
         if (!validateForm()) return
@@ -40,7 +42,7 @@ export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
             if (!verificationData.ok) {
                 throw new Error(verificationData.error)
             }
-            alert('WebAuthn login exitoso')
+            router.push('/passwords')
         } catch (err) {
             setError(err instanceof Error ? err.message : 'Error al iniciar sesión')
         } finally {
