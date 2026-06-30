@@ -25,7 +25,7 @@ export class SessionService {
         return token
     }
 
-    static async validate(userId: string) {
+    static async validate() {
         const cookieStore = await cookies()
         const token = cookieStore.get(SESSION_COOKIE_NAME)?.value
         if (!token) return null
@@ -33,11 +33,9 @@ export class SessionService {
         const session = await prisma.session.findUnique({
             where: { id: token }
         })
-        if (!session || session.userId !== userId) return null
+        if (!session) return null
         if (session.expiresAt < new Date()) {
-            await prisma.session.delete({
-                where: { id: token }
-            })
+            await prisma.session.delete({ where: { id: token } })
             return null
         }
 
@@ -47,14 +45,9 @@ export class SessionService {
     static async destroy() {
         const cookieStore = await cookies()
         const token = cookieStore.get(SESSION_COOKIE_NAME)?.value
-        if (!token) return null
+        if (!token) return
 
-        await prisma.session.deleteMany({
-            where: { id: token }
-        })
-
+        await prisma.session.deleteMany({ where: { id: token } })
         cookieStore.delete(SESSION_COOKIE_NAME)
-
-        return null
     }
 }
