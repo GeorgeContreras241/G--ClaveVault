@@ -1,20 +1,17 @@
 "use client";
 
 import WebAuthn from "@/components/icons/WebAuthn";
+import Link from "next/link";
 import { sileo } from "sileo";
 
 export function WebAuthnAction() {
-  const handleWebAuthn = () => {
-    sileo.warning({ title: "Próximamente", fill: "black" });
-  };
-
+ 
   return (
-    <button
-      type="button"
-      onClick={handleWebAuthn}
+    <Link
       className="group relative flex items-center gap-4 rounded-2xl p-4 text-left md:p-6 active:scale-[0.99] border border-zinc-300 dark:border-zinc-500/30 hover:border-zinc-400 dark:hover:border-zinc-500/80  cursor-pointer"
       role="menuitem"
       aria-label="WebAuthn - Autenticación biométrica"
+      href="/online"
     >
       <div
         className="vault-icon-frame h-12 w-12 shrink-0 rounded-xl  md:h-13 md:w-13"
@@ -33,6 +30,6 @@ export function WebAuthnAction() {
           Próximamente
         </span>
       </div>
-    </button>
+    </Link>
   );
 }
