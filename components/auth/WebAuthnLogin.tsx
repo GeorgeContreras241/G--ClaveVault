@@ -56,8 +56,8 @@ export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
                 type="button"
                 onClick={handleLoginWebauthn}
                 disabled={isLoading}
-                className="w-full h-11 font-medium"
-                variant="secondary"
+                variant="outline"
+                className="w-full h-10"
             >
                 {isLoading ? (
                     <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
