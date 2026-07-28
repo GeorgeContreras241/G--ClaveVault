@@ -26,6 +26,7 @@ export class CredentialRepository {
         credentialId: credential.credentialId,
         publicKey: Buffer.from(credential.publicKey),
         counter: BigInt(credential.counter),
+        transports: credential.transports ?? null,
       }
     })
   }
