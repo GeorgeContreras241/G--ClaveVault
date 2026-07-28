@@ -9,14 +9,11 @@ export const Header = ({ className }: { className?: string }) => {
                 className ??
                 "vault-panel flex w-full items-center justify-between gap-4 rounded-2xl px-4 py-3 md:px-6"
             }
-            aria-label="Navegación principal"
+            aria-label="Navegación principal z-9999"
         >
-            <p className="font-sora text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
-                ClaveVault
-            </p>
             <Link
                 href="/"
-                className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors duration-300"
+                className="flex items-center gap-2 text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors duration-300 cursor-pointer"
                 aria-label="Volver al inicio"
                 title="Volver al inicio"
             >
@@ -27,7 +24,9 @@ export const Header = ({ className }: { className?: string }) => {
                     Volver
                 </span>
             </Link>
-
+            <p className="font-sora text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-50">
+                ClaveVault
+            </p>
         </header>
     );
 };
