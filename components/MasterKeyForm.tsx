@@ -26,12 +26,13 @@ export function MasterKeyForm() {
     try {
       // fetch al servidor para traer info de vault
       const res = true
-      if(res.status === 200) {
+      if(res) {
         // Se maneja de logica de acceso al vauld traido de backend 
         console.log("Acceso al vault exitoso");
       } else {
         // Manejo de caso en el cual no haya guardado
-        
+        // Seteando el estado en un []
+
       }
     } catch (error) {
       setError("Error al acceder al vault. Por favor, inténtalo de nuevo.");
