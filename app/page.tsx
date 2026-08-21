@@ -62,7 +62,7 @@ export default function Home() {
               <Link
                 href="/offline"
                 title="Abrir gestor de contraseñas sin conexión"
-                className="group relative flex  items-center gap-4 rounded-2xl p-4 md:p-6 border border-zinc-300 dark:border-zinc-500/30 hover:border-zinc-400 dark:hover:border-zinc-500/80 cursor-pointer" 
+                className="group relative flex  items-center gap-4 rounded-2xl p-4 md:p-6 border border-zinc-300 dark:border-zinc-500/30 hover:border-zinc-400 dark:hover:border-zinc-500/80 cursor-pointer"
                 role="menuitem"
                 aria-label="Uso Offline - Administrar claves sin conexión"
               >
@@ -85,9 +85,7 @@ export default function Home() {
                 </div>
               </Link>
 
-              <Suspense fallback={<WebAuthnFallback />}>
-                <WebAuthnAction />
-              </Suspense>
+              <WebAuthnPage/>
             </nav>
           </section>
 
@@ -98,4 +96,13 @@ export default function Home() {
       </main>
     </>
   );
+}
+
+// fix error cache components
+export const WebAuthnPage = () => {
+  return (
+    <Suspense fallback={<WebAuthnFallback />}>
+      <WebAuthnAction />
+    </Suspense>
+  )
 }

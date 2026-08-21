@@ -213,7 +213,7 @@ export const ActionSubmit = ({ onSuccess }: ActionSubmitProps) => {
                         <input
                             type={viewPass ? "text" : "password"}
                             className={`w-full border rounded-lg px-4 py-2 font-mono pr-10 border-gray-300 dark:border-white bg-white dark:bg-zinc-800/50  backdrop-blur-sm placeholder:text-zinc-500 dark:placeholder:text-gray-500  placeholder:italic placeholder:text-md focus:outline-none focus:ring-1 focus:ring-blue-500/50 dark:focus:ring-neutral-500/50 transition-all duration-300 ${passwordError
-                                    ? 'border-red-500 focus:ring-red-500/50' : 'border-gray-300 dark:border-zinc-600/70'
+                                ? 'border-red-500 focus:ring-red-500/50' : 'border-gray-300 dark:border-zinc-600/70'
                                 }`}
                             placeholder="Ingresa Aqui"
                             id="password"
@@ -239,7 +239,7 @@ export const ActionSubmit = ({ onSuccess }: ActionSubmitProps) => {
                         </button>
                     </div>
                     <button
-                       className="w-full bg-blue-600 dark:bg-slate-900 hover:bg-blue-700 dark:hover:bg-slate-800/70 text-white rounded-lg p-3 cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] focus:outline-none focus:ring-1 focus:ring-blue-500/20 shadow-lg"
+                        className="w-full bg-blue-600 dark:bg-slate-900 hover:bg-blue-700 dark:hover:bg-slate-800/70 text-white rounded-lg p-3 cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] focus:outline-none focus:ring-1 focus:ring-blue-500/20 shadow-lg"
                         type="submit"
                         disabled={isLoading}
                         aria-busy={isLoading}
@@ -268,9 +268,17 @@ export const ActionSubmit = ({ onSuccess }: ActionSubmitProps) => {
                     )}
                 </form>
             </div>
-            <Suspense fallback={<SocialFallback />}>
-                <SeccionSocial />
-            </Suspense>
+            <SeccionSocialPage />
         </div>
+    )
+}
+
+
+// fix error 
+export const SeccionSocialPage = () => {
+    return (
+        <Suspense fallback={<SocialFallback />}>
+            <SeccionSocial />
+        </Suspense>
     )
 }
