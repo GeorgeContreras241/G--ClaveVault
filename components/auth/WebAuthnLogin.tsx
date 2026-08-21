@@ -42,8 +42,13 @@ export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
             if (!verificationData.ok) {
                 throw new Error(verificationData.error)
             }
+            console.log('Login successful:', verificationData)
             router.push('/passwords')
         } catch (err) {
+            if(err instanceof Error && err.message.includes("timed out")) {
+                setError("Tiempo agotado. Inténtalo nuevamente.")
+                return
+            }
             setError(err instanceof Error ? err.message : 'Error al iniciar sesión')
         } finally {
             setIsLoading(false)
@@ -66,7 +71,7 @@ export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
                     </svg>
                 ) : 'Acceder'}
             </Button>
-            <div className="h-3 flex items-center justify-center">
+            <div className="h-3 flex items-center text-center justify-center">
                 {error && <p className="text-[10px] text-red-500 leading-none">{error}</p>}
             </div>
         </div>

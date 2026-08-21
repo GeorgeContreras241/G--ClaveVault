@@ -8,7 +8,6 @@ const authService = new AuthService(userRepo, credentialRepo)
 
 export async function POST(request: Request) {
   try {
-    console.log("Corriendo app")
     const { attResp, email } = await request.json()
 
     if (!attResp || !email) {

@@ -5,6 +5,8 @@ const SESSION_TIMEOUT = 30 * 60 * 1000 // 30 minutes
 const SESSION_COOKIE_NAME = 'session_token'
 
 export class SessionService {
+
+    
     static async create(userId: string) {
         const token = crypto.randomUUID()
         const expiresAt = new Date(Date.now() + SESSION_TIMEOUT)

@@ -13,11 +13,12 @@ export class AuthService {
     private userRepo: UserRepository,
     private credentialRepo: CredentialRepository
   ) { }
-
+  // options Registration - Register
   async generateRegistrationOptions(email: string) {
+    console.log('Generating registration options for email')
     const existingUser = await this.userRepo.findByEmail(email)
     if (existingUser) {
-      throw new RegistrationError('Este email ya está registrado. Inicia sesión para agregar un nuevo authenticator.', 409)
+      throw new RegistrationError('Este email ya está registrado.', 409)
     }
 
     const options = await generateRegistrationOptions({
@@ -35,8 +36,8 @@ export class AuthService {
 
     return options
   }
-
   async verifyRegistration(attResp: unknown, email: string) {
+    console.log('Verifying registration for email:', email)
     const challenge = challenges.get(email)
     if (!challenge) {
       throw new RegistrationError('Challenge no encontrado', 400)
@@ -81,10 +82,12 @@ export class AuthService {
     return { ok: true }
   }
 
+  // options Authentication - Login
   async generateAuthenticationOptions(email: string) {
+    console.log('Generating authentication options for email')
     const existingUser = await this.userRepo.findByEmail(email)
     if (!existingUser) {
-      throw new RegistrationError('Usuario no registrado', 404)
+      throw new RegistrationError('email no registrado', 404)
     }
 
     const credentials = await this.credentialRepo.findByUserId(existingUser.id)
@@ -106,8 +109,8 @@ export class AuthService {
 
     return options
   }
-
   async verifyAuthentication(email: string, attResp: AuthenticationResponseJSON) {
+    console.log('Verifying authentication for email')
     const challenge = challenges.get(email)
     if (!challenge) {
       throw new RegistrationError('Challenge no encontrado', 400)
@@ -118,9 +121,10 @@ export class AuthService {
       throw new RegistrationError('Challenge expirado', 400)
     }
 
+    console.log('Verifying authentication for email:', email)
     const user = await this.userRepo.findByEmail(email)
     if (!user) {
-      throw new RegistrationError('Usuario no encontrado', 404)
+      throw new RegistrationError('email no registrado', 404)
     }
 
     const storedCredential = await this.credentialRepo.findByCredentialId(attResp.id)
