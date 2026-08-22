@@ -1,7 +1,8 @@
+
 import { Suspense } from "react";
 import { getUser } from "@/lib/get-user";
 import { redirect } from "next/navigation";
-import { MasterKeyForm } from "@/components/MasterKeyForm";
+import { OnlineProvider } from "@/components/providers/OnlineProvider";
 
 export default function PasswordsPage() {
     return (
@@ -14,7 +15,7 @@ export default function PasswordsPage() {
 
 export async function PasswordsContent() {
     const user = await getUser();
-
+    // necesito averiguar como funciona el redirect de nextjs, para que no se pueda acceder a esta pagina si no hay un usuario logueado
     if (!user) {
         redirect("/online");
     }
@@ -29,7 +30,10 @@ export async function PasswordsContent() {
                 Hola {user.email}, Necesitamos tu Master key para acceder a tus contraseñas.
             </p>
             {/* componente para ingresar la master key */}
-            <MasterKeyForm />
+            <OnlineProvider/>
+
+
+
         </div>
     );
 }

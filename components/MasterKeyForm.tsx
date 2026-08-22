@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { validatePassword } from "@/lib/utils/SeccionSubmit/validatePassword"
 
-export function MasterKeyForm() {
+
+export function MasterKeyForm({ look, setLook}: { look: boolean, setLook: React.Dispatch<React.SetStateAction<boolean>> }) {
   const [key, setKey] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
 
-  function handleSubmit(e: React.FormEvent) {
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setError("")
     const formData = new FormData(e.target as HTMLFormElement);
@@ -22,18 +24,10 @@ export function MasterKeyForm() {
       return;
     }
     setLoading(true)
-
+    await new Promise(r => setTimeout(r, 0))
     try {
       // fetch al servidor para traer info de vault
-      const res = true
-      if(res) {
-        // Se maneja de logica de acceso al vauld traido de backend 
-        console.log("Acceso al vault exitoso");
-      } else {
-        // Manejo de caso en el cual no haya guardado
-        // Seteando el estado en un []
-
-      }
+      setLook(true)
     } catch (error) {
       setError("Error al acceder al vault. Por favor, inténtalo de nuevo.");
     } finally {
@@ -41,38 +35,37 @@ export function MasterKeyForm() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="mt-6 flex items-center justify-center py-12">
-        <div className="text-muted-foreground">Cargando...</div>
-      </div>
-    )
-  }
-
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setKey(e.target.value)
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="password">Master Key</Label>
-        <Input
-          type="password"
-          id="password"
-          name="password"
-          placeholder="Ingresa tu master key"
-          value={key}
-          onChange={handlePasswordChange}
-          aria-invalid={!!error}
-        />
-        {error && (
-          <p className="text-sm text-destructive">{error}</p>
-        )}
-      </div>
-      <Button type="submit" className="w-full">
-        Acceder
-      </Button>
-    </form>
+    <>
+      {loading === false ? (
+        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="password">Master Key</Label>
+            <Input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Ingresa tu master key"
+              value={key}
+              onChange={handlePasswordChange}
+              aria-invalid={!!error}
+            />
+            {error && (
+              <p className="text-sm text-destructive">{error}</p>
+            )}
+          </div>
+          <Button type="submit" className="w-full">
+            Acceder
+          </Button>
+        </form>
+      ) : (
+        <div className="h-14 w-14 border-b-2 rounded-full border-white animate-spin"></div>
+      )}
+    </>
+
   )
 }

@@ -11,3 +11,8 @@ export function useLocalContext(): LocalContextValue {
   }
   return context;
 }
+
+
+export const useOnlineContext = () => {
+  return false
+}
