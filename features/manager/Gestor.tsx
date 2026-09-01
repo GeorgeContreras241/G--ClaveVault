@@ -1,6 +1,6 @@
 // Refacor en proceso
 'use client'
-import { useState, use } from 'react'
+import { useState} from 'react'
 import { useStoragePass } from '@/storage/useStoragePass'
 import { Header_Gestor } from "@/features/manager/components/Header_Gestor"
 import { copyToClipboard } from '@/lib/utils/Gestor/copyToClipboard'
@@ -34,7 +34,6 @@ export const Gestor = () => {
       [id]: !prev[id]
     }))
   }
-
 
   const getCategoryIcon = (category: string) => {
     switch (category) {

@@ -228,9 +228,7 @@
     background 0.35s ease;
 }
 
-:not(.dark) .vault-action-card {
-  border-color: color-mix(in oklab, var(--color-zinc-300) 80%, transparent);
-}
+
 
 .vault-action-card::before {
   content: "";
