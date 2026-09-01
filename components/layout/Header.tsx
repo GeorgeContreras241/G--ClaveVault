@@ -7,7 +7,7 @@ export const Header = ({ className }: { className?: string }) => {
         <header
             className={
                 className ??
-                "vault-panel flex w-full items-center justify-between gap-4 rounded-2xl px-4 py-3 md:px-6"
+                "vault-panel flex w-full items-center justify-between gap-4 sticky top-0 z-9999 px-4 py-3 md:px-6"
             }
             aria-label="Navegación principal z-9999"
         >
