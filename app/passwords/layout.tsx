@@ -13,8 +13,8 @@ export default async function PasswordsLayout({ children }: { children: React.Re
     return (
         <div className="min-h-dvh w-full flex flex-col bg-gradient-to-b from-background via-background to-muted/20">
             <Header />
-            <main className="flex-1 px-4 py-12 md:py-20">
-                <div className="w-full max-w-4xl mx-auto">
+            <main className="flex-1 px-4">
+                <div className="w-full">
                     {children}
                 </div>
             </main>

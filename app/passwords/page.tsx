@@ -1,8 +1,6 @@
 
 import { Suspense } from "react";
 
-import { OnlineProvider } from "@/components/providers/OnlineProvider";
-
 import { getUser } from "@/lib/get-user";
 import { redirect } from "next/navigation";
 import { PasswordsContent } from "./PasswordContent";
