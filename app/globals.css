@@ -154,30 +154,9 @@
   animation-delay: 0.32s;
 }
 
-.vault-bg {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -10%,
-      var(--color-vault-amber),
-      transparent 55%),
-    radial-gradient(circle at 100% 100%,
-      rgba(255, 255, 255, 0.6),
-      transparent 40%),
-      linear-gradient(165deg,
-        rgb(248, 250, 252) 0%,
-        rgb(241, 245, 249) 45%,
-        rgb(226, 232, 240) 100%);
-}
 
-.dark .vault-bg {
-  background:
-    radial-gradient(ellipse 80% 50% at 50% -10%, #e8b94a62, transparent 55%),
-    radial-gradient(circle at 100% 100%, #0000001a, transparent 40%),
-    linear-gradient(165deg, #0000007c 0%, #181729ef 45%, #00000038 100%);
-}
+
+
 
 .vault-grid {
   position: fixed;
