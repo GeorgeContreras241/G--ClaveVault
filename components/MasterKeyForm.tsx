@@ -1,16 +1,27 @@
 "use client"
-import { useState } from "react"
+import { useState, } from "react"
 import { Shield, KeyRound, Lock, EyeOff, AlertTriangle, WifiOff } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { validatePassword } from "@/lib/utils/SeccionSubmit/validatePassword"
+import { useStoragePass } from "@/storage/useStoragePass"
+// cryptography
+import { decrypt } from "@/lib/crypto/decryptData"
+import { encrypt } from "@/lib/crypto/encryptData"
+import { deriveKey } from "@/lib/crypto/kdfKey" 
+import { generateSalt } from "@/lib/crypto/genereteSalt"
+
 
 
 export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React.Dispatch<React.SetStateAction<boolean>> }) {
   const [key, setKey] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
+  //storage
+  const setDerivedKey = useStoragePass((state) => state.setDerivedKey)
+  const setSalt = useStoragePass((state) => state.setSalt)
+  const setDataPasswordInit = useStoragePass((state) => state.setDataPasswordInit)
 
 
   async function handleSubmit(e: React.FormEvent) {
@@ -27,12 +38,25 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
     setLoading(true)
     await new Promise(r => setTimeout(r, 0))
     try {
-      setLook(true)
       // operacion de consultal a base de datos para si hay datos guardados previamente
+      const response = await fetch("/api/auth/me",{
+        credentials: "include",// enviar cokkkies de sesión
+      })
+      if(!response.ok){
+        throw new Error("Error al acceder al vault. Por favor, inténtalo de nuevo.");
+      }
+      const data = await response.json()
+       if(!data.hasVault){
+        // Guardar en inicial
+        return
+      }
+
+
     } catch (error) {
       setError("Error al acceder al vault. Por favor, inténtalo de nuevo.");
     } finally {
       setLoading(false);
+      setLook(true)
     }
   }
 
