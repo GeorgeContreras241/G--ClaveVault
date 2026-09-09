@@ -36,20 +36,7 @@ export interface PasswordCardProps {
   getCategoryIcon: (category: string) => React.ReactNode;
 }
 
-export interface LocalContextValue {
-  saltRef: React.MutableRefObject<Uint8Array | null>;
-  drcKey: React.MutableRefObject<CryptoKey | null>;
-  handleExport: ExportResult;
-  handleImport: (file: File, password: string) => Promise<ImportResult>;
-  handleReset: () => Promise<void>;
-  toogleDeriveKey: ToogleDeriveKey;
-  isUnLocked: boolean;
-  setIsUnLocked: React.Dispatch<React.SetStateAction<boolean>>;
-  isResetting: boolean;
-}
 
-/** @deprecated Use `LocalContextValue` */
-export type ContextType = LocalContextValue;
 
 export interface ImportResultAlert {
   state: boolean;
@@ -81,21 +68,6 @@ export interface AddPasswordsProps {
   onSuccess?: () => void;
 }
 
-export type PassStorage = {
-  salt: Uint8Array | null;
-  derivedKey: CryptoKey | null;
-  loading: boolean;
-  dataPassword: PasswordEntry[];
-  setDataPassword: () => void;
-  setDataPasswordInit: (data: PasswordEntry[]) => void;
-  setDataPasswordUpdate: (data: PasswordEntry) => void;
-  setDataPasswordEdit: (data: PasswordEntry) => void;
-  setDataPasswordFavorite: (id: string) => void;
-  setDataPasswordDelate: (id: string) => void;
-  setLoading: (loading: boolean) => void;
-  setDerivedKey: (key: CryptoKey) => void;
-  setSalt: (salt: Uint8Array) => void;
-};
 
 export interface FormState {
   title: string;
@@ -203,3 +175,27 @@ export interface FormErrors {
   password?: string;
   url?: string;
 }
+
+
+export type PassStorage = {
+  salt: Uint8Array | null;
+  derivedKey: CryptoKey | null;
+  loading: boolean;
+  dataPassword: PasswordEntry[];
+  isUnLocked: boolean;
+  isResetting: boolean;
+  setDataPassword: () => void;
+  setDataPasswordInit: (data: PasswordEntry[]) => void;
+  setDataPasswordUpdate: (data: PasswordEntry) => void;
+  setDataPasswordEdit: (data: PasswordEntry) => void;
+  setDataPasswordFavorite: (id: string) => void;
+  setDataPasswordDelate: (id: string) => void;
+  setLoading: (loading: boolean) => void;
+  setDerivedKey: (key: CryptoKey) => void;
+  setSalt: (salt: Uint8Array) => void;
+  setIsUnLocked: (value: boolean) => void;
+  toogleDeriveKey: ToogleDeriveKey;
+  handleExport: ExportResult;
+  handleImport: (file: File, password: string) => Promise<ImportResult>;
+  handleReset: () => Promise<void>;
+};
