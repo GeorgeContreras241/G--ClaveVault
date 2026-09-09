@@ -1,11 +1,11 @@
 "use client"
-import { ReactNode, useContext } from "react"
+import { ReactNode } from "react"
 import { ActionSubmit } from "@/components/SeccionSubmit/ActionSubmit";
-import { LocalContext } from "@/context/localProvider";
+import { useStoragePass } from "@/storage/useStoragePass";
 
 export const AuthGuard = ({ children }: { children: ReactNode }) => {
-    const localContext = useContext(LocalContext);
-    const { isUnLocked, setIsUnLocked } = localContext || { isUnLocked: false, setIsUnLocked: () => {} };
+    const isUnLocked = useStoragePass((state) => state.isUnLocked);
+    const setIsUnLocked = useStoragePass((state) => state.setIsUnLocked);
 
     if (!isUnLocked) {
         return (
@@ -21,6 +21,3 @@ export const AuthGuard = ({ children }: { children: ReactNode }) => {
         </>
     )
 }
-
-// Este 
-

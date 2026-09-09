@@ -1,5 +1,4 @@
 "use client"
-import { useLocalContext } from "@/context/useLocalContext"
 import { Exit } from "@/components/icons/Exit";
 import { Export } from "@/components/icons/Export"
 import { Search } from "@/components/icons/Search";
@@ -12,8 +11,10 @@ import { useRouter } from "next/navigation";
 
 export const Header_Gestor = ({ setSearchTerm, setSelectedCategory, selectedCategory, searchTerm }: HeaderGestorProps) => {
     const router = useRouter();
-    const { handleExport, handleReset, isResetting } = useLocalContext()
-    const dataPassword = useStoragePass((state) => state.dataPassword)
+    const handleExport = useStoragePass((state) => state.handleExport);
+    const handleReset = useStoragePass((state) => state.handleReset);
+    const isResetting = useStoragePass((state) => state.isResetting);
+    const dataPassword = useStoragePass((state) => state.dataPassword);
 
     return (
         <header className="vault-panel rounded-xl p-4 md:p-6">

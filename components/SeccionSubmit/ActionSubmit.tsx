@@ -1,6 +1,5 @@
 "use client"
 import { useEffect, Suspense } from "react"
-import { useLocalContext } from "@/context/useLocalContext"
 import Add from "../icons/Add";
 import { sileoWarning, sileoError } from "@/const/sileoConfig";
 import { sileo, Toaster } from "sileo"
@@ -18,19 +17,17 @@ import { SocialFallback } from "@/components/home/HomeFallbacks";
 import Link from "next/link";
 import { Arrow } from "../icons/Arrow";
 
-//   i need review sileo alerts styles and refactor styles - Pending 
-
 export const ActionSubmit = ({ onSuccess }: ActionSubmitProps) => {
-    const { handleImport, handleReset, drcKey } = useLocalContext();
+    const handleImport = useStoragePass((state) => state.handleImport);
+    const handleReset = useStoragePass((state) => state.handleReset);
+    const setDerivedKey = useStoragePass((state) => state.setDerivedKey);
+    const setDataPasswordInit = useStoragePass((state) => state.setDataPasswordInit);
 
-    // Debugging log
     const [file, setFile] = useState<File | null>(null);
     const [viewPass, setViewPass] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [passwordError, setPasswordError] = useState('');
     const [fileError, setFileError] = useState('');
-    // Storage of decrypted data
-    const setDataPasswordInit = useStoragePass((state) => state.setDataPasswordInit);
 
     useEffect(() => {
         handleReset();
@@ -45,7 +42,6 @@ export const ActionSubmit = ({ onSuccess }: ActionSubmitProps) => {
         setFile(null);
         setFileError('');
     };
-
 
     const handleNoFileScenario = async (password: string) => {
         sileo.warning({
@@ -62,7 +58,7 @@ export const ActionSubmit = ({ onSuccess }: ActionSubmitProps) => {
                     const saltGenerated = await generateSalt();
                     localStorage.setItem("salt", JSON.stringify(Array.from(saltGenerated)));
                     const drcKeyResult = await deriveKey(password, saltGenerated);
-                    drcKey.current = drcKeyResult;
+                    setDerivedKey(drcKeyResult);
                     onSuccess(true);
                     sileo.clear()
                 },
@@ -72,13 +68,11 @@ export const ActionSubmit = ({ onSuccess }: ActionSubmitProps) => {
     };
 
     const processFileImport = async (file: File, password: string) => {
-        // validacion de datos
         const validation = validateVaultInputs(password);
         if (validation !== true) {
             sileo.error(validation);
             return false;
         }
-        //revisar datos pasa con datos incorrectos ojito - Completed
 
         const importResult = await handleImport(file, password);
 
@@ -91,8 +85,7 @@ export const ActionSubmit = ({ onSuccess }: ActionSubmitProps) => {
             localStorage.setItem("salt", JSON.stringify(Array.from(importResult.salt)));
         }
         if (importResult.decryptedData) {
-            const data = importResult.decryptedData;
-            setDataPasswordInit(data);
+            setDataPasswordInit(importResult.decryptedData);
         }
         return true;
     };
@@ -117,7 +110,6 @@ export const ActionSubmit = ({ onSuccess }: ActionSubmitProps) => {
                 await handleNoFileScenario(password);
                 return;
             }
-            //revisar funcion processFileImport - Completed 
             const success = await processFileImport(file, password);
             if (success) {
                 onSuccess(true);
@@ -136,9 +128,8 @@ export const ActionSubmit = ({ onSuccess }: ActionSubmitProps) => {
             if (!selectedFile.name.endsWith('.enc')) {
                 setFileError('Solo se permiten archivos .enc');
                 setFile(null);
-                // Reset file input
                 e.target.value = '';
-            } else if (selectedFile.size > 10 * 1024 * 1024) { // 10MB limit
+            } else if (selectedFile.size > 10 * 1024 * 1024) {
                 setFileError('El archivo es demasiado grande (máximo 10MB)');
                 setFile(null);
                 e.target.value = '';
@@ -273,8 +264,6 @@ export const ActionSubmit = ({ onSuccess }: ActionSubmitProps) => {
     )
 }
 
-
-// fix error 
 export const SeccionSocialPage = () => {
     return (
         <Suspense fallback={<SocialFallback />}>
