@@ -62,7 +62,9 @@ export const AddPassword = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
+        console.log("Form submit")
         if (!validateForm()) return
+        console.log("Form submit")
         const id = crypto?.randomUUID?.() || Math.random().toString(36).substring(2, 15)
         setDataPasswordUpdate(toPasswordEntry({ id, ...keys }))
         resetForm()
@@ -183,7 +185,7 @@ export const AddPassword = () => {
                         </div>
 
                         <div className="flex gap-2">
-                            <Button className="flex-1 py-1.5 text-sm">Agregar</Button>
+                            <Button type="submit" className="flex-1 py-1.5 text-sm">Agregar</Button>
                             <Button
                                 type="button"
                                 onClick={() => { resetForm(); setIsFormVisible(false) }}
