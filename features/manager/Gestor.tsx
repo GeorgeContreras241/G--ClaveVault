@@ -16,7 +16,7 @@ import { LockEmpty } from '@/components/icons/LockEmpty'
 import { PasswordCard } from './components/PasswordCard'
 
 import type { PasswordEntry } from "@/types"
-import { Footer } from '@/components/layout/Footer'
+
 
 export const Gestor = () => {
   const dataPassword = useStoragePass((state) => state.dataPassword)
@@ -27,6 +27,7 @@ export const Gestor = () => {
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [editingPassword, setEditingPassword] = useState<PasswordEntry | null>(null)
 
+  console.log(dataPassword, "dataPassword")
 
 
   const togglePasswordVisibility = (id: string) => {

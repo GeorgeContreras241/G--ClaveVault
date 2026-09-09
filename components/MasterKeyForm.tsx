@@ -9,7 +9,7 @@ import { useStoragePass } from "@/storage/useStoragePass"
 // cryptography
 import { decrypt } from "@/lib/crypto/decryptData"
 import { encrypt } from "@/lib/crypto/encryptData"
-import { deriveKey } from "@/lib/crypto/kdfKey" 
+import { deriveKey } from "@/lib/crypto/kdfKey"
 import { generateSalt } from "@/lib/crypto/genereteSalt"
 
 
@@ -22,6 +22,9 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
   const setDerivedKey = useStoragePass((state) => state.setDerivedKey)
   const setSalt = useStoragePass((state) => state.setSalt)
   const setDataPasswordInit = useStoragePass((state) => state.setDataPasswordInit)
+  const salt = useStoragePass((state) => state.salt)
+  const derivedKey = useStoragePass((state) => state.derivedKey)
+  console.log(salt, derivedKey)
 
 
   async function handleSubmit(e: React.FormEvent) {
@@ -39,15 +42,26 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
     await new Promise(r => setTimeout(r, 0))
     try {
       // operacion de consultal a base de datos para si hay datos guardados previamente
-      const response = await fetch("/api/auth/me",{
+      const response = await fetch("/api/auth/me", {
         credentials: "include",// enviar cokkkies de sesión
       })
-      if(!response.ok){
+      if (!response.ok) {
         throw new Error("Error al acceder al vault. Por favor, inténtalo de nuevo.");
       }
       const data = await response.json()
-       if(!data.hasVault){
+      if (!data.hasVault) {
         // Guardar en inicial
+        const salt =  await generateSalt()
+        if (!salt) {
+          throw new Error("Error al generar la sal. Por favor, inténtalo de nuevo.");
+        }
+        const derivedKey = await deriveKey(password, salt)
+        if (!derivedKey) {
+          throw new Error("Error al derivar la clave. Por favor, inténtalo de nuevo.");
+        }
+        setSalt(salt)
+        setDerivedKey(derivedKey)
+        setDataPasswordInit([])
         return
       }
 
