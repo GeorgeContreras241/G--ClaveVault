@@ -1,125 +1,123 @@
-# My Pass - Gestor de Contraseñas Local
+# ClaveVault - Gestor de Contraseñas Seguro
 
-Un gestor de contraseñas seguro y local que funciona directamente en el navegador. Construido con Next.js y enfocado en la privacidad y seguridad de tus credenciales.
+Gestor de contraseñas con encriptación local, autenticación WebAuthn y sincronización segura. Construido con Next.js 16 y enfocado en privacidad zero-knowledge.
 
-## 🚀 Características
+## Características
 
-### Fase 1 - Funcionalidad Actual
-- **Almacenamiento Local**: Todas las contraseñas se guardan localmente en tu navegador
-- **Encriptación**: Tus contraseñas están encriptadas con algoritmos de criptografía modernos
-- **Interfaz Moderna**: Diseño limpio y responsivo con Tailwind CSS
-- **Gestión de Vault**: Sistema seguro para almacenar y organizar tus credenciales
-- **Zero Knowledge**: Solo tú tienes acceso a tus contraseñas
+### Fase 1 - Actual
+- **Encriptación Local**: Contraseñas encriptadas con Web Crypto API (AES-GCM + PBKDF2)
+- **Vault Seguro**: Sistema de bóveda con salt, IV y derived key por usuario
+- **Gestión de Credenciales**: CRUD completo con búsqueda, filtros y favoritos
+- **Generador de Contraseñas**: Opciones configurables (longitud, mayúsculas, números, símbolos)
+- **Importación/Exportación**: Archivos `.enc` encriptados
+- **Interfaz Vault**: Diseño moderno con tema personalizado
 
 ### Fase 2 - Próximamente
-- **WebAuthn Integration**: Autenticación biométrica y con hardware de seguridad
-- **Autenticación sin Contraseña**: Soporte para huellas digitales, Face ID y llaves de seguridad
+- **WebAuthn**: Autenticación biométrica y hardware (Face ID, huella, YubiKey)
 - **Multi-dispositivo**: Sincronización segura entre dispositivos
+- **Extensiones**: Browser extensions para autocompletado
 
-## 🛠️ Tecnología
+## Tecnología
 
-- **Frontend**: Next.js 16.1.6 con React 19
-- **Estilos**: Tailwind CSS v4
-- **Estado**: Zustand para gestión de estado
-- **Criptografía**: API Web Crypto nativa del navegador
-- **Tipado**: TypeScript para mayor seguridad en el código
+| Capa | Tecnología |
+|------|------------|
+| Framework | Next.js 16 (App Router) |
+| UI | React 19, Tailwind CSS v4, shadcn/ui |
+| Estado | Zustand |
+| Base de datos | Prisma + PostgreSQL |
+| Auth | WebAuthn, sesiones con cookies |
+| Criptografía | Web Crypto API (PBKDF2, AES-GCM) |
+| Notificaciones | Sileo |
 
-## 📁 Estructura del Proyecto
+## Estructura
 
 ```
-my-pass/
-├── app/                 # Páginas y layouts de Next.js
-├── components/          # Componentes React reutilizables
-├── lib/
-│   ├── crypto/         # Funciones de encriptación y desencriptación
-│   └── vault/          # Gestión del bóveda de contraseñas
-├── public/             # Archivos estáticos
-└── storage/            # Almacenamiento local de datos
+ClaveVault/
+├── app/                    # Next.js App Router
+│   ├── api/auth/          # API routes (login, register, vault)
+│   ├── offline/           # Página offline
+│   └── passwords/         # Dashboard de contraseñas
+├── components/             # Componentes React
+│   ├── layout/            # Header, Footer
+│   ├── providers/         # Context providers
+│   ├── ui/                # shadcn/ui components
+│   └── icons/             # Iconos SVG
+├── features/               # feature-based modules
+│   └── manager/           # Gestor de contraseñas
+├── server/                 # Backend logic
+│   └── services/          # AuthService, SessionService, VaultService
+├── lib/                    # Utilidades
+│   ├── crypto/            # encrypt, decrypt, deriveKey, generateSalt
+│   └── vault/             # saveVault, loadVault
+├── context/                # React Context (LocalProvider)
+├── storage/                # Zustand stores
+├── prisma/                 # Schema y migraciones
+└── types/                  # TypeScript types
 ```
 
-## 🚀 Empezar
+## Instalación
 
 ### Prerrequisitos
-- Node.js 18 o superior
-- npm, yarn, pnpm o bun
+- Node.js 20+
+- PostgreSQL
+- npm o pnpm
 
-### Instalación
+### Setup
 
-1. Clona el repositorio:
 ```bash
+# Clonar
 git clone <repository-url>
-cd my-pass
-```
+cd ClaveVault
 
-2. Instala las dependencias:
-```bash
+# Instalar dependencias
 npm install
-# o
-yarn install
-# o
-pnpm install
-```
 
-3. Inicia el servidor de desarrollo:
-```bash
+# Configurar base de datos
+cp .env.example .env
+# Editar DATABASE_URL en .env
+
+# Ejecutar migraciones
+npx prisma migrate dev
+
+# Iniciar desarrollo
 npm run dev
-# o
-yarn dev
-# o
-pnpm dev
 ```
 
-4. Abre [http://localhost:3000](http://localhost:3000) en tu navegador
+Abrir [http://localhost:3000](http://localhost:3000)
 
-## 🔐 Seguridad
+## Variables de Entorno
 
-My Pass está diseñado con la seguridad como prioridad:
+```env
+DATABASE_URL="postgresql://user:password@localhost:5432/clavevault"
+```
 
-- **Encriptación Local**: Todas las contraseñas se encriptan antes de guardarlas
-- **Sin Servidores**: Los datos nunca salen de tu navegador
-- **Código Abierto**: Puedes verificar cada línea de código
-- **Web Crypto API**: Utiliza la criptografía nativa del navegador
-
-## 📋 Scripts Disponibles
+## Scripts
 
 ```bash
-npm run dev      # Inicia servidor de desarrollo
-npm run build    # Construye para producción
-npm run start    # Inicia servidor de producción
-npm run lint     # Ejecuta ESLint
+npm run dev      # Desarrollo
+npm run build    # Build producción
+npm run start    # Servidor producción
+npm run lint     # ESLint
 ```
 
-## 🚀 Despliegue
+## Seguridad
 
-La forma más fácil de desplegar es usar [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme).
+- **Zero Knowledge**: El servidor nunca ve tus contraseñas en texto plano
+- **Encriptación Local**: Todo se cifra antes de salir del navegador
+- **Derived Key**: PBKDF2 con salt único por usuario
+- **AES-GCM**: Encriptación autenticada
+- **WebAuthn**: Autenticación sin contraseñas (fase 2)
 
-Consulta la [documentación de despliegue de Next.js](https://nextjs.org/docs/app/building-your-application/deploying) para más detalles.
+## Roadmap
 
-## 🤝 Contribuir
-
-Las contribuciones son bienvenidas. Por favor:
-
-1. Fork el proyecto
-2. Crea una rama para tu feature (`git checkout -b feature/amazing-feature`)
-3. Commit tus cambios (`git commit -m 'Add some amazing feature'`)
-4. Push a la rama (`git push origin feature/amazing-feature`)
-5. Abre un Pull Request
-
-## 📄 Licencia
-
-Este proyecto está bajo licencia MIT - consulta el archivo [LICENSE](LICENSE) para más detalles.
-
-## 🔮 Roadmap
-
-- [x] Sistema básico de vault
-- [x] Encriptación local
-- [x] Interfaz de usuario moderna
-- [ ] Integración WebAuthn
-- [ ] Sincronización segura
-- [ ] Generador de contraseñas
-- [ ] Importación/Exportación
-- [ ] Extensiones de navegador
+- [x] Sistema de vault con encriptación
+- [x] CRUD de contraseñas
+- [x] Generador de contraseñas
+- [x] Importación/Exportación
+- [ ] WebAuthn integration
+- [ ] Sincronización multi-dispositivo
+- [ ] Browser extensions
 
 ---
 
-**⚠️ Importante**: My Pass es un proyecto educativo y de código abierto. Siempre verifica la seguridad de tus herramientas de gestión de contraseñas y considera soluciones auditadas profesionalmente para uso crítico.
+**ClaveVault** es un proyecto educativo. Para uso crítico, considera soluciones auditadas profesionalmente (Bitwarden, 1Password, etc.).
