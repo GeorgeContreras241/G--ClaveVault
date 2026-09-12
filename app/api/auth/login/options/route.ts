@@ -6,6 +6,7 @@ const credentialRepo = new CredentialRepository()
 const authService = new AuthService(userRepo, credentialRepo)
 
 export async function POST(request: Request) {
+  console.log("[/api/auth/login/options] Generando opciones WebAuthn para login")
   try {
     const { email } = await request.json()
 

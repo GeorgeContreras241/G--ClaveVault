@@ -7,6 +7,7 @@ const credentialRepo = new CredentialRepository()
 const authService = new AuthService(userRepo, credentialRepo)
 
 export async function POST(request: Request) {
+  console.log("[/api/auth/login/verify] Verificando credenciales WebAuthn del login")
   try {
     const { attResp, email } = await request.json()
 
