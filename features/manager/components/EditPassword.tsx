@@ -7,13 +7,20 @@ import { generatePassword } from "@/lib/utils/Gestor/generatePassword"
 import { copyToClipboard } from "@/lib/utils/Gestor/copyToClipboard"
 import type { EditPasswordProps, FormErrors } from "@/types"
 import { toPasswordEntry } from "@/lib/utils/Gestor/toPasswordEntry"
+import { useMode } from "@/hooks/useMode"
+import { encrypt } from "@/lib/crypto/encryptData"
 
 export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
+    const mode = useMode()
     const [isFormVisible, setIsFormVisible] = useState(true)
     const [isConfigVisible, setIsConfigVisible] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [errors, setErrors] = useState<FormErrors>({})
     const setDataPasswordEdit = useStoragePass((state) => state.setDataPasswordEdit)
+    const dataPassword = useStoragePass((state) => state.dataPassword)
+    const derivedKey = useStoragePass((state) => state.derivedKey)
+    const salt = useStoragePass((state) => state.salt)
+    const setVersion = useStoragePass((state) => state.setVersion)
 
     const [keys, setKeys] = useState({
         id: password.id,
@@ -52,21 +59,45 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
         return Object.keys(newErrors).length === 0
     }
 
-    const resetForm = () => {
-        setKeys({ ...originalKeys })
-        setErrors({})
-        setShowPassword(false)
-    }
-
     const handleGeneratePassword = () => {
         setKeys({ ...keys, password: generatePassword(passwordOptions) })
         setErrors({ ...errors, password: undefined })
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         if (!validateForm()) return
-        setDataPasswordEdit(toPasswordEntry(keys))
+
+        const editedEntry = toPasswordEntry(keys)
+
+        if (mode === "online" && derivedKey && salt) {
+            try {
+                const updatedPasswords = dataPassword.map((p) => p.id === editedEntry.id ? editedEntry : p)
+                const encrypted = await encrypt(derivedKey, updatedPasswords)
+                const res = await fetch("/api/auth/me", {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        salt: Array.from(salt),
+                        iv: encrypted.iv,
+                        encryptedData: encrypted.data,
+                    }),
+                })
+                const data = await res.json()
+                if (!data) return
+                if (data.ok && data.version) {
+                    setDataPasswordEdit(editedEntry)
+                    setVersion(data.version)
+                }
+            } catch (error) {
+                console.error("Error guardando vault:", error)
+                return
+            }
+        } else {
+            setDataPasswordEdit(editedEntry)
+        }
+
         onClose()
     }
 

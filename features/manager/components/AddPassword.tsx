@@ -7,13 +7,20 @@ import { generatePassword } from "@/lib/utils/Gestor/generatePassword"
 import { copyToClipboard } from "@/lib/utils/Gestor/copyToClipboard"
 import type { FormErrors } from "@/types"
 import { toPasswordEntry } from "@/lib/utils/Gestor/toPasswordEntry"
+import { useMode } from "@/hooks/useMode"
+import { encrypt } from "@/lib/crypto/encryptData"
 
 export const AddPassword = () => {
+    const mode = useMode()
     const [isFormVisible, setIsFormVisible] = useState(false)
     const [isConfigVisible, setIsConfigVisible] = useState(false)
     const [showPassword, setShowPassword] = useState(false)
     const [errors, setErrors] = useState<FormErrors>({})
+    const dataPassword = useStoragePass((state) => state.dataPassword)
     const setDataPasswordUpdate = useStoragePass((state) => state.setDataPasswordUpdate)
+    const derivedKey = useStoragePass((state) => state.derivedKey)
+    const salt = useStoragePass((state) => state.salt)
+    const setVersion = useStoragePass((state) => state.setVersion)
     const [keys, setKeys] = useState({
         title: "",
         application: "web",
@@ -60,13 +67,41 @@ export const AddPassword = () => {
         setErrors({ ...errors, password: undefined })
     }
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-        console.log("Form submit")
         if (!validateForm()) return
-        console.log("Form submit")
+
         const id = crypto?.randomUUID?.() || Math.random().toString(36).substring(2, 15)
-        setDataPasswordUpdate(toPasswordEntry({ id, ...keys }))
+        const newEntry = toPasswordEntry({ id, ...keys })
+
+        if (mode === "online" && derivedKey && salt) {
+            try {
+                const updatedPasswords = [...dataPassword, newEntry]
+                const encrypted = await encrypt(derivedKey, updatedPasswords)
+                const res = await fetch("/api/auth/me", {
+                    method: "POST",
+                    credentials: "include",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        salt: Array.from(salt),
+                        iv: encrypted.iv,
+                        encryptedData: encrypted.data,
+                    }),
+                })
+                const data = await res.json()
+                if (!data) return
+                if (data.ok && data.version) {
+                    setDataPasswordUpdate(newEntry)
+                    setVersion(data.version)
+                }
+            } catch (error) {
+                console.error("Error guardando vault:", error)
+                return
+            }
+        } else {
+            setDataPasswordUpdate(newEntry)
+        }
+
         resetForm()
         setIsFormVisible(false)
     }

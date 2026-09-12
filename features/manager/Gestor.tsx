@@ -16,18 +16,22 @@ import { LockEmpty } from '@/components/icons/LockEmpty'
 import { PasswordCard } from './components/PasswordCard'
 
 import type { PasswordEntry } from "@/types"
+import { useMode } from "@/hooks/useMode"
+import { encrypt } from "@/lib/crypto/encryptData"
 
 
 export const Gestor = () => {
+  const mode = useMode()
   const dataPassword = useStoragePass((state) => state.dataPassword)
   const setDataPasswordDelate = useStoragePass((state) => state.setDataPasswordDelate)
   const setDataPasswordFavorite = useStoragePass((state) => state.setDataPasswordFavorite)
+  const derivedKey = useStoragePass((state) => state.derivedKey)
+  const salt = useStoragePass((state) => state.salt)
+  const setVersion = useStoragePass((state) => state.setVersion)
   const [searchTerm, setSearchTerm] = useState('')
   const [showPasswords, setShowPasswords] = useState<{ [key: string]: boolean }>({})
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [editingPassword, setEditingPassword] = useState<PasswordEntry | null>(null)
-
-  console.log(dataPassword, "dataPassword")
 
 
   const togglePasswordVisibility = (id: string) => {
@@ -35,6 +39,36 @@ export const Gestor = () => {
       ...prev,
       [id]: !prev[id]
     }))
+  }
+
+  const handleDeletePassword = async (id: string) => {
+    if (mode === "online" && derivedKey && salt) {
+      try {
+        const updatedPasswords = dataPassword.filter((p) => p.id !== id)
+        const encrypted = await encrypt(derivedKey, updatedPasswords)
+        const res = await fetch("/api/auth/me", {
+          method: "POST",
+          credentials: "include",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            salt: Array.from(salt),
+            iv: encrypted.iv,
+            encryptedData: encrypted.data,
+          }),
+        })
+        const data = await res.json()
+        if (!data) return
+        if (data.ok && data.version) {
+          setDataPasswordDelate(id)
+          setVersion(data.version)
+        }
+      } catch (error) {
+        console.error("Error guardando vault:", error)
+        return
+      }
+    } else {
+      setDataPasswordDelate(id)
+    }
   }
 
   const getCategoryIcon = (category: string) => {
@@ -88,7 +122,7 @@ export const Gestor = () => {
                     onTogglePasswordVisibility={togglePasswordVisibility}
                     onCopyToClipboard={copyToClipboard}
                     onEditPassword={setEditingPassword}
-                    onDeletePassword={setDataPasswordDelate}
+                    onDeletePassword={handleDeletePassword}
                     onToggleFavorite={setDataPasswordFavorite}
                     getCategoryIcon={getCategoryIcon}
                   />

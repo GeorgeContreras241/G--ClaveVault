@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { validatePassword } from "@/lib/utils/SeccionSubmit/validatePassword"
 import { useStoragePass } from "@/storage/useStoragePass"
+import type { PasswordEntry } from "@/types"
 // cryptography
 import { decrypt } from "@/lib/crypto/decryptData"
 import { encrypt } from "@/lib/crypto/encryptData"
@@ -22,9 +23,9 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
   const setDerivedKey = useStoragePass((state) => state.setDerivedKey)
   const setSalt = useStoragePass((state) => state.setSalt)
   const setDataPasswordInit = useStoragePass((state) => state.setDataPasswordInit)
+  const setVersion = useStoragePass((state) => state.setVersion)
   const salt = useStoragePass((state) => state.salt)
   const derivedKey = useStoragePass((state) => state.derivedKey)
-  console.log(salt, derivedKey)
 
 
   async function handleSubmit(e: React.FormEvent) {
@@ -50,8 +51,7 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
       }
       const data = await response.json()
       if (!data.hasVault) {
-        // Guardar en inicial
-        const salt =  await generateSalt()
+        const salt = await generateSalt()
         if (!salt) {
           throw new Error("Error al generar la sal. Por favor, inténtalo de nuevo.");
         }
@@ -64,6 +64,21 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
         setDataPasswordInit([])
         return
       }
+
+      // Vault existente: descifrar
+      const saltBytes = Uint8Array.from(atob(data.salt), c => c.charCodeAt(0))
+      const derivedKey = await deriveKey(password, saltBytes)
+      if (!derivedKey) {
+        throw new Error("Error al derivar la clave. Por favor, inténtalo de nuevo.");
+      }
+
+      const decrypted = await decrypt(derivedKey, data.iv, data.encryptedData)
+      const passwords: PasswordEntry[] = JSON.parse(decrypted)
+
+      setSalt(saltBytes)
+      setDerivedKey(derivedKey)
+      setDataPasswordInit(passwords)
+      setVersion(data.version)
 
 
     } catch (error) {
