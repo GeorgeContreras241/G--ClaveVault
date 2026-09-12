@@ -15,6 +15,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
   dataPassword: [],
   isUnLocked: false,
   isResetting: false,
+  version: 1,
 
   setDataPassword: () => set({ dataPassword: [] }),
   setDataPasswordInit: (data: PasswordEntry[]) => set({ dataPassword: data }),
@@ -40,6 +41,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
   setDerivedKey: (key) => set({ derivedKey: key }),
   setSalt: (salt) => set({ salt }),
   setIsUnLocked: (value) => set({ isUnLocked: value }),
+  setVersion: (version) => set({ version }),
 
   toogleDeriveKey: async (password: string) => {
     const saltSave = JSON.parse(localStorage.getItem("salt") || "null");
@@ -174,7 +176,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
   handleReset: async () => {
     set({ isResetting: true, isUnLocked: false });
     localStorage.removeItem("salt");
-    set({ salt: null, derivedKey: null, dataPassword: [] });
+    set({ salt: null, derivedKey: null, dataPassword: [], version: 1 });
     await new Promise((resolve) => setTimeout(resolve, 500));
     set({ isResetting: false });
   },

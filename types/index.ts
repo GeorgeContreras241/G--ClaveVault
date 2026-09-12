@@ -184,6 +184,7 @@ export type PassStorage = {
   dataPassword: PasswordEntry[];
   isUnLocked: boolean;
   isResetting: boolean;
+  version: number;
   setDataPassword: () => void;
   setDataPasswordInit: (data: PasswordEntry[]) => void;
   setDataPasswordUpdate: (data: PasswordEntry) => void;
@@ -194,6 +195,7 @@ export type PassStorage = {
   setDerivedKey: (key: CryptoKey) => void;
   setSalt: (salt: Uint8Array) => void;
   setIsUnLocked: (value: boolean) => void;
+  setVersion: (version: number) => void;
   toogleDeriveKey: ToogleDeriveKey;
   handleExport: ExportResult;
   handleImport: (file: File, password: string) => Promise<ImportResult>;
