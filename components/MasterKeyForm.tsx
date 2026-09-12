@@ -72,12 +72,17 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
         throw new Error("Error al derivar la clave. Por favor, inténtalo de nuevo.");
       }
 
-      const decrypted = await decrypt(derivedKey, data.iv, data.encryptedData)
-      const passwords: PasswordEntry[] = JSON.parse(decrypted)
+      const iv = Uint8Array.from(atob(data.iv), c => c.charCodeAt(0))
+      const encryptedData = Uint8Array.from(atob(data.encryptedData), c => c.charCodeAt(0))
+
+      const result = await decrypt(derivedKey, { iv, data: encryptedData })
+      if (!result.status || !result.data) {
+        throw new Error("Error al descifrar el vault. La master key podría ser incorrecta.");
+      }
 
       setSalt(saltBytes)
       setDerivedKey(derivedKey)
-      setDataPasswordInit(passwords)
+      setDataPasswordInit(result.data)
       setVersion(data.version)
 
 
