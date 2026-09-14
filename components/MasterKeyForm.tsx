@@ -1,12 +1,12 @@
 "use client"
-import { useState, } from "react"
+import { useState } from "react"
 import { Shield, KeyRound, Lock, EyeOff, AlertTriangle, WifiOff } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
+import { Loading } from "@/components/shared/Loading"
 import { validatePassword } from "@/lib/utils/SeccionSubmit/validatePassword"
 import { useStoragePass } from "@/storage/useStoragePass"
-import type { PasswordEntry } from "@/types"
 // cryptography
 import { decrypt } from "@/lib/crypto/decryptData"
 import { encrypt } from "@/lib/crypto/encryptData"
@@ -77,20 +77,21 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
 
       const result = await decrypt(derivedKey, { iv, data: encryptedData })
       if (!result.status || !result.data) {
-        throw new Error("Error al descifrar el vault. La master key podría ser incorrecta.");
+        setError("Master key incorrecta. Inténtalo de nuevo.");
+        return
       }
 
       setSalt(saltBytes)
       setDerivedKey(derivedKey)
       setDataPasswordInit(result.data)
       setVersion(data.version)
+      setLook(true)
 
 
     } catch (error) {
       setError("Error al acceder al vault. Por favor, inténtalo de nuevo.");
     } finally {
       setLoading(false);
-      setLook(true)
     }
   }
 
@@ -101,7 +102,7 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="h-14 w-14 border-b-2 rounded-full border-vault-amber animate-spin" />
+        <Loading size="lg" text="Accediendo al vault..." />
       </div>
     )
   }
