@@ -1,13 +1,13 @@
 
 import { Suspense } from "react";
-
+import { Loading } from "@/components/shared/Loading";
 import { getUser } from "@/lib/get-user";
 import { redirect } from "next/navigation";
 import { PasswordsContent } from "./PasswordContent";
 
 export default function PasswordsPage() {
     return (
-        <Suspense fallback={<div>Cargando...</div>}>
+        <Suspense fallback={<Loading text="Cargando contraseñas..." />}>
             <PasswordsInit />
         </Suspense>
     );

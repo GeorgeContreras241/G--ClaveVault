@@ -1,12 +1,12 @@
 import type { Metadata, Viewport } from "next";
 import { IBM_Plex_Sans, Sora, Inter } from "next/font/google";
-import { AppProviders } from "@/components/providers/AppProviders";
 import { WebApplicationJsonLd } from "@/components/seo/JsonLd";
+import { SplitLayout } from "@/components/layout/SplitLayout";
 import { siteConfig } from "@/lib/site";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const inter = Inter({subsets:['latin'],variable:'--font-sans'});
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 const ibmPlexSans = IBM_Plex_Sans({
   subsets: ["latin"],
@@ -70,10 +70,10 @@ export default function RootLayout({
   return (
     <html lang="es" suppressHydrationWarning className={cn("font-sans", inter.variable)}>
       <body
-        className={`${ibmPlexSans.variable} ${sora.variable} font-sans antialiased bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100`}
+        className={`${ibmPlexSans.variable} ${sora.variable} font-sans antialiased bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 overflow-hidden`}
       >
         <WebApplicationJsonLd />
-        <AppProviders>{children}</AppProviders>
+        <SplitLayout>{children}</SplitLayout>
       </body>
     </html>
   );
