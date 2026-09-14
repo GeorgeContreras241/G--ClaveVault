@@ -1,13 +1,12 @@
 import { SessionService } from "@/server/services/SessionService"
 import { VaultService } from "@/server/services/VaultService"
-
+import { ValidationService } from "@/server/services/ValidationService"
 
 function toBase64(bytes: Uint8Array): string {
     return Buffer.from(bytes).toString('base64')
 }
 
 export const GET = async () => {
-    console.log("[/api/auth/me] Consultando vault del usuario autenticado")
     try {
         const session = await SessionService.validate()
         if (!session) {
@@ -23,6 +22,7 @@ export const GET = async () => {
         if (!vault.salt || !vault.iv || !vault.encryptedData) {
             return Response.json({ ok: false, error: "Datos del vault incompletos" }, { status: 500 })
         }
+
         return Response.json({
             ok: true,
             hasVault: true,
@@ -38,20 +38,21 @@ export const GET = async () => {
     }
 }
 
-
-
 export const POST = async (req: Request) => {
-    console.log("[/api/auth/me] Guardando vault en servidor")
-    const body = await req.json()
-    const { salt, iv, encryptedData } = body
-    if (!salt || !iv || !encryptedData) {
-        return Response.json({ ok: false, error: "Datos incompletos" }, { status: 400 })
-    }
     try {
         const session = await SessionService.validate()
         if (!session) {
             return Response.json({ ok: false, error: "No autenticado" }, { status: 401 })
         }
+
+        const body = await req.json()
+
+        const validation = ValidationService.validateVaultPayload(body)
+        if (!validation.ok) {
+            return Response.json({ ok: false, error: validation.error, field: validation.field }, { status: 400 })
+        }
+
+        const { salt, iv, encryptedData } = body
 
         const existing = await VaultService.findByUserId(session.userId)
         const newVersion = existing ? existing.version + 1 : 1
