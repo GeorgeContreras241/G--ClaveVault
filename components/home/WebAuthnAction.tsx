@@ -1,20 +1,37 @@
 "use client";
 
 import WebAuthn from "@/components/icons/WebAuthn";
-import Link from "next/link";
 import { sileo } from "sileo";
 
+const ONLINE_ENABLED = false
+
 export function WebAuthnAction() {
- 
+  const handleClick = (e: React.MouseEvent) => {
+    if (!ONLINE_ENABLED) {
+      e.preventDefault()
+      sileo.warning({
+        title: "Modo online aún no disponible",
+        description: "Estamos trabajando en ello. Próximamente podrás acceder desde cualquier dispositivo.",
+        duration: 4000,
+        fill: "var(--color-bg-elevated)",
+        styles: {
+          title: "text-vault-amber! font-bold!",
+          description: "text-white! text-center!",
+        },
+      })
+    }
+  }
+
   return (
-    <Link
-      className="group relative flex items-center gap-4 rounded-2xl p-4 text-left md:p-6 active:scale-[0.99] border border-zinc-300 dark:border-zinc-500/30 hover:border-zinc-400 dark:hover:border-zinc-500/80  cursor-pointer"
+    <a
+      className="group relative flex items-center gap-4 rounded-2xl p-4 text-left md:p-6 active:scale-[0.99] border border-zinc-300 dark:border-zinc-500/30 hover:border-zinc-400 dark:hover:border-zinc-500/80 cursor-pointer"
       role="menuitem"
       aria-label="WebAuthn - Autenticación biométrica"
       href="/online"
+      onClick={handleClick}
     >
       <div
-        className="vault-icon-frame h-12 w-12 shrink-0 rounded-xl  md:h-13 md:w-13"
+        className="vault-icon-frame h-12 w-12 shrink-0 rounded-xl md:h-13 md:w-13"
         aria-hidden="true"
       >
         <WebAuthn />
@@ -30,6 +47,6 @@ export function WebAuthnAction() {
           Próximamente
         </span>
       </div>
-    </Link>
+    </a>
   );
 }
