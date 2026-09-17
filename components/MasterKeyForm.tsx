@@ -5,13 +5,13 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Loading } from "@/components/shared/Loading"
-import { validatePassword } from "@/lib/utils/SeccionSubmit/validatePassword"
+import { validatePassword } from "@/features/offline/utils/validatePassword"
 import { useStoragePass } from "@/storage/useStoragePass"
-// cryptography
+// cryptography - Criptografia
 import { decrypt } from "@/lib/crypto/decryptData"
 import { encrypt } from "@/lib/crypto/encryptData"
 import { deriveKey } from "@/lib/crypto/kdfKey"
-import { generateSalt } from "@/lib/crypto/genereteSalt"
+import { generateSalt } from "@/lib/crypto/generateSalt"
 
 
 
@@ -19,7 +19,7 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
   const [key, setKey] = useState("")
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
-  //storage
+  //storage - Almacenamiento
   const setDerivedKey = useStoragePass((state) => state.setDerivedKey)
   const setSalt = useStoragePass((state) => state.setSalt)
   const setDataPasswordInit = useStoragePass((state) => state.setDataPasswordInit)
@@ -108,8 +108,8 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
   }
 
   return (
-    <section className="relative flex flex-col items-center min-h-full px-4 pb-8 md:pb-12">
-      <div className="vault-rise max-w-3xl w-full flex flex-col items-center text-center mb-6 md:mb-8">
+    <section className="relative flex flex-col items-center w-full min-h-full px-4 pb-8 md:pb-12">
+      <div className="vault-rise w-full flex flex-col items-center text-center mb-6 md:mb-8">
         <div className="flex flex-row items-center justify-center gap-3 mb-4 md:mb-5">
           <div className="vault-rise vault-rise-delay-1 mb-4 md:mb-6 flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-vault-amber/10 border border-vault-amber/20">
             <KeyRound className="w-5 h-5 md:w-7 md:h-7 text-vault-amber" />
@@ -124,7 +124,7 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
         </p>
       </div>
 
-      <div className="vault-rise vault-rise-delay-3 w-full max-w-3xl mb-8 md:mb-10">
+      <div className="vault-rise vault-rise-delay-3 w-full mb-8 md:mb-10">
         <form onSubmit={handleSubmit} className="vault-panel rounded-xl p-4 md:p-6 space-y-3 md:space-y-4">
           <div className="space-y-2">
             <div className="flex items-center justify-between">
@@ -152,7 +152,7 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
         </form>
       </div>
 
-      <div className="vault-rise vault-rise-delay-3 w-full max-w-3xl grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-8 md:mb-10">
+      <div className="vault-rise vault-rise-delay-3 w-full grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-8 md:mb-10">
         <FeatureCard
           icon={<Lock className="w-5 h-5" />}
           title="Cifrado local"
@@ -175,7 +175,7 @@ export function MasterKeyForm({ look, setLook }: { look: boolean, setLook: React
         />
       </div>
 
-      <div className="vault-rise vault-rise-delay-4 w-full max-w-3xl mb-8 md:mb-10">
+      <div className="vault-rise vault-rise-delay-4 w-full mb-8 md:mb-10">
         <div className="vault-panel rounded-xl p-4 md:p-6">
           <div className="flex items-center gap-3 mb-4 md:mb-5">
             <AlertTriangle className="w-4 h-4 md:w-5 md:h-5 text-vault-amber" />

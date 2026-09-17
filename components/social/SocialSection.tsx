@@ -1,12 +1,12 @@
 import GitHub from "../icons/GitHub";
-import Linkedin from "../icons/LinKedin";
-import { ThemeToggle } from "@/components/shared/themeMode/ThemeToogle";
+import Linkedin from "../icons/LinkedIn";
+import { ThemeToggle } from "@/components/shared/themeMode/ThemeToggle";
 
-type SeccionSocialProps = {
+type SocialSectionProps = {
   className?: string;
 };
 
-const SeccionSocial = ({ className }: SeccionSocialProps) => {
+const SocialSection = ({ className }: SocialSectionProps) => {
   return (
     <footer
       className={
@@ -49,4 +49,4 @@ const SeccionSocial = ({ className }: SeccionSocialProps) => {
   );
 };
 
-export default SeccionSocial;
+export default SocialSection;
