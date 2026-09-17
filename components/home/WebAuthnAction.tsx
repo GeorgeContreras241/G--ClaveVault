@@ -1,9 +1,9 @@
 "use client";
-
 import WebAuthn from "@/components/icons/WebAuthn";
+import Link from "next/link";
 import { sileo } from "sileo";
 
-const ONLINE_ENABLED = false
+const ONLINE_ENABLED = true
 
 export function WebAuthnAction() {
   const handleClick = (e: React.MouseEvent) => {
@@ -23,7 +23,7 @@ export function WebAuthnAction() {
   }
 
   return (
-    <a
+    <Link
       className="group relative flex items-center gap-4 rounded-2xl p-4 text-left md:p-6 active:scale-[0.99] border border-zinc-300 dark:border-zinc-500/30 hover:border-zinc-400 dark:hover:border-zinc-500/80 cursor-pointer"
       role="menuitem"
       aria-label="WebAuthn - Autenticación biométrica"
@@ -47,6 +47,6 @@ export function WebAuthnAction() {
           Próximamente
         </span>
       </div>
-    </a>
+    </Link>
   );
 }

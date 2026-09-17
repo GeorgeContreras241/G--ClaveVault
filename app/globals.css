@@ -5,8 +5,8 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-  --color-vault-amber: #e8b84a;
-  --color-vault-amber-dim: #c49a2e;
+  --color-vault-amber: oklch(65.443% 0.29681 264.478);
+  --color-vault-amber-dim: oklch(75.443% 0.29681 264.478);
   --color-vault-teal: #3dd6c3;
   --color-vault-panel: color-mix(in oklab, var(--color-zinc-950) 72%, transparent);
   --font-family-body: var(--font-ibm), ui-sans-serif, system-ui, sans-serif;
@@ -58,6 +58,7 @@
     --sidebar-accent-foreground: oklch(0.205 0 0);
     --sidebar-border: oklch(0.922 0 0);
     --sidebar-ring: oklch(0.708 0 0);
+    --sidebar-r2ing: oklch(45.443% 0.29681 264.478);
 }
 
 .dark {

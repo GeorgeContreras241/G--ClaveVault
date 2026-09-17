@@ -8,16 +8,13 @@ import { WebAuthnFallback } from "@/components/home/HomeFallbacks";
 import { Footer } from "@/components/layout/Footer";
 
 
-
-// Remember i have to do  a border animation - completed
-
 export default function Home() {
   return (
     <main className="home relative z-10 grid min-h-dvh place-items-center px-3 py-10 md:px-6 md:py-12">
       <div className="flex w-full max-w-3xl flex-col items-center gap-8 md:gap-10">
         <section
           id="main-content"
-          className="vault-panel vault-rise w-full rounded-3xl p-5 md:p-8 lg:p-10"
+          className="vault-rise w-full rounded-3xl p-5 md:p-8 lg:p-10"
         >
           <header className="space-y-6">
             <div className="flex flex-col gap-5">
@@ -29,7 +26,7 @@ export default function Home() {
                 <p className="max-w-xl text-start text-[0.85rem] leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-sm md:text-base">
                   Almacena, organiza y protege tus claves en el navegador. Cifrado
                   en cliente,{" "}
-                  <strong className="font-semibold text-amber-600 dark:text-vault-amber">
+                  <strong className="font-semibold text-blue-700 dark:text-blue-400">
                     cero servidores
                   </strong>{" "}
                   y control total sobre tus datos.
