@@ -1,8 +1,8 @@
 "use client"
 
 import WebAuthnIcon from "@/components/icons/WebAuthn"
-import { WebAuthnRegister } from "@/components/auth/WebAuthnRegister"
-import { WebAuthnLogin } from "@/components/auth/WebAuthnLogin"
+import { WebAuthnRegister } from "./WebAuthnRegister"
+import { WebAuthnLogin } from "./WebAuthnLogin"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
