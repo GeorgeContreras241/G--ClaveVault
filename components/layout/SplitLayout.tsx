@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 
 export const SplitLayout = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname()
+  console.log("pathname", pathname)
   const isHome = pathname === "/"
   const [showVideo, setShowVideo] = useState(isHome)
 
@@ -33,6 +34,7 @@ export const SplitLayout = ({ children }: { children: React.ReactNode }) => {
             src={ASSETS.video.background}
             playbackRate={0.7}
             opacity={0.5}
+            blur={3}
           />
         )}
       </div>
