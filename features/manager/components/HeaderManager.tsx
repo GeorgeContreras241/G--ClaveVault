@@ -1,15 +1,15 @@
 "use client"
-import { Exit } from "@/components/icons/Exit";
+import { LogOut } from "lucide-react";
 import { Export } from "@/components/icons/Export"
 import { Search } from "@/components/icons/Search";
 import { Button } from "@/components/ui/button";
 import { useStoragePass } from "@/storage/useStoragePass";
-import { ThemeToggle } from "@/components/shared/themeMode/ThemeToogle";
+import { ThemeToggle } from "@/components/shared/themeMode/ThemeToggle";
 import { CATEGORY_BUTTONS } from "@/const/buttonsNavegations";
-import { HeaderGestorProps } from "@/types";
+import { HeaderManagerProps } from "@/types";
 import { useRouter } from "next/navigation";
 
-export const Header_Gestor = ({ setSearchTerm, setSelectedCategory, selectedCategory, searchTerm }: HeaderGestorProps) => {
+export const HeaderManager = ({ setSearchTerm, setSelectedCategory, selectedCategory, searchTerm }: HeaderManagerProps) => {
     const router = useRouter();
     const handleExport = useStoragePass((state) => state.handleExport);
     const handleReset = useStoragePass((state) => state.handleReset);
@@ -43,7 +43,7 @@ export const Header_Gestor = ({ setSearchTerm, setSelectedCategory, selectedCate
                             <div className="h-4 w-4 border-b-2 rounded-full border-current animate-spin" />
                         ) : (
                             <>
-                                <Exit />
+                                <LogOut className="h-4 w-4" />
                                 <span className="hidden sm:inline">Salir</span>
                             </>
                         )}

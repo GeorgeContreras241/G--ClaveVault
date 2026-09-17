@@ -2,8 +2,8 @@
 'use client'
 import { useState} from 'react'
 import { useStoragePass } from '@/storage/useStoragePass'
-import { Header_Gestor } from "@/features/manager/components/Header_Gestor"
-import { copyToClipboard } from '@/lib/utils/Gestor/copyToClipboard'
+import { HeaderManager } from "@/features/manager/components/HeaderManager"
+import { copyToClipboard } from '@/lib/utils/Manager/copyToClipboard'
 import { AddPassword } from '@/features/manager/components/AddPassword'
 import { EditPassword } from '@/features/manager/components/EditPassword'
 
@@ -20,7 +20,7 @@ import { useMode } from "@/hooks/useMode"
 import { encrypt } from "@/lib/crypto/encryptData"
 
 
-export const Gestor = () => {
+export const Manager = () => {
   const mode = useMode()
   const dataPassword = useStoragePass((state) => state.dataPassword)
   const setDataPasswordDelate = useStoragePass((state) => state.setDataPasswordDelate)
@@ -97,7 +97,7 @@ export const Gestor = () => {
   return (
     <div className="min-h-[90dvh] h-full">
       <div className="max-w-6xl mx-auto flex flex-col gap-4 pt-10">
-        <Header_Gestor selectedCategory={selectedCategory}
+        <HeaderManager selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory} setSearchTerm={setSearchTerm} searchTerm={searchTerm} />
         <section className='grid grid-cols-1 xl:grid-cols-[350px_1fr] gap-4 lg:gap-6'>
           <section>

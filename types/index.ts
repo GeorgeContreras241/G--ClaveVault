@@ -53,11 +53,11 @@ export interface VaultData {
   data?: Uint8Array;
 }
 
-export interface ActionSubmitProps {
+export interface OfflineUnlockProps {
   onSuccess: (value: boolean) => void;
 }
 
-export interface HeaderGestorProps {
+export interface HeaderManagerProps {
   setSearchTerm: (value: string) => void;
   setSelectedCategory: (value: string) => void;
   selectedCategory: string;
