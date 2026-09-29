@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { ThemeProvider } from "next-themes";
-import { Toaster } from "sileo";
+import { ThemeProvider } from 'next-themes';
+import { Toaster } from 'sileo';
 
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (

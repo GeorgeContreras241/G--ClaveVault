@@ -1,12 +1,11 @@
-import { Suspense } from "react";
-import Archive from "../components/icons/Archive";
-import Link from "next/link";
-import { Target } from "@/components/shared/Target";
-import { target } from "@/const/target";
-import { WebAuthnAction } from "@/components/home/WebAuthnAction";
-import { WebAuthnFallback } from "@/components/home/HomeFallbacks";
-import { Footer } from "@/components/layout/Footer";
-
+import { Suspense } from 'react';
+import Archive from '../components/icons/Archive';
+import Link from 'next/link';
+import { Target } from '@/components/shared/Target';
+import { target } from '@/constants/target';
+import { WebAuthnAction } from '@/components/home/WebAuthnAction';
+import { WebAuthnFallback } from '@/components/home/WebAuthnFallback';
+import { Footer } from '@/components/layout/Footer';
 
 export default function Home() {
   return (
@@ -24,11 +23,11 @@ export default function Home() {
                   Tu bóveda local de credenciales
                 </h1>
                 <p className="max-w-xl text-start text-[0.85rem] leading-relaxed text-zinc-600 dark:text-zinc-400 sm:text-sm md:text-base">
-                  Almacena, organiza y protege tus claves en el navegador. Cifrado
-                  en cliente,{" "}
+                  Almacena, organiza y protege tus claves en el navegador.
+                  Cifrado en cliente,{' '}
                   <strong className="font-semibold text-blue-700 dark:text-blue-400">
                     cero servidores
-                  </strong>{" "}
+                  </strong>{' '}
                   y control total sobre tus datos.
                 </p>
               </div>
@@ -49,7 +48,6 @@ export default function Home() {
             role="navigation"
             aria-label="Opciones principales"
           >
-
             {/* Se queja de Role de SEo - Pending*/}
             <Link
               href="/offline"
@@ -90,10 +88,10 @@ export default function Home() {
 }
 
 // fix error cache components
-export const WebAuthnPage = () => {
+const WebAuthnPage = () => {
   return (
     <Suspense fallback={<WebAuthnFallback />}>
       <WebAuthnAction />
     </Suspense>
-  )
-}
+  );
+};

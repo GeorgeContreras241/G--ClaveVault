@@ -1,18 +1,18 @@
-import { cacheLife, cacheTag } from "next/cache";
-import { siteConfig } from "@/lib/site";
+import { cacheLife, cacheTag } from 'next/cache';
+import { siteConfig } from '@/lib/site';
 
 export async function getCachedSiteConfig() {
-  "use cache";
-  cacheLife("max");
-  cacheTag("site-config");
+  'use cache';
+  cacheLife('max');
+  cacheTag('site-config');
 
   return siteConfig;
 }
 
 export async function getCachedSitemapEntries() {
-  "use cache";
-  cacheLife("days");
-  cacheTag("sitemap", "site-config");
+  'use cache';
+  cacheLife('days');
+  cacheTag('sitemap', 'site-config');
 
   const config = await getCachedSiteConfig();
   const lastModified = new Date();
@@ -21,13 +21,13 @@ export async function getCachedSitemapEntries() {
     {
       url: config.url,
       lastModified,
-      changeFrequency: "monthly" as const,
+      changeFrequency: 'monthly' as const,
       priority: 1,
     },
     {
       url: `${config.url}/offline`,
       lastModified,
-      changeFrequency: "weekly" as const,
+      changeFrequency: 'weekly' as const,
       priority: 0.8,
     },
   ];

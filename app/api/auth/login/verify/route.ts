@@ -1,43 +1,49 @@
-import { AuthService, RegistrationError } from '@/server/services'
-import { UserRepository, CredentialRepository } from '@/server/repositories'
-import { SessionService } from '@/server/services/SessionService'
+import type { AuthenticationResponseJSON } from '@simplewebauthn/server';
+import { AuthService, SessionService } from '@/server/services';
+import { UserRepository, CredentialRepository } from '@/server/repositories';
+import { ValidationService } from '@/server/services/ValidationService';
+import { CsrfService } from '@/server/services/CsrfService';
+import { nextCookieJar } from '@/server/utils/cookies';
+import { authRateLimit, handleRouteError, ok } from '@/server/http';
 
-const userRepo = new UserRepository()
-const credentialRepo = new CredentialRepository()
-const authService = new AuthService(userRepo, credentialRepo)
+const userRepo = new UserRepository();
+const credentialRepo = new CredentialRepository();
+const authService = new AuthService(userRepo, credentialRepo);
 
 export async function POST(request: Request) {
-  console.log("[/api/auth/login/verify] Verificando credenciales WebAuthn del login")
   try {
-    const { attResp, email } = await request.json()
-
-    if (!attResp || !email) {
-      console.error("Datos incompletos")
-      return Response.json({ ok: false, error: 'Datos incompletos' }, { status: 400 })
+    const limited = await authRateLimit(request, 'verify');
+    if (limited) {
+      return limited;
     }
 
-    await authService.verifyAuthentication(email, attResp)
-
-    const user = await userRepo.findByEmail(email)
-    if (!user) {
-      console.error("Usuario no encontrado")
-      return Response.json({ ok: false, error: 'Usuario no encontrado' }, { status: 404 })
+    const body = await ValidationService.readJson(request);
+    if (!body.ok) {
+      return body.response;
     }
 
-    await SessionService.create(user.id)
+    const validation = ValidationService.validateLoginVerifyPayload(body.body);
+    if (!validation.ok) {
+      return ValidationService.toResponse(validation);
+    }
 
-    return Response.json({ ok: true })
+    const { attResp, challengeId } = body.body as {
+      attResp: AuthenticationResponseJSON;
+      challengeId: string;
+    };
+
+    // El email ya no viaja en el cuerpo: lo aporta el reto guardado en
+    // Redis, así que no se puede elegir la cuenta desde el cliente.
+    const result = await authService.verifyAuthentication(attResp, challengeId);
+
+    // La sesión y el token CSRF nacen juntos: aunque el cliente no haya
+    // cargado antes ninguna página, ya sale de aquí con ambos.
+    const jar = await nextCookieJar();
+    await SessionService.create(result.userId, jar);
+    CsrfService.issue(jar);
+
+    return ok();
   } catch (error) {
-    console.error("Error en verifyAuthentication:", error)
-    if (error instanceof RegistrationError) {
-      return Response.json({ ok: false, error: error.message }, { status: error.statusCode })
-    }
-    return Response.json({ ok: false, error: 'Error al verificar autenticación error de captura' }, { status: 500 })
+    return handleRouteError(error, 'Error al verificar autenticación');
   }
 }
-
-
-
-// this route error 500 
-// reason: challenge not found
-// it may be due to  lost of challenge during server load; for that i need to run the project in mode build , but  it gives an error

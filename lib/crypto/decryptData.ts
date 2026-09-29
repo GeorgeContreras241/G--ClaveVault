@@ -1,8 +1,8 @@
-import type { DecryptResult, PasswordEntry, VaultCipherPayload } from "@/types";
+import type { DecryptResult, PasswordEntry, VaultCipherPayload } from '@/types';
 
 export const decrypt = async (
   key: CryptoKey,
-  payload: VaultCipherPayload,
+  payload: VaultCipherPayload
 ): Promise<DecryptResult> => {
   try {
     if (
@@ -15,10 +15,10 @@ export const decrypt = async (
       return {
         status: false,
         message: {
-          title: "Error al descifrar los datos",
-          description: "Key inválida",
+          title: 'Error al descifrar los datos',
+          description: 'Key inválida',
           duration: 5000,
-          fill: "var(--color-bg-elevated)",
+          fill: 'var(--color-bg-elevated)',
         },
       };
     }
@@ -28,11 +28,11 @@ export const decrypt = async (
 
     const decrypted = await crypto.subtle.decrypt(
       {
-        name: "AES-GCM",
+        name: 'AES-GCM',
         iv,
       },
       key,
-      data,
+      data
     );
 
     const decoded = new TextDecoder().decode(decrypted);
@@ -41,11 +41,11 @@ export const decrypt = async (
     try {
       parsedData = JSON.parse(decoded);
     } catch {
-      throw new Error("JSON inválido");
+      throw new Error('JSON inválido');
     }
 
     if (!Array.isArray(parsedData)) {
-      throw new Error("Formato de bóveda inválido");
+      throw new Error('Formato de bóveda inválido');
     }
 
     return {
@@ -54,18 +54,18 @@ export const decrypt = async (
     };
   } catch (error: unknown) {
     const description =
-      error instanceof Error ? error.message : "Datos incorrectos";
+      error instanceof Error ? error.message : 'Datos incorrectos';
 
     return {
       status: false,
       message: {
-        title: "Error al descifrar los datos",
+        title: 'Error al descifrar los datos',
         description,
         duration: 5000,
-        fill: "var(--color-bg-elevated)",
+        fill: 'var(--color-bg-elevated)',
         styles: {
-          title: "text-red! font-bold!",
-          description: "text-white! text-center!",
+          title: 'text-red! font-bold!',
+          description: 'text-white! text-center!',
         },
       },
     };

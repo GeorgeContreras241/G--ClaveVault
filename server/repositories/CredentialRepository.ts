@@ -1,5 +1,5 @@
-import { prisma } from '@/lib/db'
-import { WebAuthnCredential } from '@/server/models'
+import { prisma } from '@/lib/db';
+import { WebAuthnCredential } from '@/server/models';
 
 // operacionees db prisma
 
@@ -7,16 +7,36 @@ export class CredentialRepository {
   async findByUserId(userId: string): Promise<WebAuthnCredential[]> {
     const records = await prisma.webAuthnCredential.findMany({
       where: { userId },
-      orderBy: { createdAt: 'desc' }
-    })
-    return records.map(record => WebAuthnCredential.fromPrisma(record))
+      orderBy: { createdAt: 'desc' },
+    });
+    return records.map((record) => WebAuthnCredential.fromPrisma(record));
   }
 
-  async findByCredentialId(credentialId: string): Promise<WebAuthnCredential | null> {
+  async findByCredentialId(
+    credentialId: string
+  ): Promise<WebAuthnCredential | null> {
     const record = await prisma.webAuthnCredential.findUnique({
-      where: { credentialId }
-    })
-    return record ? WebAuthnCredential.fromPrisma(record) : null
+      where: { credentialId },
+    });
+    return record ? WebAuthnCredential.fromPrisma(record) : null;
+  }
+
+  /**
+   * Búsqueda **por usuario + credencial**.
+   *
+   * Es la consulta que debe usarse durante el login: sin el filtro por
+   * `userId`, un atacante podría reclamar una credencial que pertenece a
+   * otra cuenta (la credencial es única globalmente, así que el `findFirst`
+   * la encuentra igual y habría que comprobarlo después).
+   */
+  async findByUserIdAndCredentialId(
+    userId: string,
+    credentialId: string
+  ): Promise<WebAuthnCredential | null> {
+    const record = await prisma.webAuthnCredential.findFirst({
+      where: { userId, credentialId },
+    });
+    return record ? WebAuthnCredential.fromPrisma(record) : null;
   }
 
   async save(credential: WebAuthnCredential): Promise<void> {
@@ -27,24 +47,24 @@ export class CredentialRepository {
         publicKey: Buffer.from(credential.publicKey),
         counter: BigInt(credential.counter),
         transports: credential.transports ?? null,
-      }
-    })
+      },
+    });
   }
 
   async updateCounter(credentialId: string, counter: number): Promise<void> {
     await prisma.webAuthnCredential.update({
       where: { credentialId },
-      data: { counter: BigInt(counter) }
-    })
+      data: { counter: BigInt(counter) },
+    });
   }
 
   async delete(credentialId: string): Promise<void> {
     await prisma.webAuthnCredential.delete({
-      where: { credentialId }
-    })
+      where: { credentialId },
+    });
   }
 
   async countByUserId(userId: string): Promise<number> {
-    return prisma.webAuthnCredential.count({ where: { userId } })
+    return prisma.webAuthnCredential.count({ where: { userId } });
   }
 }

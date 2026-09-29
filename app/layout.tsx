@@ -1,23 +1,23 @@
-import type { Metadata, Viewport } from "next";
-import { IBM_Plex_Sans, Sora, Inter } from "next/font/google";
-import { WebApplicationJsonLd } from "@/components/seo/JsonLd";
-import { SplitLayout } from "@/components/layout/SplitLayout";
-import { siteConfig } from "@/lib/site";
-import "./globals.css";
-import { cn } from "@/lib/utils";
+import type { Metadata, Viewport } from 'next';
+import { IBM_Plex_Sans, Sora, Inter } from 'next/font/google';
+import { WebApplicationJsonLd } from '@/components/seo/JsonLd';
+import { SplitLayout } from '@/components/layout/SplitLayout';
+import { siteConfig } from '@/lib/site';
+import './globals.css';
+import { cn } from '@/lib/utils';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 
 const ibmPlexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-  variable: "--font-ibm",
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  display: 'swap',
+  variable: '--font-ibm',
 });
 
 const sora = Sora({
-  subsets: ["latin"],
-  variable: "--font-sora",
+  subsets: ['latin'],
+  variable: '--font-sora',
 });
 
 export const metadata: Metadata = {
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   keywords: [...siteConfig.keywords],
   applicationName: siteConfig.name,
   alternates: {
-    canonical: "/",
+    canonical: '/',
   },
   robots: {
     index: true,
@@ -38,12 +38,12 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
     },
   },
   openGraph: {
-    type: "website",
+    type: 'website',
     locale: siteConfig.locale,
     url: siteConfig.url,
     siteName: siteConfig.name,
@@ -51,14 +51,14 @@ export const metadata: Metadata = {
     description: siteConfig.description,
   },
   twitter: {
-    card: "summary",
+    card: 'summary',
     title: `${siteConfig.name} | Gestor de contraseñas local y seguro`,
     description: siteConfig.description,
   },
 };
 
 export const viewport: Viewport = {
-  width: "device-width",
+  width: 'device-width',
   initialScale: 1,
 };
 
@@ -68,7 +68,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" suppressHydrationWarning className={cn("font-sans", inter.variable)}>
+    <html
+      lang="es"
+      suppressHydrationWarning
+      className={cn('font-sans', inter.variable)}
+    >
       <body
         className={`${ibmPlexSans.variable} ${sora.variable} font-sans antialiased bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 overflow-hidden`}
       >

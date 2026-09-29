@@ -1,12 +1,11 @@
-import { create } from "zustand";
-import { encrypt } from "@/lib/crypto/encryptData";
-import { buildVaultFile } from "@/lib/vault/saveVault";
-import { deriveKey } from "@/lib/crypto/kdfKey";
-import { loadVault } from "@/lib/vault/loadVault";
-import { decrypt } from "@/lib/crypto/decryptData";
-import { sileo } from "sileo";
-import type { PasswordEntry , PassStorage, ImportResult, ExportResult, ToogleDeriveKey } from "@/types";
-
+import { create } from 'zustand';
+import { encrypt } from '@/lib/crypto/encryptData';
+import { buildVaultFile } from '@/lib/vault/saveVault';
+import { deriveKey } from '@/lib/crypto/kdfKey';
+import { loadVault } from '@/lib/vault/loadVault';
+import { decrypt } from '@/lib/crypto/decryptData';
+import { sileo } from 'sileo';
+import type { PasswordEntry, PassStorage, ImportResult } from '@/types';
 
 export const useStoragePass = create<PassStorage>((set, get) => ({
   salt: null,
@@ -44,9 +43,8 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
   setVersion: (version) => set({ version }),
 
   toogleDeriveKey: async (password: string) => {
-    const saltSave = JSON.parse(localStorage.getItem("salt") || "null");
+    const saltSave = JSON.parse(localStorage.getItem('salt') || 'null');
     if (!saltSave) {
-      console.log("No existe salt");
       return;
     }
     const salt = new Uint8Array(saltSave);
@@ -54,7 +52,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
       const drvKey = await deriveKey(password, salt);
       set({ salt, derivedKey: drvKey });
     } catch (error) {
-      console.error("Error derivando key", error);
+      console.error('Error derivando key', error);
       set({ derivedKey: null });
     }
   },
@@ -64,10 +62,10 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
 
     if (!derivedKey) {
       sileo.error({
-        title: "Error al exportar los datos",
-        description: "No se pudo derivar la clave",
+        title: 'Error al exportar los datos',
+        description: 'No se pudo derivar la clave',
         duration: 5000,
-        styles: { title: "text-white!" },
+        styles: { title: 'text-white!' },
       });
       return;
     }
@@ -77,10 +75,10 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
 
     if (!iv || !data) {
       sileo.error({
-        title: "Error al encriptar",
-        description: "No se pudo encriptar los datos",
+        title: 'Error al encriptar',
+        description: 'No se pudo encriptar los datos',
         duration: 5000,
-        styles: { title: "text-white!" },
+        styles: { title: 'text-white!' },
       });
       return;
     }
@@ -90,22 +88,26 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
 
     if (!salt) {
       sileo.error({
-        title: "Error al exportar",
-        description: "Salt no disponible",
+        title: 'Error al exportar',
+        description: 'Salt no disponible',
         duration: 5000,
-        styles: { title: "text-white!" },
+        styles: { title: 'text-white!' },
       });
       return;
     }
 
     const vaultFile = buildVaultFile(salt, ivArray, dataArray);
-    if (!vaultFile) return;
+    if (!vaultFile) {
+      return;
+    }
 
-    const blob = new Blob([vaultFile.slice()], { type: "application/octet-stream" });
+    const blob = new Blob([vaultFile.slice()], {
+      type: 'application/octet-stream',
+    });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    const a = document.createElement('a');
     a.href = url;
-    a.download = "pass.enc";
+    a.download = 'pass.enc';
     a.click();
     URL.revokeObjectURL(url);
   },
@@ -117,10 +119,10 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
       return {
         state: false,
         message: {
-          title: "Error Fatal",
-          description: "No se pudo cargar el archivo",
+          title: 'Error Fatal',
+          description: 'No se pudo cargar el archivo',
           duration: 5000,
-          styles: { title: "text-white!" },
+          styles: { title: 'text-white!' },
         },
       };
     }
@@ -131,15 +133,15 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
       return {
         state: false,
         message: {
-          title: "Error Fatal",
-          description: "No se pudo cargar el archivo",
+          title: 'Error Fatal',
+          description: 'No se pudo cargar el archivo',
           duration: 5000,
-          styles: { title: "text-white!" },
+          styles: { title: 'text-white!' },
         },
       };
     }
 
-    localStorage.setItem("salt", JSON.stringify(Array.from(salt)));
+    localStorage.setItem('salt', JSON.stringify(Array.from(salt)));
     await get().toogleDeriveKey(password);
 
     const key = get().derivedKey;
@@ -148,10 +150,10 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
       return {
         state: false,
         message: {
-          title: "Error Fatal",
-          description: "No se pudo derivar la clave",
+          title: 'Error Fatal',
+          description: 'No se pudo derivar la clave',
           duration: 5000,
-          styles: { title: "text-black!" },
+          styles: { title: 'text-black!' },
         },
       };
     }
@@ -175,7 +177,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
 
   handleReset: async () => {
     set({ isResetting: true, isUnLocked: false });
-    localStorage.removeItem("salt");
+    localStorage.removeItem('salt');
     set({ salt: null, derivedKey: null, dataPassword: [], version: 1 });
     await new Promise((resolve) => setTimeout(resolve, 500));
     set({ isResetting: false });

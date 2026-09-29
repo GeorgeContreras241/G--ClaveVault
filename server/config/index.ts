@@ -1,1 +1,1 @@
-export { webauthnConfig } from './webauthn.config'
+export { webauthnConfig } from './webauthn.config';

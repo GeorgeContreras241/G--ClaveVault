@@ -1,12 +1,12 @@
-import type { Metadata } from "next";
-import { OfflineShell } from "./OfflineShell";
+import type { Metadata } from 'next';
+import { OfflineShell } from '@/features/offline/OfflineShell';
 
 export const metadata: Metadata = {
-  title: "Gestor offline",
+  title: 'Gestor offline',
   description:
-    "Administra tus credenciales sin conexión. Archivo cifrado local en el navegador con ClaveVault.",
+    'Administra tus credenciales sin conexión. Archivo cifrado local en el navegador con ClaveVault.',
   alternates: {
-    canonical: "/offline",
+    canonical: '/offline',
   },
 };
 

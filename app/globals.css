@@ -1,6 +1,6 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -8,7 +8,11 @@
   --color-vault-amber: oklch(65.443% 0.29681 264.478);
   --color-vault-amber-dim: oklch(75.443% 0.29681 264.478);
   --color-vault-teal: #3dd6c3;
-  --color-vault-panel: color-mix(in oklab, var(--color-zinc-950) 72%, transparent);
+  --color-vault-panel: color-mix(
+    in oklab,
+    var(--color-zinc-950) 72%,
+    transparent
+  );
   --font-family-body: var(--font-ibm), ui-sans-serif, system-ui, sans-serif;
   --font-family-display: var(--font-sora), ui-serif, Georgia, serif;
 }
@@ -23,42 +27,42 @@
 
 :root {
   --vault-glow: rgba(232, 184, 74, 0.14);
-    --vault-line: rgba(15, 23, 42, 0.08);
-    --vault-surface: rgba(255, 255, 255, 0.72);
-    --vault-border: rgba(15, 23, 42, 0.1);
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.708 0 0);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
-    --sidebar-r2ing: oklch(45.443% 0.29681 264.478);
+  --vault-line: rgba(15, 23, 42, 0.08);
+  --vault-surface: rgba(255, 255, 255, 0.72);
+  --vault-border: rgba(15, 23, 42, 0.1);
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar-r2ing: oklch(45.443% 0.29681 264.478);
 }
 
 .dark {
@@ -122,7 +126,6 @@
 }
 
 @keyframes vault-pulse-ring {
-
   0%,
   100% {
     opacity: 0.35;
@@ -155,10 +158,6 @@
   animation-delay: 0.32s;
 }
 
-
-
-
-
 .vault-grid {
   position: fixed;
   inset: 0;
@@ -169,7 +168,11 @@
     linear-gradient(var(--vault-line) 1px, transparent 1px),
     linear-gradient(90deg, var(--vault-line) 1px, transparent 1px);
   background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 20%, transparent 75%);
+  mask-image: radial-gradient(
+    ellipse 70% 60% at 50% 40%,
+    black 20%,
+    transparent 75%
+  );
 }
 
 .vault-grain {
@@ -208,15 +211,15 @@
     background 0.35s ease;
 }
 
-
-
 .vault-action-card::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg,
-      transparent 40%,
-      color-mix(in oklab, var(--color-vault-amber) 8%, transparent) 100%);
+  background: linear-gradient(
+    135deg,
+    transparent 40%,
+    color-mix(in oklab, var(--color-vault-amber) 8%, transparent) 100%
+  );
   opacity: 0;
   transition: opacity 0.35s ease;
 }
@@ -228,8 +231,10 @@
 .vault-action-card:hover {
   border-color: color-mix(in oklab, var(--color-vault-amber) 55%, transparent);
   box-shadow:
-    0 0 0 1px color-mix(in oklab, var(--color-vault-amber) 15%, transparent) inset,
-    0 16px 40px -12px color-mix(in oklab, var(--color-vault-amber) 25%, transparent);
+    0 0 0 1px color-mix(in oklab, var(--color-vault-amber) 15%, transparent)
+      inset,
+    0 16px 40px -12px
+      color-mix(in oklab, var(--color-vault-amber) 25%, transparent);
   transform: translateY(-2px);
 }
 
@@ -250,9 +255,11 @@
 }
 
 .group:hover .vault-icon-frame {
-  background: radial-gradient(circle,
-      rgba(232, 185, 74, 0.199) 0%,
-      transparent 80%);
+  background: radial-gradient(
+    circle,
+    rgba(232, 185, 74, 0.199) 0%,
+    transparent 80%
+  );
   color: var(--color-vault-amber);
 }
 

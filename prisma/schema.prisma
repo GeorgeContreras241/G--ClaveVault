@@ -77,6 +77,12 @@ model AuditLog {
 }
 
 // Model session for access control
+/**
+ * Tabla de sesiones. **Ya no se usa**: las sesiones viven en Redis con un
+ * token de 256 bits del que solo se persiste su hash SHA-256 (ver
+ * `server/services/SessionService.ts`). Puede eliminarse con
+ * `prisma migrate dev` en una siguiente pasada.
+ */
 model Session {
   id        String   @id
   userId    String

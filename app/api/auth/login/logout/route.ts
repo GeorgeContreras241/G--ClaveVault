@@ -1,11 +1,20 @@
-import { SessionService } from '@/server/services/SessionService'
+import { SessionService } from '@/server/services';
+import { CsrfError, CsrfService } from '@/server/services/CsrfService';
+import { handleRouteError, ok } from '@/server/http';
 
-export async function POST() {
-  console.log("[/api/auth/login/logout] Cerrando sesión del usuario")
+export async function POST(request: Request) {
   try {
-    await SessionService.destroy()
-    return Response.json({ ok: true })
-  } catch {
-    return Response.json({ ok: false, error: 'Error al cerrar sesión' }, { status: 500 })
+    // Cierra sesión solo quien demuestra ser el dueño de la cookie y del
+    // token CSRF; el `Origin` ya lo comprueba `proxy.ts` para todo POST.
+    CsrfService.assertToken(request.headers);
+
+    await SessionService.destroy();
+
+    return ok();
+  } catch (error) {
+    if (error instanceof CsrfError) {
+      return CsrfService.toResponse(error);
+    }
+    return handleRouteError(error, 'Error al cerrar sesión');
   }
 }

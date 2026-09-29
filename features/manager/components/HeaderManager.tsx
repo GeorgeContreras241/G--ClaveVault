@@ -1,80 +1,104 @@
-"use client"
-import { LogOut } from "lucide-react";
-import { Export } from "@/components/icons/Export"
-import { Search } from "@/components/icons/Search";
-import { Button } from "@/components/ui/button";
-import { useStoragePass } from "@/storage/useStoragePass";
-import { ThemeToggle } from "@/components/shared/themeMode/ThemeToggle";
-import { CATEGORY_BUTTONS } from "@/const/buttonsNavegations";
-import { HeaderManagerProps } from "@/types";
-import { useRouter } from "next/navigation";
+'use client';
+import { LogOut } from 'lucide-react';
+import { Export } from '@/components/icons/Export';
+import { Search } from '@/components/icons/Search';
+import { Button } from '@/components/ui/button';
+import { useStoragePass } from '@/storage/useStoragePass';
+import { ThemeToggle } from '@/components/shared/ThemeToggle';
+import { CATEGORY_BUTTONS } from '@/constants/navigationButtons';
+import { HeaderManagerProps } from '@/types';
+import { useRouter } from 'next/navigation';
+import { apiFetch } from '@/lib/http/apiFetch';
+import { useMode } from '@/hooks/useMode';
 
-export const HeaderManager = ({ setSearchTerm, setSelectedCategory, selectedCategory, searchTerm }: HeaderManagerProps) => {
-    const router = useRouter();
-    const handleExport = useStoragePass((state) => state.handleExport);
-    const handleReset = useStoragePass((state) => state.handleReset);
-    const isResetting = useStoragePass((state) => state.isResetting);
-    const dataPassword = useStoragePass((state) => state.dataPassword);
+export const HeaderManager = ({
+  setSearchTerm,
+  setSelectedCategory,
+  selectedCategory,
+  searchTerm,
+}: HeaderManagerProps) => {
+  const router = useRouter();
+  const mode = useMode();
+  const handleExport = useStoragePass((state) => state.handleExport);
+  const handleReset = useStoragePass((state) => state.handleReset);
+  const isResetting = useStoragePass((state) => state.isResetting);
+  const dataPassword = useStoragePass((state) => state.dataPassword);
 
-    return (
-        <header className="vault-panel rounded-xl p-4 md:p-6">
-            <div className="flex flex-row justify-between items-center mb-4">
-                <h1 className="font-sora text-xl md:text-4xl font-bold tracking-tight">Clave vault</h1>
-                <article className="flex items-center gap-2">
-                    <ThemeToggle className="h-5 w-5" />
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleExport(dataPassword)}
-                    >
-                        <Export />
-                        <span className="hidden sm:inline">Exportar</span>
-                    </Button>
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={async () => {
-                            await handleReset();
-                            router.push('/offline');
-                        }}
-                        disabled={isResetting}
-                    >
-                        {isResetting ? (
-                            <div className="h-4 w-4 border-b-2 rounded-full border-current animate-spin" />
-                        ) : (
-                            <>
-                                <LogOut className="h-4 w-4" />
-                                <span className="hidden sm:inline">Salir</span>
-                            </>
-                        )}
-                    </Button>
-                </article>
-            </div>
+  return (
+    <header className="vault-panel rounded-xl p-4 md:p-6">
+      <div className="flex flex-row justify-between items-center mb-4">
+        <h1 className="font-sora text-xl md:text-4xl font-bold tracking-tight">
+          Clave vault
+        </h1>
+        <article className="flex items-center gap-2">
+          <ThemeToggle className="h-5 w-5" />
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => handleExport(dataPassword)}
+          >
+            <Export />
+            <span className="hidden sm:inline">Exportar</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={async () => {
+              // En modo online además hay que invalidar la sesión en el
+              // servidor: sin esto la cookie seguía viva 30 minutos.
+              if (mode === 'online') {
+                try {
+                  await apiFetch('/api/auth/login/logout', { method: 'POST' });
+                } catch {
+                  // El almacenamiento local se limpia igualmente y el
+                  // servidor caduca la sesión por inactividad.
+                }
+              }
+              await handleReset();
+              router.push('/offline');
+            }}
+            disabled={isResetting}
+          >
+            {isResetting ? (
+              <div className="h-4 w-4 border-b-2 rounded-full border-current animate-spin" />
+            ) : (
+              <>
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Salir</span>
+              </>
+            )}
+          </Button>
+        </article>
+      </div>
 
-            <div className="relative mb-4">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <input
-                    type="text"
-                    placeholder="Buscar contraseñas..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full pl-10 pr-3 py-2.5 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-vault-amber/30 focus:border-vault-amber transition-all"
-                />
-            </div>
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+        <input
+          type="text"
+          placeholder="Buscar contraseñas..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full pl-10 pr-3 py-2.5 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-vault-amber/30 focus:border-vault-amber transition-all"
+        />
+      </div>
 
-            <div className="flex gap-2 flex-wrap">
-                {CATEGORY_BUTTONS.map((button) => (
-                    <Button
-                        key={button.id}
-                        variant={selectedCategory === button.value ? "default" : "outline"}
-                        size="sm"
-                        onClick={() => setSelectedCategory(button.value)}
-                        className={selectedCategory === button.value ? "bg-vault-amber text-black hover:bg-vault-amber/80" : ""}
-                    >
-                        {button.label}
-                    </Button>
-                ))}
-            </div>
-        </header>
-    )
-}
+      <div className="flex gap-2 flex-wrap">
+        {CATEGORY_BUTTONS.map((button) => (
+          <Button
+            key={button.id}
+            variant={selectedCategory === button.value ? 'default' : 'outline'}
+            size="sm"
+            onClick={() => setSelectedCategory(button.value)}
+            className={
+              selectedCategory === button.value
+                ? 'bg-vault-amber text-black hover:bg-vault-amber/80'
+                : ''
+            }
+          >
+            {button.label}
+          </Button>
+        ))}
+      </div>
+    </header>
+  );
+};

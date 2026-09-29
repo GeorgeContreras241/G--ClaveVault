@@ -1,30 +1,41 @@
-import { AuthService, RegistrationError } from '@/server/services'
-import { UserRepository, CredentialRepository } from '@/server/repositories'
+import type { RegistrationResponseJSON } from '@simplewebauthn/server';
+import { AuthService } from '@/server/services';
+import { UserRepository, CredentialRepository } from '@/server/repositories';
+import { ValidationService } from '@/server/services/ValidationService';
+import { authRateLimit, handleRouteError, ok } from '@/server/http';
 
-const userRepo = new UserRepository()
-const credentialRepo = new CredentialRepository()
-const authService = new AuthService(userRepo, credentialRepo)
+const userRepo = new UserRepository();
+const credentialRepo = new CredentialRepository();
+const authService = new AuthService(userRepo, credentialRepo);
 
 export async function POST(request: Request) {
-  console.log("[/api/auth/register/verify] Verificando y registrando credencial WebAuthn")
   try {
-
-    const { attResp, email } = await request.json()
-
-
-    if (!attResp || !email) {
-
-      return Response.json({ ok: false, error: 'Datos incompletos' }, { status: 400 })
+    const limited = await authRateLimit(request, 'verify');
+    if (limited) {
+      return limited;
     }
 
-    const result = await authService.verifyRegistration(attResp, email)
+    const body = await ValidationService.readJson(request);
+    if (!body.ok) {
+      return body.response;
+    }
 
-    return Response.json(result)
+    const validation = ValidationService.validateRegisterVerifyPayload(
+      body.body
+    );
+    if (!validation.ok) {
+      return ValidationService.toResponse(validation);
+    }
+
+    const { attResp, challengeId } = body.body as {
+      attResp: RegistrationResponseJSON;
+      challengeId: string;
+    };
+
+    await authService.verifyRegistration(attResp, challengeId);
+
+    return ok();
   } catch (error) {
-    if (error instanceof RegistrationError) {
-      return Response.json({ ok: false, error: error.message }, { status: error.statusCode })
-    }
-    return Response.json({ ok: false, error: 'Error al verificar registro' }, { status: 500 })
+    return handleRouteError(error, 'Error al verificar registro');
   }
 }
-

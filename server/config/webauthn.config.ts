@@ -11,4 +11,4 @@ export const webauthnConfig = {
   },
 
   attestationType: 'none' as const,
-} as const
+} as const;

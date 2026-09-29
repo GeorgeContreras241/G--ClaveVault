@@ -1,26 +1,27 @@
-"use client";
-import WebAuthn from "@/components/icons/WebAuthn";
-import Link from "next/link";
-import { sileo } from "sileo";
+'use client';
+import WebAuthn from '@/components/icons/WebAuthn';
+import Link from 'next/link';
+import { sileo } from 'sileo';
 
-const ONLINE_ENABLED = true
+const ONLINE_ENABLED = true;
 
 export function WebAuthnAction() {
   const handleClick = (e: React.MouseEvent) => {
     if (!ONLINE_ENABLED) {
-      e.preventDefault()
+      e.preventDefault();
       sileo.warning({
-        title: "Modo online aún no disponible",
-        description: "Estamos trabajando en ello. Próximamente podrás acceder desde cualquier dispositivo.",
+        title: 'Modo online aún no disponible',
+        description:
+          'Estamos trabajando en ello. Próximamente podrás acceder desde cualquier dispositivo.',
         duration: 4000,
-        fill: "var(--color-bg-elevated)",
+        fill: 'var(--color-bg-elevated)',
         styles: {
-          title: "text-vault-amber! font-bold!",
-          description: "text-white! text-center!",
+          title: 'text-vault-amber! font-bold!',
+          description: 'text-white! text-center!',
         },
-      })
+      });
     }
-  }
+  };
 
   return (
     <Link

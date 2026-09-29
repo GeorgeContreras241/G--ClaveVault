@@ -1,15 +1,15 @@
-import type { EncryptResult, PasswordEntry } from "@/types";
+import type { EncryptResult, PasswordEntry } from '@/types';
 
 export const encrypt = async (
   key: CryptoKey,
-  data: PasswordEntry[],
+  data: PasswordEntry[]
 ): Promise<EncryptResult> => {
   if (!crypto?.subtle) {
-    throw new Error("Web Crypto API no soportada");
+    throw new Error('Web Crypto API no soportada');
   }
 
   if (!key) {
-    throw new Error("La key es requerida");
+    throw new Error('La key es requerida');
   }
 
   try {
@@ -19,11 +19,11 @@ export const encrypt = async (
 
     const encryptedBuffer = await crypto.subtle.encrypt(
       {
-        name: "AES-GCM",
+        name: 'AES-GCM',
         iv,
       },
       key,
-      encodedData,
+      encodedData
     );
 
     const encryptedArray = Array.from(new Uint8Array(encryptedBuffer));
@@ -33,7 +33,7 @@ export const encrypt = async (
       data: encryptedArray,
     };
   } catch (error) {
-    console.error("Error encryptando datos:", error);
-    throw new Error("No se pudieron encryptar los datos");
+    console.error('Error encryptando datos:', error);
+    throw new Error('No se pudieron encryptar los datos');
   }
 };

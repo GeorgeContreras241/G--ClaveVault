@@ -36,23 +36,6 @@ export interface PasswordCardProps {
   getCategoryIcon: (category: string) => React.ReactNode;
 }
 
-
-
-export interface ImportResultAlert {
-  state: boolean;
-  message?: ToastMessage;
-  decryptedData?: PasswordEntry[];
-  salt?: Uint8Array;
-  drcKey?: CryptoKey | null;
-}
-
-export interface VaultData {
-  state: boolean;
-  salt?: Uint8Array;
-  iv?: Uint8Array;
-  data?: Uint8Array;
-}
-
 export interface OfflineUnlockProps {
   onSuccess: (value: boolean) => void;
 }
@@ -62,35 +45,6 @@ export interface HeaderManagerProps {
   setSelectedCategory: (value: string) => void;
   selectedCategory: string;
   searchTerm: string;
-}
-
-export interface AddPasswordsProps {
-  onSuccess?: () => void;
-}
-
-
-export interface FormState {
-  title: string;
-  application: string;
-  username: string;
-  password: string;
-  url: string;
-  category: string;
-  favorite: boolean;
-}
-
-export interface PasswordValidationResult {
-  success: boolean;
-  error?: string;
-}
-
-export interface FileValidationResult {
-  isValid: boolean;
-  error?: string;
-}
-
-export interface ThemeToggleProps {
-  className?: string;
 }
 
 export type VaultCipherPayload = {
@@ -103,43 +57,17 @@ export type EncryptResult = {
   data: number[];
 };
 
-export type DecryptSuccess = {
+type DecryptSuccess = {
   status: true;
   data: PasswordEntry[];
 };
 
-export type DecryptFailure = {
+type DecryptFailure = {
   status: false;
   message: ToastMessage;
 };
 
 export type DecryptResult = DecryptSuccess | DecryptFailure;
-
-export interface EncryptedData {
-  iv: Uint8Array;
-  data: Uint8Array;
-}
-
-export interface SaltGenerationResult {
-  salt: Uint8Array;
-  success: boolean;
-}
-
-export type CategoryType = "all" | "favorites" | "web" | "app" | "card";
-
-export interface CategoryButton {
-  id: CategoryType;
-  label: string;
-  icon: React.ReactNode;
-}
-
-export type PasswordVisibilityHandler = (id: string) => void;
-export type CopyHandler = (text: string) => void;
-export type EditHandler = (password: PasswordEntry) => void;
-export type DeleteHandler = (id: string) => void;
-export type FavoriteHandler = (id: string) => void;
-export type CategoryHandler = (category: CategoryType) => void;
-export type SearchHandler = (term: string) => void;
 
 export interface ToastMessage {
   title: string;
@@ -150,11 +78,6 @@ export interface ToastMessage {
     title?: string;
     description?: string;
   };
-}
-
-export interface LoadingState {
-  isLoading: boolean;
-  message?: string;
 }
 
 export type ImportResult = {
@@ -175,7 +98,6 @@ export interface FormErrors {
   password?: string;
   url?: string;
 }
-
 
 export type PassStorage = {
   salt: Uint8Array | null;

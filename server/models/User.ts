@@ -11,18 +11,23 @@ export class User {
       crypto.randomUUID(),
       email.toLowerCase().trim(),
       new Date()
-    )
+    );
   }
 
-  static fromPrisma(data: { id: string; email: string; createdAt: Date; updatedAt: Date }): User {
-    return new User(data.id, data.email, data.createdAt, data.updatedAt)
+  static fromPrisma(data: {
+    id: string;
+    email: string;
+    createdAt: Date;
+    updatedAt: Date;
+  }): User {
+    return new User(data.id, data.email, data.createdAt, data.updatedAt);
   }
 
   toJSON() {
     return {
       id: this.id,
       email: this.email,
-      createdAt: this.createdAt.toISOString()
-    }
+      createdAt: this.createdAt.toISOString(),
+    };
   }
 }

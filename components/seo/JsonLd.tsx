@@ -1,4 +1,4 @@
-import { getCachedSiteConfig } from "@/lib/cache/site";
+import { getCachedSiteConfig } from '@/lib/cache/site';
 
 type JsonLdProps = {
   data: Record<string, unknown>;
@@ -19,18 +19,18 @@ export async function WebApplicationJsonLd() {
   return (
     <JsonLd
       data={{
-        "@context": "https://schema.org",
-        "@type": "WebApplication",
+        '@context': 'https://schema.org',
+        '@type': 'WebApplication',
         name: siteConfig.name,
         description: siteConfig.description,
         url: siteConfig.url,
-        applicationCategory: "SecurityApplication",
-        operatingSystem: "Web",
-        inLanguage: "es",
+        applicationCategory: 'SecurityApplication',
+        operatingSystem: 'Web',
+        inLanguage: 'es',
         offers: {
-          "@type": "Offer",
-          price: "0",
-          priceCurrency: "USD",
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD',
         },
       }}
     />

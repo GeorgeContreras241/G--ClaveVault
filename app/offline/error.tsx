@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useEffect } from "react";
+import Link from 'next/link';
+import { useEffect } from 'react';
 
 export default function OfflineError({
   error,
@@ -21,8 +21,8 @@ export default function OfflineError({
           Algo salió mal
         </h1>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          No se pudo cargar el gestor offline. Puedes intentar de nuevo o volver al
-          inicio.
+          No se pudo cargar el gestor offline. Puedes intentar de nuevo o volver
+          al inicio.
         </p>
         <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">
           <button

@@ -1,32 +1,29 @@
-"use client"
+'use client';
 
-import { usePathname } from "next/navigation"
-import { VideoBackground } from "@/components/shared/VideoBackground"
-import { AppProviders } from "@/components/providers/AppProviders"
-import { ASSETS } from "@/const/assets"
-import { useEffect, useState } from "react"
+import { usePathname } from 'next/navigation';
+import { VideoBackground } from '@/components/shared/VideoBackground';
+import { AppProviders } from '@/components/providers/AppProviders';
+import { ASSETS } from '@/constants/assets';
+import { useEffect, useState } from 'react';
 
 export const SplitLayout = ({ children }: { children: React.ReactNode }) => {
-  const pathname = usePathname()
-  console.log("pathname", pathname)
-  const isHome = pathname === "/"
-  const [showVideo, setShowVideo] = useState(isHome)
+  const pathname = usePathname();
+  const isHome = pathname === '/';
+  const [showVideo, setShowVideo] = useState(isHome);
 
+  // El vídeo se monta al entrar en la home y se desmonta 500 ms después de
+  // salir, para que la transición CSS termine antes de reproducir el vídeo.
   useEffect(() => {
-    if (isHome) {
-      setShowVideo(true)
-    } else {
-      const timer = setTimeout(() => setShowVideo(false), 500)
-      return () => clearTimeout(timer)
-    }
-  }, [isHome])
+    const timer = setTimeout(() => setShowVideo(isHome), isHome ? 0 : 500);
+    return () => clearTimeout(timer);
+  }, [isHome]);
 
   return (
     <div className="flex flex-col lg:flex-row h-dvh overflow-hidden">
       {/* Video - se oculta al navegar */}
       <div
         className={`hidden lg:block transition-all duration-500 ease-in-out overflow-hidden ${
-          isHome ? "lg:w-1/2 opacity-100" : "lg:w-0 opacity-0"
+          isHome ? 'lg:w-1/2 opacity-100' : 'lg:w-0 opacity-0'
         }`}
       >
         {showVideo && (
@@ -42,11 +39,11 @@ export const SplitLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Contenido - se expande al navegar */}
       <div
         className={`flex-1 flex items-center justify-center p-4 lg:p-8 transition-all duration-500 ease-in-out ${
-          isHome ? "" : "lg:w-full"
+          isHome ? '' : 'lg:w-full'
         }`}
       >
         <AppProviders>{children}</AppProviders>
       </div>
     </div>
-  )
-}
+  );
+};
