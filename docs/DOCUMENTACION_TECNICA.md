@@ -28,7 +28,6 @@ header-includes:
 
 <div style="text-align: center; margin-top: 100px;">
 
-![ClaveVault Logo](public/next.svg){ width=200px }
 
 <br><br>
 
@@ -133,13 +132,13 @@ El objetivo principal es proporcionar una solución segura, fácil de usar y tra
 |---|---|
 | ESLint | Linting del código |
 | Prettier | Formato del código |
-| pnpm | Gestor de paquetes |
+| npm | Gestor de paquetes |
 
 ## Convenciones de Nombres
 
 ### Archivos
 - **Componentes React**: PascalCase (`WebAuthnLogin.tsx`, `PasswordCard.tsx`)
-- **Utilidades y servicios**: camelCase (`encryptData.ts`, `generatePassword.tsx`)
+- **Utilidades y servicios**: camelCase (`encryptData.ts`, `generatePassword.ts`)
 - **Archivos de configuración**: kebab_case o camelCase (`next.config.ts`, `prisma.config.ts`)
 
 ### Variables y Funciones
@@ -212,7 +211,7 @@ graph TB
 | `lib/crypto/` | Utilidades de cifrado: encrypt, decrypt, KDF, salt |
 | `lib/vault/` | Gestión de archivos vault: save, load |
 | `storage/` | Stores de Zustand: passwords, config |
-| `context/` | React Contexts: local vault, cloud (placeholder) |
+| `constants/` | Constantes compartidas: assets, categorías, avisos y textos |
 
 ## Flujo de Información
 
@@ -311,181 +310,78 @@ graph LR
 
 ```text
 G--ClaveVault/
-├── app/                              # Next.js App Router (páginas, layouts, rutas API)
-│   ├── layout.tsx                    # Layout raíz (fuentes, providers, SEO)
-│   ├── page.tsx                      # Página principal de inicio
-│   ├── globals.css                   # Estilos globales (Tailwind v4 + tema vault)
-│   ├── not-found.tsx                 # Página 404
-│   ├── robots.ts                     # SEO robots.txt
-│   ├── sitemap.ts                    # SEO sitemap
-│   ├── (auth)/
-│   │   └── online/
-│   │       ├── layout.tsx            # Layout modo online (Header + Footer)
-│   │       └── page.tsx              # Página WebAuthn login/register
-│   ├── api/
-│   │   └── auth/
-│   │       ├── register/
-│   │       │   ├── options/route.ts  # POST: Generar opciones de registro
-│   │       │   └── verify/route.ts   # POST: Verificar registro
-│   │       └── login/
-│   │           ├── options/route.ts  # POST: Generar opciones de login
-│   │           ├── verify/route.ts   # POST: Verificar login + crear sesión
-│   │           └── logout/route.ts   # POST: Destruir sesión
-│   ├── offline/
-│   │   ├── layout.tsx                # Layout modo offline
-│   │   ├── page.tsx                  # Gestor de contraseñas offline
-│   │   ├── AuthGuard.tsx            # Guard de seguridad (master password)
-│   │   ├── OfflineShell.tsx          # Wrapper LocalProvider
-│   │   ├── loading.tsx               # Skeleton de carga
-│   │   └── error.tsx                 # Error boundary
-│   └── passwords/
-│       ├── layout.tsx                # Layout de contraseñas
-│       └── page.tsx                  # Página de contraseñas (server-rendered)
-│
-├── components/                       # Componentes React reutilizables
-│   ├── auth/
-│   │   ├── WebAuthnLogin.tsx         # Botón login WebAuthn
-│   │   └── WebAuthnRegister.tsx      # Botón registro WebAuthn
-│   ├── home/
-│   │   ├── WebAuthnAction.tsx        # Card de acción WebAuthn
-│   │   └── HomeFallbacks.tsx         # Skeletons de carga
-│   ├── layout/
-│   │   ├── Header.tsx                # Header global con enlace de retroceso
-│   │   ├── Footer.tsx                # Footer global (redes sociales + toggle tema)
-│   │   ├── Sidebar.tsx               # Sidebar placeholder
-│   │   └── BackButton.tsx            # Botón de retroceso placeholder
-│   ├── providers/
-│   │   └── AppProviders.tsx          # ThemeProvider + Toaster
-│   ├── vault/
-│   │   ├── VaultHeader.tsx           # Header del vault (placeholder)
-│   │   ├── VaultSearch.tsx           # Búsqueda del vault (placeholder)
-│   │   └── VaultFilters.tsx          # Filtros del vault (placeholder)
-│   ├── shared/
-│   │   ├── Button.tsx                # Botón personalizado con variantes
-│   │   ├── Target.tsx                # Badge de feature target
-│   │   ├── exit.tsx                  # Icono de salida
-│   │   └── themeMode/
-│   │       └── ThemeToogle.tsx        # Toggle de tema claro/oscuro
-│   ├── SeccionSubmit/
-│   │   ├── ActionSubmit.tsx          # Formulario master password + upload .enc
-│   │   ├── Menu.tsx                  # Componente menú
-│   │   └── Search.tsx                # Componente búsqueda
-│   ├── Social/
-│   │   └── SocialSeccion.tsx         # Enlaces redes sociales + toggle tema
-│   ├── seo/
-│   │   └── JsonLd.tsx                # Datos estructurados JSON-LD
-│   ├── icons/                        # 24 componentes de iconos SVG
-│   │   ├── Add.tsx, App.tsx, Archive.tsx, Arrow.tsx, Card.tsx
-│   │   ├── Copy.tsx, Dark.tsx, Delete.tsx, Edit.tsx, Exit.tsx
-│   │   ├── Export.tsx, Eye.tsx, EyeClose.tsx, Favorite.tsx
-│   │   ├── GitHub.tsx, Ligth.tsx, LinKedin.tsx, Lock.tsx
-│   │   ├── LockEmpty.tsx, Search.tsx, Star.tsx, StarFilled.tsx
-│   │   ├── Web.tsx, WebAuthn.tsx
-│   └── ui/                           # Componentes base shadcn/ui
-│       ├── button.tsx, card.tsx, input.tsx, label.tsx, separator.tsx
-│
-├── features/                         # Módulos de funcionalidad
-│   ├── auth/
-│   │   ├── index.ts                  # Export barrel
-│   │   └── components/
-│   │       ├── WebAuthn.tsx          # Página completa de autenticación WebAuthn
-│   │       └── authGuard.tsx         # Guard placeholder
-│   └── manager/
-│       ├── Gestor.tsx                # Gestor principal de contraseñas
-│       └── components/
-│           ├── AddPassword.tsx       # Formulario agregar contraseña
-│           ├── EditPassword.tsx      # Formulario editar contraseña
-│           ├── Header_Gestor.tsx     # Header del gestor
-│           └── PasswordCard.tsx      # Tarjeta de contraseña
-│
-├── server/                           # Capa del servidor
-│   ├── config/
-│   │   ├── index.ts                  # Export barrel
-│   │   └── webauthn.config.ts        # Configuración WebAuthn RP
-│   ├── models/
-│   │   ├── index.ts                  # Export barrel
-│   │   ├── User.ts                   # Modelo de dominio User
-│   │   ├── WebAuthnCredential.ts     # Modelo de dominio WebAuthnCredential
-│   │   └── Challenge.ts             # Modelo de dominio Challenge
-│   ├── repositories/
-│   │   ├── index.ts                  # Export barrel
-│   │   ├── UserRepository.ts         # CRUD usuarios con Prisma
-│   │   └── CredentialRepository.ts   # CRUD credenciales WebAuthn
-│   └── services/
-│       ├── index.ts                  # Export barrel
-│       ├── AuthService.ts            # Lógica WebAuthn registro + autenticación
-│       └── SessionService.ts         # Gestión de sesiones con cookies
-│
-├── lib/                              # Código compartido
-│   ├── db.ts                         # Cliente Prisma singleton
-│   ├── site.ts                       # Configuración del sitio
-│   ├── utils.ts                      # Utilidad cn() (clsx + tailwind-merge)
-│   ├── get-user.ts                   # Obtención de usuario desde sesión
-│   ├── webauthn-store.ts             # Almacén de challenges en memoria
-│   ├── crypto/
-│   │   ├── encryptData.ts            # Cifrado AES-GCM
-│   │   ├── decryptData.ts            # Descifrado AES-GCM
-│   │   ├── genereteSalt.ts           # Generación de salt aleatorio
-│   │   └── kdfKey.ts                 # Derivación de claves PBKDF2
-│   ├── vault/
-│   │   ├── saveVault.ts              # Guardar vault binario
-│   │   └── loadVault.ts              # Cargar vault binario
-│   ├── cache/
-│   │   └── site.ts                   # Cache Next.js "use cache"
-│   └── utils/
-│       ├── Gestor/
-│       │   ├── copyToClipboard.ts    # Copiar al portapapeles
-│       │   ├── generatePassword.tsx  # Generador de contraseñas
-│       │   └── toPasswordEntry.ts    # Mapeador de datos
-│       └── SeccionSubmit/
-│           ├── openVault.ts          # Cargar y parsear vault
-│           ├── validatePassword.tsx  # Validación de password
-│           └── validateVaultInputs.ts # Validación de inputs vault
-│
-├── context/                          # React Contexts
-│   ├── cloudProvider.tsx             # Context cloud (placeholder)
-│   ├── localProvider.tsx             # Context vault local
-│   └── useLocalContext.ts            # Hook personalizado para LocalContext
-│
-├── storage/                          # Stores Zustand
-│   ├── useStoragePass.tsx            # Store de entradas de contraseña
-│   └── useStoreConfig.tsx            # Store de configuración
-│
-├── types/
-│   └── index.ts                      # Todas las interfaces/tipos TypeScript
-│
-├── const/                            # Constantes
-│   ├── buttonsNavegations.js         # Botones de categorías
-│   ├── sileoConfig.js                # Configuración de notificaciones
-│   └── target.js                     # Features targets página principal
-│
-├── utils/
-│   └── commitGenerator.ts            # Generador de mensajes commit
-│
-├── prisma/
-│   ├── schema.prisma                 # Esquema de base de datos
-│   ├── prisma.config.ts              # Configuración Prisma
-│   └── migrations/
-│       └── 20260619020039_init/      # Migración inicial
-│           └── migration.sql
-│
-├── public/                           # Assets estáticos
-│   ├── file.svg, globe.svg, next.svg
-│   └── vercel.svg, window.svg
-│
-├── .agents/                          # Skills de agentes IA
-│   └── skills/                       # 13 skills de autoskills-registry
-│
-├── proxy.ts                          # Middleware proxy de sesión
-├── next.config.ts                    # Configuración Next.js
-├── tsconfig.json                     # Configuración TypeScript
-├── postcss.config.mjs                # Configuración PostCSS
-├── eslint.config.mjs                 # Configuración ESLint
-├── .prettierrc                       # Configuración Prettier
-├── components.json                   # Configuración shadcn/ui
+├── app/                              # Next.js App Router (paginas, layouts, rutas API)
+│   ├── layout.tsx                    # Layout raiz (fuentes, providers, SEO)
+│   ├── page.tsx                      # Pagina principal de inicio
+│   ├── globals.css                   # Estilos globales y tokens de tema
+│   ├── not-found.tsx                 # Pagina 404
+│   ├── robots.ts                     # robots.txt
+│   ├── sitemap.ts                    # sitemap.xml
+│   ├── (auth)/online/                # Ruta /online (login WebAuthn)
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── offline/                      # Ruta /offline (modo local)
+│   │   ├── page.tsx
+│   │   ├── layout.tsx
+│   │   ├── loading.tsx
+│   │   └── error.tsx
+│   ├── passwords/                    # Ruta /passwords (dashboard)
+│   │   ├── page.tsx
+│   │   └── layout.tsx
+│   └── api/auth/                     # Rutas API
+│       ├── me/route.ts
+│       ├── login/{options,verify,logout}/route.ts
+│       └── register/{options,verify}/route.ts
+├── features/                         # Modulos de funcionalidad
+│   ├── auth/components/              # WebAuthn, WebAuthnLogin, WebAuthnRegister
+│   ├── manager/                      # Manager + components (AddPassword, EditPassword, HeaderManager, PasswordCard)
+│   ├── offline/                      # AuthGuard, OfflineShell, OfflineUnlock + utils/
+│   └── online/                       # MasterKeyForm, OnlineProvider, PasswordsContent
+├── components/                       # Componentes React presentacionales
+│   ├── home/                         # WebAuthnAction, WebAuthnFallback
+│   ├── icons/                        # 22 iconos SVG
+│   ├── layout/                       # Header, Footer, SplitLayout
+│   ├── providers/                    # AppProviders (Theme + Toaster)
+│   ├── seo/                          # JsonLd
+│   ├── shared/                       # Loading, Target, ThemeToggle, VideoBackground
+│   └── ui/                           # shadcn/ui: button, card, input, label, separator
+├── server/                           # Backend en capas
+│   ├── config/                       # Config WebAuthn (RP config)
+│   ├── http/                         # Helpers de respuestas, errores y rate limit
+│   ├── models/                       # User, WebAuthnCredential
+│   ├── redis/                        # Cliente KV (Upstash / memoria en local)
+│   ├── repositories/                 # UserRepository, CredentialRepository
+│   ├── services/                     # Auth, Session, Vault, Validation, Challenge, Csrf, RateLimit
+│   └── utils/                        # cookies, crypto (tokens, hash, comparacion)
+├── lib/
+│   ├── cache/                        # Cache de Next.js (site, sitemap)
+│   ├── crypto/                       # encrypt, decrypt, kdfKey, generateSalt
+│   ├── encoding/                     # base64 (contrato de la API de vault)
+│   ├── http/                         # apiFetch (wrapper con cabecera CSRF)
+│   ├── utils/manager/                # copyToClipboard, generatePassword, toPasswordEntry
+│   ├── vault/                        # saveVault, loadVault
+│   ├── db.ts                         # Cliente Prisma singleton (adaptador pg)
+│   ├── get-user.ts                   # Usuario de la sesion actual
+│   ├── site.ts                       # Config del sitio (SEO)
+│   └── utils.ts                      # cn() para clases Tailwind
+├── constants/                        # Constantes: assets, navigationButtons, sileoConfig, target
+├── storage/                          # Store Zustand: useStoragePass
+├── hooks/                            # useMode (online | offline)
+├── types/                            # index.ts con los tipos compartidos
+├── prisma/                           # schema.prisma + migrations/
+├── public/                           # Estaticos (video/fondo.mp4)
+├── docs/                             # Documentacion tecnica
+├── proxy.ts                          # Middleware: origen, sesion y cookie CSRF
+├── next.config.ts                    # Configuracion Next.js + cabeceras de seguridad
+├── tsconfig.json                     # Configuracion TypeScript
+├── postcss.config.mjs                # Configuracion PostCSS
+├── eslint.config.mjs                 # Configuracion ESLint (flat config)
+├── .prettierrc / .prettierignore     # Configuracion Prettier
+├── components.json                   # Configuracion shadcn/ui
 ├── package.json                      # Dependencias del proyecto
-├── pnpm-lock.yaml                    # Lock file pnpm
-└── README.md                         # Documentación del proyecto
+├── package-lock.json                 # Lock file de npm
+├── vercel.json                       # Configuracion de Vercel
+└── README.md                         # Documentacion del proyecto
 ```
 
 ## Responsabilidades por Carpeta
@@ -502,15 +398,21 @@ Módulos de funcionalidad completa. Cada feature contiene sus propios componente
 ### `server/`
 Capa del servidor con arquitectura en capas:
 - **config/**: Configuración de servicios externos
+- **http/**: Helpers compartidos por las rutas (respuestas `ok/fail`, manejo unificado de errores, rate limit de autenticación)
 - **models/**: Modelos de dominio con métodos factory
+- **redis/**: Cliente KV único. Con `UPSTASH_REDIS_REST_*` usa Upstash; sin claves en local usa un almacén en memoria
 - **repositories/**: Acceso a datos encapsulado con Prisma
-- **services/**: Lógica de negocio
+- **services/**: Lógica de negocio. **Todas las validaciones de entrada pasan por `ValidationService`**, y la protección CSRF por `CsrfService`
+- **utils/**: Cookies (jarra abstracta para rutas y middleware) y primitivas criptográficas (tokens, SHA-256, comparación en tiempo constante)
 
 ### `lib/`
-Biblioteca compartida entre cliente y servidor. Incluye utilidades de cifrado, gestores de vault, y configuración del sitio.
+Biblioteca compartida entre cliente y servidor. Incluye utilidades de cifrado, gestores de vault, codificación base64 del contrato de la API, `apiFetch` (wrapper de `fetch` que adjunta la cabecera CSRF) y la configuración del sitio.
 
-### `context/`
-React Contexts para manejo de estado global. Actualmente implementa el vault local; el cloud está en placeholder.
+### `constants/`
+Constantes de la aplicación: rutas de assets, botones de categoría, avisos de notificación y textos de la portada.
+
+### `hooks/`
+Hooks propios del proyecto. `useMode` devuelve `"online"` u `"offline"` según la ruta actual.
 
 ### `storage/`
 Stores de Zustand para estado del lado del cliente. Separación entre datos de contraseñas y configuración.
@@ -605,9 +507,14 @@ Registro de auditoría de acciones del usuario.
 **Relaciones:**
 - Muchos AuditLogs pertenecen a un User (N:1)
 
-## Entidad: Session
+## Entidad: Session (en desuso)
 
-Sesión activa de un usuario.
+> **Estado:** las sesiones ya no se almacenan en PostgreSQL. Viven en Redis
+> (`server/services/SessionService.ts`): la cookie `session_token` contiene
+> un token aleatorio de 256 bits y en Redis solo se guarda su huella
+> `sha256(token)`, con TTL de 30 minutos renovado en cada petición.
+> El modelo permanece en `schema.prisma` por compatibilidad y puede
+> eliminarse con `prisma migrate dev`.
 
 | Campo | Tipo | Descripción | Restricciones |
 |---|---|---|---|
@@ -787,17 +694,26 @@ npx prisma migrate reset
 
 ## Endpoints de Autenticación
 
+### Consideraciones comunes
+
+| Regla | Comportamiento |
+|---|---|
+| Origen | `proxy.ts` rechaza con `403` cualquier POST cuyo `Origin`/`Referer` no coincida con el `Host` (o que no lleve ninguno). |
+| Content-Type | Debe ser `application/json`; si no, `415`. |
+| Tamaño del cuerpo | 64 KB en las rutas de autenticación y 5 MB en `POST /api/auth/me`; `413` al superarlo (lectura por streaming). |
+| Rate limit | 20 peticiones / 15 min por IP y bucket (`options` y `verify` por separado) en las cuatro rutas WebAuthn; `429` con cabecera `Retry-After`. |
+| Caché | Todas las respuestas llevan `Cache-Control: no-store`. |
+| Validación | Todas las reglas viven en `ValidationService`; ninguna ruta escribe sus propias comprobaciones. |
+
+---
+
 ### POST `/api/auth/register/options`
 
-Genera las opciones de registro WebAuthn para un email dado.
+Genera las opciones de registro WebAuthn y emite un `challengeId`.
 
-**Descripción:** Inicia el flujo de registro WebAuthn creando un challenge y las opciones necesarias para que el navegador registre una nueva credencial.
-
-**Parámetros de Request:**
-
-| Campo | Tipo | Ubicación | Descripción | Requerido |
-|---|---|---|---|---|
-| `email` | string | Body | Correo electrónico del usuario | Sí |
+**Descripción:** Inicia el flujo de registro. El reto se guarda en Redis
+bajo un identificador aleatorio de 128 bits con TTL de 5 minutos; ese
+identificador es el que hay que devolver en `register/verify`.
 
 **Body:**
 ```json
@@ -810,32 +726,28 @@ Genera las opciones de registro WebAuthn para un email dado.
 
 | Código | Descripción | Body |
 |---|---|---|
-| 200 | Opciones generadas exitosamente | `{ "ok": true, "options": { ... } }` |
-| 400 | Email inválido o faltante | `{ "ok": false, "error": "Email inválido" }` |
-| 500 | Error interno del servidor | `{ "ok": false, "error": "Error al generar opciones" }` |
+| 200 | Opciones generadas | `{ "ok": true, "options": { ... }, "challengeId": "…" }` |
+| 400 | Email ausente o inválido | `{ "ok": false, "error": "Email inválido", "field": "email" }` |
+| 415 / 413 | Content-Type o tamaño incorrectos | `{ "ok": false, "error": "...", "field": "content-type" \| "body" }` |
+| 409 | El email ya está registrado | `{ "ok": false, "error": "Este email ya está registrado." }` |
+| 429 | Rate limit superado | `{ "ok": false, "error": "Demasiados intentos..." }` |
+| 500 | Error interno | `{ "ok": false, "error": "Error al generar opciones" }` |
 
 **Ejemplo de Respuesta 200:**
 ```json
 {
   "ok": true,
   "options": {
-    "rp": {
-      "name": "ClaveVault",
-      "id": "localhost"
-    },
-    "user": {
-      "id": "cuid_generado",
-      "name": "usuario@ejemplo.com",
-      "displayName": "usuario@ejemplo.com"
-    },
-    "challenge": "challenge_en_base64",
+    "rp": { "name": "ClaveVault", "id": "localhost" },
+    "challenge": "challenge_en_base64url",
     "pubKeyCredParams": [
       { "type": "public-key", "alg": -7 },
       { "type": "public-key", "alg": -257 }
     ],
     "timeout": 60000,
-    "attestation": "direct"
-  }
+    "attestation": "none"
+  },
+  "challengeId": "Fyyhkt4fEUpwferT91RBLQ"
 }
 ```
 
@@ -843,31 +755,26 @@ Genera las opciones de registro WebAuthn para un email dado.
 
 ### POST `/api/auth/register/verify`
 
-Verifica la respuesta de registro WebAuthn y crea el usuario y credencial.
+Verifica la respuesta de registro y crea usuario + credencial.
 
-**Descripción:** Completa el flujo de registro verificando la respuesta del authenticator, almacenando la credencial y creando el usuario.
-
-**Parámetros de Request:**
-
-| Campo | Tipo | Ubicación | Descripción | Requerido |
-|---|---|---|---|---|
-| `email` | string | Body | Correo electrónico | Sí |
-| `credential` | object | Body | Respuesta del authenticator | Sí |
+**Descripción:** Completa el registro. **No se acepta `email` en el cuerpo**
+(los campos no descritos se ignoran): la cuenta la determina el servidor a
+partir del reto guardado, lo que impide registrar una credencial
+perteneciente a otra identidad.
 
 **Body:**
 ```json
 {
-  "email": "usuario@ejemplo.com",
-  "credential": {
-    "id": "credential_id",
-    "rawId": "raw_id_base64",
-    "response": {
-      "attestationObject": "attestation_base64",
-      "clientDataJSON": "client_data_base64"
-    },
-    "type": "public-key",
-    "clientExtensionResults": {}
-  }
+  "attResp": {
+    "id": "credential_id_base64url",
+    "rawId": "credential_id_base64url",
+    "type": "webauthn.create",
+    "clientDataJSON": "base64url",
+    "authenticatorData": "base64url",
+    "attestationObject": "base64url",
+    "transports": ["internal"]
+  },
+  "challengeId": "Fyyhkt4fEUpwferT91RBLQ"
 }
 ```
 
@@ -876,8 +783,12 @@ Verifica la respuesta de registro WebAuthn y crea el usuario y credencial.
 | Código | Descripción | Body |
 |---|---|---|
 | 200 | Registro exitoso | `{ "ok": true }` |
-| 400 | Verificación fallida | `{ "ok": false, "error": "Verificación fallida" }` |
-| 500 | Error del servidor | `{ "ok": false, "error": "Error al verificar" }` |
+| 400 | Formato de `attResp` inválido o `challengeId` inválido | `{ "ok": false, "error": "...", "field": "attResp.type" }` |
+| 400 | Reto inexistente, expirado o ya consumido | `{ "ok": false, "error": "Challenge no encontrado o expirado" }` |
+| 400 | Falló la verificación criptográfica | `{ "ok": false, "error": "Verificación fallida" }` |
+| 409 | La credencial ya existe | `{ "ok": false, "error": "Esta credencial ya está registrada" }` |
+| 415 / 413 / 429 | Como en el resto de rutas | - |
+| 500 | Error del servidor | `{ "ok": false, "error": "Error al verificar registro" }` |
 
 ---
 
@@ -885,13 +796,8 @@ Verifica la respuesta de registro WebAuthn y crea el usuario y credencial.
 
 Genera las opciones de autenticación WebAuthn para un email.
 
-**Descripción:** Inicia el flujo de login buscando las credenciales del usuario y creando un challenge de autenticación.
-
-**Parámetros de Request:**
-
-| Campo | Tipo | Ubicación | Descripción | Requerido |
-|---|---|---|---|---|
-| `email` | string | Body | Correo electrónico registrado | Sí |
+**Descripción:** Busca las credenciales del usuario y crea un reto de
+autenticación en Redis, devolviendo su `challengeId`.
 
 **Body:**
 ```json
@@ -904,9 +810,10 @@ Genera las opciones de autenticación WebAuthn para un email.
 
 | Código | Descripción | Body |
 |---|---|---|
-| 200 | Opciones generadas | `{ "ok": true, "options": { ... } }` |
-| 400 | Email inválido | `{ "ok": false, "error": "Email inválido" }` |
-| 404 | Usuario no encontrado | `{ "ok": false, "error": "Usuario no encontrado" }` |
+| 200 | Opciones generadas | `{ "ok": true, "options": { ... }, "challengeId": "…" }` |
+| 400 | Email ausente o inválido | `{ "ok": false, "error": "Email inválido", "field": "email" }` |
+| 404 | Usuario no registrado | `{ "ok": false, "error": "email no registrado" }` |
+| 415 / 413 / 429 | Como en el resto de rutas | - |
 | 500 | Error del servidor | `{ "ok": false, "error": "Error al generar opciones" }` |
 
 ---
@@ -915,31 +822,26 @@ Genera las opciones de autenticación WebAuthn para un email.
 
 Verifica la respuesta de autenticación WebAuthn y crea la sesión.
 
-**Descripción:** Completa el flujo de login verificando la respuesta del authenticator, validando el counter, creando la sesión y estableciendo la cookie httpOnly.
-
-**Parámetros de Request:**
-
-| Campo | Tipo | Ubicación | Descripción | Requerido |
-|---|---|---|---|---|
-| `email` | string | Body | Correo electrónico | Sí |
-| `credential` | object | Body | Respuesta del authenticator | Sí |
+**Descripción:** El reto se consume una sola vez (uso único atómico). El
+**email no viaja en el cuerpo**: se lee del reto, por lo que no se puede
+cambiar de cuenta a mitad de operación. La credencial se busca filtrando
+por `userId`, de modo que solo puede autenticarse el dueño de esa
+credencial. Al terminar se emiten `session_token` (httpOnly) y
+`csrf_token` (legible por el cliente).
 
 **Body:**
 ```json
 {
-  "email": "usuario@ejemplo.com",
-  "credential": {
-    "id": "credential_id",
-    "rawId": "raw_id_base64",
-    "response": {
-      "authenticatorData": "auth_data_base64",
-      "clientDataJSON": "client_data_base64",
-      "signature": "signature_base64",
-      "userHandle": "user_handle_base64"
-    },
-    "type": "public-key",
-    "clientExtensionResults": {}
-  }
+  "attResp": {
+    "id": "credential_id_base64url",
+    "rawId": "credential_id_base64url",
+    "type": "webauthn.get",
+    "clientDataJSON": "base64url",
+    "authenticatorData": "base64url",
+    "signature": "base64url",
+    "userHandle": "base64url"
+  },
+  "challengeId": "UtaXJzpZfvuNYA2DYPyZnw"
 }
 ```
 
@@ -947,15 +849,20 @@ Verifica la respuesta de autenticación WebAuthn y crea la sesión.
 
 | Código | Descripción | Headers |
 |---|---|---|
-| 200 | Login exitoso | `Set-Cookie: session_token=...; HttpOnly; Secure; SameSite=Lax` |
-| 400 | Verificación fallida | - |
-| 404 | Credencial no encontrada | - |
+| 200 | Login exitoso | `Set-Cookie: session_token=...` y `Set-Cookie: csrf_token=...` |
+| 400 | Formato o verificación fallida | - |
+| 404 | Usuario o credencial no encontrados | - |
+| 403 | Credencial que no pertenece al usuario | - |
+| 415 / 413 / 429 | Como en el resto de rutas | - |
 | 500 | Error del servidor | - |
 
 **Headers de Respuesta (200):**
 ```
-Set-Cookie: session_token=uuid_token; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=1800
+Set-Cookie: session_token=<43 caracteres base64url>; Path=/; HttpOnly; SameSite=Lax; Max-Age=1800
+Set-Cookie: csrf_token=<43 caracteres base64url>; Path=/; SameSite=Lax; Max-Age=3600
 ```
+
+> En producción ambas cookies añaden el atributo `Secure`.
 
 ---
 
@@ -963,16 +870,22 @@ Set-Cookie: session_token=uuid_token; Path=/; HttpOnly; Secure; SameSite=Lax; Ma
 
 Destruye la sesión activa del usuario.
 
-**Descripción:** Elimina la sesión de la base de datos y limpia la cookie de sesión.
+**Descripción:** Elimina la clave de sesión en Redis y borra la cookie.
+**Requiere la cabecera `X-CSRF-Token`** coincidente con la cookie
+`csrf_token` (comparación en tiempo constante).
 
-**Parámetros de Request:**
-Ninguno (usa la cookie de sesión del request)
+**Request:**
+```
+Cookie: session_token=...; csrf_token=...
+X-CSRF-Token: <mismo valor que la cookie csrf_token>
+```
 
 **Respuestas:**
 
 | Código | Descripción | Headers |
 |---|---|---|
 | 200 | Logout exitoso | `Set-Cookie: session_token=; Max-Age=0` |
+| 403 | Token CSRF ausente o inválido | - |
 | 500 | Error del servidor | - |
 
 **Body (200):**
@@ -982,15 +895,69 @@ Ninguno (usa la cookie de sesión del request)
 }
 ```
 
+---
+
+### GET `/api/auth/me`
+
+Devuelve el vault cifrado del usuario autenticado.
+
+**Respuestas:**
+
+| Código | Descripción | Body |
+|---|---|---|
+| 200 | Sin bóveda todavía | `{ "ok": true, "hasVault": false }` |
+| 200 | Con bóveda | `{ "ok": true, "hasVault": true, "salt": "...", "iv": "...", "encryptedData": "...", "version": 1, "updatedAt": "..." }` |
+| 401 | Sin sesión | `{ "ok": false, "error": "No autenticado" }` |
+| 429 | Límite de lecturas (240/min por usuario) | `{ "ok": false, "error": "Demasiados intentos..." }` |
+
+`salt`, `iv` y `encryptedData` son **base64** (no arrays): es el mismo
+formato que acepta el `POST`.
+
+---
+
+### POST `/api/auth/me`
+
+Guarda el vault cifrado del usuario.
+
+**Descripción:** Valida el origen **y** el token CSRF, y después aplica las
+reglas de `validateVaultPayload`: `salt` = 16 bytes, `iv` = exactamente
+12 bytes (AES-GCM) y `encryptedData` dentro del límite de 5 MB, todo en
+base64 válido.
+
+**Body:**
+```json
+{
+  "salt": "<base64 de 16 bytes>",
+  "iv": "<base64 de 12 bytes>",
+  "encryptedData": "<base64 cifrado>"
+}
+```
+
+**Respuestas:**
+
+| Código | Descripción | Body |
+|---|---|---|
+| 200 | Vault guardado | `{ "ok": true, "version": 2 }` |
+| 400 | Payload inválido | `{ "ok": false, "error": "IV debe decodificar exactamente a 12 bytes", "field": "iv" }` |
+| 401 | Sin sesión | `{ "ok": false, "error": "No autenticado" }` |
+| 403 | Origen o token CSRF inválido | `{ "ok": false, "error": "Token CSRF inválido", "field": "csrf" }` |
+| 413 / 415 | Cuerpo demasiado grande o Content-Type incorrecto | - |
+| 429 | Límite de escrituras (120/min por usuario) | `{ "ok": false, "error": "Demasiados intentos..." }` |
+| 500 | Error del servidor | `{ "ok": false, "error": "Error al guardar" }` |
+
+---
+
 ## Formato de Respuesta Estándar
 
-Todos los endpoints de autenticación siguen el siguiente formato:
+Todos los endpoints siguen el siguiente formato:
 
 ```typescript
 interface ApiResponse {
   ok: boolean;
-  options?: object;    // Solo en respuestas de opciones
-  error?: string;      // Solo en errores
+  options?: object;   // Solo en respuestas de opciones
+  challengeId?: string; // Solo en `*/options`
+  error?: string;     // Solo en errores
+  field?: string;     // Campo que ha fallado la validación
 }
 ```
 
@@ -1001,7 +968,12 @@ interface ApiResponse {
 | 200 | OK | Operación exitosa |
 | 400 | Bad Request | Datos de entrada inválidos |
 | 401 | Unauthorized | No autenticado |
+| 403 | Forbidden | Origen o token CSRF inválido, propiedad de credencial |
 | 404 | Not Found | Usuario o credencial no encontrada |
+| 409 | Conflict | Email o credencial ya registrados |
+| 413 | Payload Too Large | Cuerpo por encima del límite |
+| 415 | Unsupported Media Type | Content-Type distinto de `application/json` |
+| 429 | Too Many Requests | Rate limit superado (con `Retry-After`) |
 | 500 | Internal Server Error | Error interno del servidor |
 
 \newpage
@@ -1244,48 +1216,53 @@ export async function verifyRegistration(
 |---|---|
 | **Tipo** | Cookie httpOnly |
 | **Nombre** | `session_token` |
-| **TTL** | 30 minutos |
-| **Secure** | true en producción |
+| **TTL** | 30 minutos de inactividad (renovado en cada petición) |
+| **Secure** | `true` en producción |
 | **SameSite** | Lax |
-| **Almacenamiento** | PostgreSQL tabla `sessions` |
+| **Token** | 32 bytes aleatorios en base64url (43 caracteres) |
+| **Almacenamiento** | Redis, clave `session:<sha256(token)>` |
+| **Datos guardados** | Solo `{ userId, createdAt }` — nunca el token en claro |
+
+> **¿Por qué el hash?** Si Redis se volcara o se filtrara, no se podría
+> reconstruir una cookie válida a partir de lo almacenado.
 
 **Código de Sesión:**
 ```typescript
 // server/services/SessionService.ts
-export async function createSession(userId: string): Promise<string> {
-  const token = randomUUID();
-  const expiresAt = new Date(Date.now() + 30 * 60 * 1000); // 30 min
+static async create(userId: string, jar?: CookieJar) {
+  const token = randomToken(32);                    // 256 bits
+  const hash = await sha256Hex(token);              // solo esto se guarda
 
-  await prisma.session.create({
-    data: { id: token, userId, expiresAt },
+  await getKv().set(`session:${hash}`, JSON.stringify({ userId }), 30 * 60);
+
+  store.set('session_token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: 30 * 60,
   });
-
-  return token;
 }
 
-export async function validateSession(token: string) {
-  const session = await prisma.session.findUnique({
-    where: { id: token },
-    include: { user: true },
-  });
+static async validate(jar?: CookieJar) {
+  const token = jar.get('session_token');
+  if (!token) return null;
 
-  if (!session || session.expiresAt < new Date()) {
-    return null;
-  }
+  const raw = await getKv().get(`session:${sha256Hex(token)}`);
+  if (!raw) return null;
 
-  return session;
-}
+  // Expiración deslizante: mientras haya actividad, la sesión sigue viva.
+  await getKv().expire(`session:${sha256Hex(token)}`, 30 * 60);
 
-export async function destroySession(token: string) {
-  await prisma.session.delete({ where: { id: token } });
+  return JSON.parse(raw);
 }
 ```
 
 ## Revocación de Sesiones
 
-- **Logout**: Elimina la sesión de PostgreSQL y limpia la cookie
-- **Expiración**: Sesiones expiran automáticamente después de 30 minutos
-- **Invalidación**: Al cambiar de dispositivo, las sesiones anteriores pueden ser revocadas manualmente
+- **Logout**: `POST /api/auth/login/logout` borra la clave en Redis y elimina la cookie (requiere token CSRF)
+- **Expiración**: TTL de 30 minutos por inactividad; Redis la elimina sola, sin limpieza de tablas
+- **Cookie CSRF**: `csrf_token` se renueva automáticamente desde `proxy.ts`
 
 \newpage
 
@@ -1302,30 +1279,49 @@ Actualmente ClaveVault implementa un modelo de autorización simple basado en au
 
 ## Protección de Rutas
 
-### Middleware Proxy
+### Middleware Proxy (`proxy.ts`)
+
+El middleware hace tres cosas, en este orden:
+
+1. **Valida el origen** de toda petición que modifica estado
+   (`POST/PUT/PATCH/DELETE`) contra la cabecera `Host`. Si falta el
+   `Origin`/`Referer` o no coincide, devuelve `403` sin llegar a la ruta.
+2. **Protege `/passwords`**: redirige a `/online` si no hay sesión válida.
+3. **Emite la cookie `csrf_token`** si el cliente todavía no la tiene, para
+   que pueda leerla y devolverla en `X-CSRF-Token`.
 
 ```typescript
 // proxy.ts
-export async function sessionGuard(request: NextRequest) {
-  const sessionToken = request.cookies.get('session_token')?.value;
-
-  if (!sessionToken) {
-    return NextResponse.redirect(new URL('/online', request.url));
+export async function proxy(request: NextRequest) {
+  if (CsrfService.isMutating(request.method)) {
+    try {
+      CsrfService.assertOrigin(request.headers);   // 403 si no coincide
+    } catch {
+      return NextResponse.json({ ok: false, error: 'Origen no permitido' }, { status: 403 });
+    }
   }
 
-  const session = await validateSession(sessionToken);
-  if (!session) {
-    return NextResponse.redirect(new URL('/online', request.url));
+  if (isProtected(request.nextUrl.pathname)) {
+    const session = await SessionService.validate(readOnlyJar(...));
+    if (!session) {
+      return NextResponse.redirect(new URL('/online', request.url));
+    }
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  CsrfService.ensureForResponse(request.cookies.get('csrf_token')?.value, ...);
+  return response;
 }
+
+export const config = {
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|video/|robots.txt|sitemap.xml).*)'],
+};
 ```
 
 ### AuthGuard (Modo Offline)
 
 ```typescript
-// app/offline/AuthGuard.tsx
+// features/offline/AuthGuard.tsx
 export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { isUnLocked } = useLocalContext();
 
@@ -1560,6 +1556,10 @@ DATABASE_URL=postgresql://postgres:1234@localhost:5432/vault
 RP_ID=localhost
 ORIGIN=http://localhost:3000
 
+# Redis (Upstash) — obligatorio en producción
+UPSTASH_REDIS_REST_URL=https://xxx.upstash.io
+UPSTASH_REDIS_REST_TOKEN=AXxx...
+
 # Next.js
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NODE_ENV=development
@@ -1574,6 +1574,12 @@ NODE_ENV=development
 | `ORIGIN` | Server | Origen permitido para WebAuthn | `http://localhost:3000` | `https://clavevault.com` |
 | `NODE_ENV` | Runtime | Entorno de ejecución | `development` | `production` |
 | `NEXT_PUBLIC_SITE_URL` | Client | URL pública del sitio | `http://localhost:3000` | `https://clavevault.com` |
+| `UPSTASH_REDIS_REST_URL` | Server | URL REST de Upstash Redis (retos, sesiones, rate limit) | - | `https://xxx.upstash.io` |
+| `UPSTASH_REDIS_REST_TOKEN` | Server | Token de Upstash Redis | - | `AXxx...` |
+
+> **Sin claves de Redis en local** se usa un almacén en memoria, que se
+> vacía al reiniciar `npm run dev`. En producción, si faltan, la aplicación
+> falla de forma explícita en lugar de degradarse en silencio.
 
 ## Configuraciones
 
@@ -1582,15 +1588,42 @@ NODE_ENV=development
 ```typescript
 import type { NextConfig } from 'next';
 
+const isProduction = process.env.NODE_ENV === 'production';
+
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  `script-src 'self' 'unsafe-inline'${isProduction ? '' : " 'unsafe-eval'"}`,
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "media-src 'self' blob:",
+  "font-src 'self' data:",
+  isProduction ? "connect-src 'self'" : "connect-src 'self' ws: wss:",
+  "manifest-src 'self'",
+].join('; ');
+
 const nextConfig: NextConfig = {
-  experimental: {
-    viewTransition: false,
-  },
+  cacheComponents: true,
   allowedDevOrigins: ['192.168.0.105'],
+  async headers() {
+    return [
+      { source: '/(.*)', headers: securityHeaders },
+      { source: '/api/(.*)', headers: [{ key: 'Cache-Control', value: 'no-store' }] },
+      { source: '/video/:path*', headers: [{ key: 'Cache-Control', value: 'public, max-age=31536000, immutable' }] },
+    ];
+  },
 };
 
 export default nextConfig;
 ```
+
+Las cabeceras aplicadas en todas las rutas son: `Content-Security-Policy`,
+`X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`,
+`Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`
+(y `Strict-Transport-Security` en producción).
 
 ### TypeScript (`tsconfig.json`)
 
@@ -1678,14 +1711,14 @@ FROM node:20-alpine AS base
 
 FROM base AS deps
 WORKDIR /app
-COPY package.json pnpm-lock.yaml ./
-RUN corepack enable pnpm && pnpm install --frozen-lockfile
+COPY package.json package-lock.json ./
+RUN npm ci
 
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN corepack enable pnpm && pnpm build
+RUN npm run build
 
 FROM base AS runner
 WORKDIR /app
@@ -1750,7 +1783,7 @@ volumes:
 
 ```bash
 # 1. Instalar dependencias
-pnpm install
+npm install
 
 # 2. Configurar variables de entorno
 cp .env.example .env
@@ -1768,17 +1801,17 @@ docker run -d --name vault-db \
 npx prisma migrate dev
 
 # 5. Iniciar servidor de desarrollo
-pnpm dev
+npm run dev
 ```
 
 ## Build de Producción
 
 ```bash
 # Construir
-pnpm build
+npm run build
 
 # Iniciar
-pnpm start
+npm run start
 ```
 
 ## CI/CD
@@ -1801,37 +1834,34 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm lint
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run lint
 
   typecheck:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm tsc --noEmit
+          cache: 'npm'
+      - run: npm ci
+      - run: npx tsc --noEmit
 
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: 'pnpm'
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm build
+          cache: 'npm'
+      - run: npm ci
+      - run: npm run build
 
   deploy:
     needs: [lint, typecheck, build]
@@ -1877,20 +1907,33 @@ const nextConfig = {
 
 ## CSP (Content Security Policy)
 
-> **Planificado:** Implementar headers CSP estrictos.
+**Estado:** ✅ Implementado en `next.config.ts` para todas las rutas.
 
 ```
 Content-Security-Policy:
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline';
-  style-src 'self' 'unsafe-inline';
-  img-src 'self' data:;
-  font-src 'self';
-  connect-src 'self';
-  frame-ancestors 'none';
   base-uri 'self';
   form-action 'self';
+  frame-ancestors 'none';
+  object-src 'none';
+  script-src 'self' 'unsafe-inline' (+ 'unsafe-eval' solo en desarrollo);
+  style-src 'self' 'unsafe-inline';
+  img-src 'self' data: blob:;
+  media-src 'self' blob:;
+  font-src 'self' data:;
+  connect-src 'self' (ws: wss: solo en desarrollo, HMR);
+  manifest-src 'self';
 ```
+
+**Notas:**
+- `'unsafe-inline'` en `script-src` es necesario porque Next.js inyecta sus
+  scripts de hidratación inline; aun así la directiva **bloquea cargar
+  scripts desde dominios de terceros**, que es el vector típico de XSS.
+- `frame-ancestors 'none'` (más `X-Frame-Options: DENY`) impide que la
+  bóveda se incruste en iframes ajenos.
+- `media-src 'self' blob:` permite el vídeo de fondo de la portada.
+- Mejora futura: pasar a CSP con `nonce` generado en el middleware para
+  poder eliminar `'unsafe-inline'` de `script-src`.
 
 ## XSS (Cross-Site Scripting)
 
@@ -1900,15 +1943,40 @@ Content-Security-Policy:
 - Next.js sanitiza entradas en server components
 
 **Medidas pendientes:**
-- Sanitización explícita de entradas de usuario
-- Headers de seguridad HTTP
+- Sanitización de URLs (`javascript:`) antes de renderizar enlaces
 
 ## CSRF (Cross-Site Request Forgery)
 
-**Medidas implementadas:**
-- Cookies con `SameSite=Lax`
-- WebAuthn incluye verificación de origin
-- Patrón POST para todas las mutaciones
+**Estado:** ✅ Implementado en dos capas (`CsrfService`).
+
+**Capa 1 — validación de origen** (`proxy.ts`, todas las rutas):
+- Toda petición `POST/PUT/PATCH/DELETE` debe llevar `Origin` (o en su
+  defecto `Referer`) cuyo host coincida con la cabecera `Host`.
+- Si no hay ninguno de los dos, o no coinciden → `403 Origen no permitido`.
+- Cubre `app/` y `app/api/`, es decir, rutas y endpoints.
+
+**Capa 2 — doble cookie** (`/api/auth/me` y `/api/auth/login/logout`):
+1. El servidor emite `csrf_token` en una cookie **legible por JavaScript**.
+2. `apiFetch()` la lee y la envía en la cabecera `X-CSRF-Token`.
+3. El servidor compara cookie y cabecera con `timingSafeEqual`
+   (comparación en tiempo constante).
+
+Un tercero puede forzar una petición desde su sitio, pero no puede leer
+esa cookie (política de mismo origen) ni inyectar la cabecera sin que el
+navegador dispare un preflight CORS.
+
+**Refuerzo:** `SameSite=Lax` en `session_token` + verificación de `Origin`
+dentro de `@simplewebauthn/server` durante la ceremonia WebAuthn.
+
+**Cómo usar la API desde un cliente:**
+```typescript
+import { apiFetch } from '@/lib/http/apiFetch';
+
+await apiFetch('/api/auth/me', {
+  method: 'POST',
+  body: JSON.stringify({ salt, iv, encryptedData }),
+});
+```
 
 ## SQL Injection
 
@@ -1923,30 +1991,56 @@ const user = await prisma.user.findUnique({
 
 ## Rate Limiting
 
-> **Planificado:** Implementar rate limiting en endpoints de autenticación.
+**Estado:** ✅ Implementado con Redis (`RateLimitService`).
+
+| Bucket | Clave | Límite | Ventana | Dónde |
+|---|---|---|---|---|
+| `auth:options` | IP | 20 | 15 min | `*/options` (login y registro) |
+| `auth:verify` | IP | 20 | 15 min | `*/verify` (login y registro) |
+| `vault:read` | userId | 240 | 60 s | `GET /api/auth/me` |
+| `vault:write` | userId | 120 | 60 s | `POST /api/auth/me` |
 
 ```typescript
-// Ejemplo planificado con next-rate-limit
-import rateLimit from 'next-rate-limit';
+// server/services/RateLimitService.ts
+static async hit(key: string, limit: number, windowSeconds: number) {
+  const count = await kv.incr(`rl:${key}`);
+  if (count === 1) await kv.expire(`rl:${key}`, windowSeconds); // solo al nacer
 
-const rateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 10,                   // 10 intentos
-  message: 'Demasiados intentos, intenta de nuevo en 15 minutos',
-});
+  if (count > limit) {
+    return { allowed: false, retryAfter: await kv.ttl(`rl:${key}`) };
+  }
+  return { allowed: true, remaining: limit - count, retryAfter: 0 };
+}
 ```
+
+La respuesta de bloqueo incluye la cabecera `Retry-After` que exige la RFC.
+`INCR` es atómico en Redis, así que varios intentos simultáneos no pueden
+quedarse sin contar.
 
 ## Validación de Datos
 
-```typescript
-// Validación de entrada en ActionSubmit
-export function validatePassword(password: string): boolean {
-  return password.length >= 8;
-}
+**Estado:** ✅ Centralizada en `server/services/ValidationService.ts`.
+**Ninguna ruta escribe sus propios `if` de validación**: todas delegan en
+el servicio, así que una ruta nueva no puede "olvidar" validar.
 
-export function validateVaultInputs(data: VaultInput): boolean {
-  return !!(data.email && data.password && data.password.length >= 8);
-}
+| Método | Qué valida |
+|---|---|
+| `readJson(request, maxBytes)` | `Content-Type: application/json` (415), límite de tamaño por streaming (413), JSON bien formado y objeto plano (400) |
+| `validateOptionsPayload` | `email` presente y con formato válido (máx. 254 caracteres) |
+| `validateChallengeId` | Formato `base64url` de 16–64 caracteres |
+| `validateRegistrationResponse` | `type === 'webauthn.create'`, campos `id`, `rawId`, `clientDataJSON`, `authenticatorData`, `attestationObject` en base64url y acotados, `transports` opcional y `id === rawId` |
+| `validateAuthenticationResponse` | `type === 'webauthn.get'`, mismos campos más `signature`, `userHandle` opcional y `id === rawId` |
+| `validateLoginVerifyPayload` / `validateRegisterVerifyPayload` | `challengeId` + respuesta WebAuthn correspondiente |
+| `validateVaultPayload` | `salt` = 16 bytes, **`iv` = exactamente 12 bytes**, `encryptedData` dentro del límite de 5 MB, todo base64 válido |
+| `validatePassword` | Longitud 8–128 |
+
+```typescript
+// Uso típico dentro de una ruta
+const body = await ValidationService.readJson(request);
+if (!body.ok) return body.response;
+
+const validation = ValidationService.validateLoginVerifyPayload(body.body);
+if (!validation.ok) return ValidationService.toResponse(validation);
 ```
 
 ## Sanitización
@@ -1966,9 +2060,13 @@ export function validateVaultInputs(data: VaultInput): boolean {
 | Counter verification | ✅ Implementado |
 | PBKDF2 con 200K iteraciones | ✅ Implementado |
 | AES-256-GCM (no AES-CBC) | ✅ Implementado |
-| Rate limiting | ❌ Planificado |
-| CSP headers | ❌ Planificado |
-| HSTS | ❌ Planificado |
+| Rate limiting en autenticación y vault | ✅ Implementado |
+| CSP headers | ✅ Implementado |
+| HSTS (producción) | ✅ Implementado |
+| Validación de entrada centralizada en servicio | ✅ Implementado |
+| CSRF: validación de origen + doble cookie | ✅ Implementado |
+| Sesiones en Redis con token hasheado | ✅ Implementado |
+| Restricción de credencial por usuario en el login | ✅ Implementado |
 
 \newpage
 
@@ -2446,13 +2544,13 @@ Implementa el flujo de login usando WebAuthn/FIDO2.
 ### Configuración
 ```bash
 # Formatear todo el proyecto
-pnpm prettier --write .
+npm run format
 
 # Verificar lint
-pnpm lint
+npm run lint
 
 # Auto-fix
-pnpm lint --fix
+npm run lint:fix
 ```
 
 \newpage
@@ -2463,7 +2561,7 @@ pnpm lint --fix
 
 ### Prerrequisitos
 - Node.js 20+
-- pnpm (recomendado) o npm
+- npm
 - PostgreSQL 16+
 - Git
 
@@ -2475,7 +2573,7 @@ git clone https://github.com/usuario/G--ClaveVault.git
 cd G--ClaveVault
 
 # 2. Instalar dependencias
-pnpm install
+npm install
 
 # 3. Configurar variables de entorno
 cp .env.example .env
@@ -2493,21 +2591,21 @@ docker run -d --name vault-db \
 npx prisma migrate dev
 
 # 6. Iniciar servidor de desarrollo
-pnpm dev
+npm run dev
 ```
 
 ## Ejecutar
 
 ```bash
 # Desarrollo
-pnpm dev
+npm run dev
 
 # Build de producción
-pnpm build
-pnpm start
+npm run build
+npm run start
 
 # Lint
-pnpm lint
+npm run lint
 ```
 
 ## Crear una Rama
@@ -2652,14 +2750,14 @@ Actualmente no. Estamos planificando soporte para importación desde:
 - KeePass
 
 ### ¿Por qué el challenge de WebAuthn no se encuentra?
-Los challenges se almacenan en un `Map` en memoria del servidor. Si el servidor se reinicia (en desarrollo), los challenges se pierden. En producción, esto no debería ocurrir. Solución: usar `pnpm build && pnpm start` en lugar de `pnpm dev`.
+Los challenges se almacenan en un `Map` en memoria del servidor. Si el servidor se reinicia (en desarrollo), los challenges se pierden. En producción, esto no debería ocurrir. Solución: usar `npm run build && npm run start` en lugar de `npm run dev`.
 
 ## Preguntas de Desarrollo
 
 ### ¿Cómo agrego un nuevo tipo de categoría?
 1. Agregar el tipo en `types/index.ts`
 2. Actualizar el componente de selección de categoría
-3. Agregar el botón de navegación en `const/buttonsNavegations.js`
+3. Agregar el botón de navegación en `constants/navigationButtons.ts`
 
 ### ¿Cómo agrego un nuevo endpoint API?
 1. Crear archivo en `app/api/<ruta>/route.ts`
@@ -2797,7 +2895,7 @@ stateDiagram-v2
 ### Ejemplo: Generador de Contraseñas
 
 ```typescript
-// lib/utils/Gestor/generatePassword.tsx
+// lib/utils/manager/generatePassword.ts
 interface PasswordConfig {
   length: number;
   uppercase: boolean;
@@ -2908,10 +3006,10 @@ export async function decryptData(
 
 | Script | Comando | Descripción |
 |---|---|---|
-| Desarrollo | `pnpm dev` | Inicia servidor de desarrollo |
-| Build | `pnpm build` | Construye para producción |
-| Start | `pnpm start` | Inicia servidor de producción |
-| Lint | `pnpm lint` | Verifica código con ESLint |
+| Desarrollo | `npm run dev` | Inicia servidor de desarrollo |
+| Build | `npm run build` | Construye para producción |
+| Start | `npm run start` | Inicia servidor de producción |
+| Lint | `npm run lint` | Verifica código con ESLint |
 | Prisma Generate | `npx prisma generate` | Genera cliente Prisma |
 | Prisma Migrate | `npx prisma migrate dev` | Ejecuta migraciones |
 | Prisma Studio | `npx prisma studio` | Abre Prisma Studio |
