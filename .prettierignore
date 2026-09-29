@@ -1,0 +1,24 @@
+# Dependencias y build
+node_modules/
+.next/
+out/
+build/
+coverage/
+lib/generated/
+
+# Lockfiles (generados por el gestor de paquetes)
+package-lock.json
+pnpm-lock.yaml
+pnpm-workspace.yaml
+
+# Skills de agentes IA (no son código del proyecto)
+.agents/
+
+# Documentación larga (se edita a mano)
+docs/
+README.md
+
+# Varios
+public/
+*.tsbuildinfo
+next-env.d.ts
