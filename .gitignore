@@ -41,9 +41,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Agents code
-/.agents
+# Agents code (las skills sí se versionan; el resto es metadata local)
+/.agents/*
+!/.agents/skills/
 /.cursor
 /skills-lock.json
 
 /lib/generated/
+.neon
