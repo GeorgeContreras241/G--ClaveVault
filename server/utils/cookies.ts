@@ -1,27 +1,8 @@
 import { cookies } from 'next/headers';
+import type { CookieOptions, CookieJar } from "@/types/index";
 
-export type CookieOptions = {
-  httpOnly?: boolean;
-  secure?: boolean;
-  sameSite?: 'lax' | 'strict' | 'none';
-  path?: string;
-  maxAge?: number;
-};
 
-/**
- * Abstracción mínima de cookies para que los servicios (SessionService,
- * CsrfService) funcionen igual dentro de una Route Handler (usa
- * `next/headers`) y dentro de `proxy.ts` (usa request/response de Next).
- */
-export interface CookieJar {
-  get(name: string): string | undefined;
-  set(name: string, value: string, options?: CookieOptions): void;
-  delete(name: string): void;
-}
 
-/**
- * Jarra para Route Handlers y Server Components.
- */
 export async function nextCookieJar(): Promise<CookieJar> {
   const store = await cookies();
   return {

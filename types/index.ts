@@ -123,3 +123,20 @@ export type PassStorage = {
   handleImport: (file: File, password: string) => Promise<ImportResult>;
   handleReset: () => Promise<void>;
 };
+
+
+// cookies.ts
+
+export type CookieOptions = {
+  httpOnly?: boolean;
+  secure?: boolean;
+  sameSite?: 'lax' | 'strict' | 'none';
+  path?: string;
+  maxAge?: number;
+};
+
+export interface CookieJar {
+  get(name: string): string | undefined;
+  set(name: string, value: string, options?: CookieOptions): void;
+  delete(name: string): void;
+}

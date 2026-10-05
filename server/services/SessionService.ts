@@ -1,7 +1,7 @@
 import { nextCookieJar } from '@/server/utils/cookies';
 import { randomToken, sha256Hex } from '@/server/utils/crypto';
 import { getKv } from '@/server/redis/client';
-import type { CookieJar } from '@/server/utils/cookies';
+import type { CookieJar } from '@/types/index';
 
 export const SESSION_COOKIE_NAME = 'session_token';
 

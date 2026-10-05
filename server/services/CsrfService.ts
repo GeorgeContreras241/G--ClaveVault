@@ -1,4 +1,4 @@
-import type { CookieJar, CookieOptions } from '@/server/utils/cookies';
+import type { CookieJar, CookieOptions } from '@/types/index';
 import { randomToken, timingSafeEqual } from '@/server/utils/crypto';
 
 export const CSRF_COOKIE_NAME = 'csrf_token';
