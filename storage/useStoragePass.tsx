@@ -110,6 +110,11 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
     a.download = 'pass.enc';
     a.click();
     URL.revokeObjectURL(url);
+
+    sileo.success({
+      title: 'Bóveda exportada correctamente.',
+      duration: 1000,
+    });
   },
 
   handleImport: async (file: File, password: string): Promise<ImportResult> => {

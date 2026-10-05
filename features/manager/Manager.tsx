@@ -1,6 +1,7 @@
 // Refacor en proceso
 'use client';
 import { useState } from 'react';
+import { sileo } from 'sileo';
 import { useStoragePass } from '@/storage/useStoragePass';
 import { HeaderManager } from '@/features/manager/components/HeaderManager';
 import { copyToClipboard } from '@/lib/utils/manager/copyToClipboard';
@@ -50,6 +51,8 @@ export const Manager = () => {
   };
 
   const handleDeletePassword = async (id: string) => {
+    let saved = false;
+
     if (mode === 'online' && derivedKey && salt) {
       try {
         const updatedPasswords = dataPassword.filter((p) => p.id !== id);
@@ -69,6 +72,7 @@ export const Manager = () => {
         if (data.ok && data.version) {
           setDataPasswordDelate(id);
           setVersion(data.version);
+          saved = true;
         }
       } catch (error) {
         console.error('Error guardando vault:', error);
@@ -76,6 +80,14 @@ export const Manager = () => {
       }
     } else {
       setDataPasswordDelate(id);
+      saved = true;
+    }
+
+    if (saved) {
+      sileo.success({
+        title: 'Contraseña eliminada.',
+        duration: 1000,
+      });
     }
   };
 

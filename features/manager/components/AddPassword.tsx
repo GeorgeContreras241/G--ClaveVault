@@ -1,4 +1,5 @@
 'use client';
+import { sileo } from 'sileo';
 import { Button } from '@/components/ui/button';
 import { Copy } from '@/components/icons/Copy';
 import { useState } from 'react';
@@ -91,6 +92,10 @@ export const AddPassword = () => {
   const handleGeneratePassword = () => {
     setKeys({ ...keys, password: generatePassword(passwordOptions) });
     setErrors({ ...errors, password: undefined });
+    sileo.success({
+      title: 'Se ha generado una nueva contraseña.',
+      duration: 1000,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -102,6 +107,8 @@ export const AddPassword = () => {
     const id =
       crypto?.randomUUID?.() || Math.random().toString(36).substring(2, 15);
     const newEntry = toPasswordEntry({ id, ...keys });
+
+    let saved = false;
 
     if (mode === 'online' && derivedKey && salt) {
       try {
@@ -122,6 +129,7 @@ export const AddPassword = () => {
         if (data.ok && data.version) {
           setDataPasswordUpdate(newEntry);
           setVersion(data.version);
+          saved = true;
         }
       } catch (error) {
         console.error('Error guardando vault:', error);
@@ -129,10 +137,26 @@ export const AddPassword = () => {
       }
     } else {
       setDataPasswordUpdate(newEntry);
+      saved = true;
     }
 
     resetForm();
     setIsFormVisible(false);
+
+    if (saved) {
+      sileo.success({
+        title: 'Contraseña agregada correctamente.',
+        duration: 1000,
+      });
+    }
+  };
+
+  const handlecopyToClipboard = () => {
+    copyToClipboard(keys.password);
+    sileo.success({
+      title: 'Contraseña copiada al portapapeles.',
+      duration: 1000,
+    });
   };
 
   return (
@@ -297,7 +321,7 @@ export const AddPassword = () => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => copyToClipboard(keys.password)}
+                    onClick={handlecopyToClipboard}
                     className="p-1 rounded hover:bg-vault-amber/10 transition-colors"
                   >
                     <Copy />

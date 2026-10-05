@@ -1,4 +1,5 @@
 'use client';
+import { sileo } from 'sileo';
 import { Copy } from '@/components/icons/Copy';
 import { Eye } from '@/components/icons/Eye';
 import { EyeClose } from '@/components/icons/EyeClose';
@@ -18,6 +19,11 @@ export const PasswordCard = ({
   onToggleFavorite,
   getCategoryIcon,
 }: PasswordCardProps) => {
+  const handleCopy = (text: string, title: string) => {
+    onCopyToClipboard(text);
+    sileo.success({ title, duration: 1000 });
+  };
+
   return (
     <article className="vault-action-card vault-panel rounded-xl overflow-hidden">
       <div className="flex items-center gap-3 p-3 border-b border-border">
@@ -61,7 +67,12 @@ export const PasswordCard = ({
                 {password.username}
               </span>
               <button
-                onClick={() => onCopyToClipboard(password.username)}
+                onClick={() =>
+                  handleCopy(
+                    password.username,
+                    'Usuario copiado al portapapeles.'
+                  )
+                }
                 className="absolute right-1.5 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-vault-amber/10 transition-colors"
                 aria-label="Copiar usuario"
               >
@@ -91,7 +102,12 @@ export const PasswordCard = ({
                   {showPasswords[password.id] ? <EyeClose /> : <Eye />}
                 </button>
                 <button
-                  onClick={() => onCopyToClipboard(password.password)}
+                  onClick={() =>
+                    handleCopy(
+                      password.password,
+                      'Contraseña copiada al portapapeles.'
+                    )
+                  }
                   className="p-0.5 rounded hover:bg-vault-amber/10 transition-colors"
                   aria-label="Copiar contraseña"
                 >

@@ -1,4 +1,5 @@
 'use client';
+import { sileo } from 'sileo';
 import { Button } from '@/components/ui/button';
 import { Copy } from '@/components/icons/Copy';
 import { useState } from 'react';
@@ -72,6 +73,18 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
   const handleGeneratePassword = () => {
     setKeys({ ...keys, password: generatePassword(passwordOptions) });
     setErrors({ ...errors, password: undefined });
+    sileo.success({
+      title: 'Se ha generado una nueva contraseña.',
+      duration: 1000,
+    });
+  };
+
+  const handleCopyToClipboard = () => {
+    copyToClipboard(keys.password);
+    sileo.success({
+      title: 'Contraseña copiada al portapapeles.',
+      duration: 1000,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -81,6 +94,8 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
     }
 
     const editedEntry = toPasswordEntry(keys);
+
+    let saved = false;
 
     if (mode === 'online' && derivedKey && salt) {
       try {
@@ -103,6 +118,7 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
         if (data.ok && data.version) {
           setDataPasswordEdit(editedEntry);
           setVersion(data.version);
+          saved = true;
         }
       } catch (error) {
         console.error('Error guardando vault:', error);
@@ -110,9 +126,17 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
       }
     } else {
       setDataPasswordEdit(editedEntry);
+      saved = true;
     }
 
     onClose();
+
+    if (saved) {
+      sileo.success({
+        title: 'Cambios guardados correctamente.',
+        duration: 1000,
+      });
+    }
   };
 
   const inputClass = (hasError: boolean) =>
@@ -302,7 +326,7 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
                   </button>
                   <button
                     type="button"
-                    onClick={() => copyToClipboard(keys.password)}
+                    onClick={handleCopyToClipboard}
                     className="p-1 rounded hover:bg-vault-amber/10 transition-colors"
                   >
                     <Copy />
