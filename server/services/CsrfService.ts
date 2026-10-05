@@ -28,7 +28,7 @@ function baseCookieOptions(): CookieOptions {
   return {
     httpOnly: false, // el cliente debe poder leerlo para reenviarlo
     secure: isSecureEnv(),
-    sameSite: 'lax',
+    sameSite: 'strict',
     path: '/',
     maxAge: CSRF_TOKEN_TTL_SECONDS,
   };
