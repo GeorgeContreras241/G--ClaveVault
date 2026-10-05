@@ -343,18 +343,50 @@ export class ValidationService {
     return ValidationService.validateRegistrationResponse(body.attResp);
   }
 
-  static validateRegistrationResponse(attResp: unknown): ValidationResult {
-    if (!attResp || typeof attResp !== 'object') {
+  /**
+   * `clientDataJSON` es un JSON codificado en base64url. Devuelve el tipo
+   * de ceremonia (`webauthn.create` / `webauthn.get`) o `null` si no se
+   * puede decodificar. Ese campo, y no `attResp.type`, es donde viaja el
+   * tipo real: `attResp.type` es siempre `'public-key'` (WebAuthn L3).
+   */
+  private static clientDataType(
+    clientDataJSON: unknown
+  ): 'webauthn.create' | 'webauthn.get' | null {
+    if (!ValidationService.isValidBase64Url(clientDataJSON)) {
+      return null;
+    }
+    try {
+      const parsed: unknown = JSON.parse(
+        Buffer.from(clientDataJSON, 'base64').toString('utf8')
+      );
+      if (parsed && typeof parsed === 'object') {
+        const type = (parsed as { type?: unknown }).type;
+        if (type === 'webauthn.create' || type === 'webauthn.get') {
+          return type;
+        }
+      }
+    } catch {
+      // JSON roto: se trata como tipo desconocido.
+    }
+    return null;
+  }
+
+  /** Valida la envoltura común de toda respuesta JSON de WebAuthn. */
+  private static validateCredentialEnvelope(
+    attResp: unknown,
+    label: string
+  ): { ok: true; inner: Record<string, unknown> } | Failure {
+    if (!attResp || typeof attResp !== 'object' || Array.isArray(attResp)) {
       return {
         ok: false,
-        error: 'Respuesta de registro inválida',
+        error: `Respuesta de ${label} inválida`,
         field: 'attResp',
       };
     }
 
     const response = attResp as Record<string, unknown>;
 
-    if (response.type !== 'webauthn.create') {
+    if (response.type !== 'public-key') {
       return {
         ok: false,
         error: 'Tipo de respuesta incorrecto',
@@ -362,13 +394,7 @@ export class ValidationService {
       };
     }
 
-    for (const field of [
-      'id',
-      'rawId',
-      'clientDataJSON',
-      'authenticatorData',
-      'attestationObject',
-    ] as const) {
+    for (const field of ['id', 'rawId'] as const) {
       if (!ValidationService.isValidBase64Url(response[field])) {
         return {
           ok: false,
@@ -378,8 +404,71 @@ export class ValidationService {
       }
     }
 
-    if (response.transports !== undefined) {
-      const transports = response.transports;
+    if (response.rawId !== response.id) {
+      return {
+        ok: false,
+        error: 'id y rawId no coinciden',
+        field: 'attResp.rawId',
+      };
+    }
+
+    const inner = response.response;
+    if (!inner || typeof inner !== 'object' || Array.isArray(inner)) {
+      return {
+        ok: false,
+        error: `Respuesta de ${label} inválida`,
+        field: 'attResp.response',
+      };
+    }
+
+    return { ok: true, inner: inner as Record<string, unknown> };
+  }
+
+  static validateRegistrationResponse(attResp: unknown): ValidationResult {
+    const envelope = ValidationService.validateCredentialEnvelope(
+      attResp,
+      'registro'
+    );
+    if (!envelope.ok) {
+      return envelope;
+    }
+    const payload = envelope.inner;
+
+    for (const field of ['clientDataJSON', 'attestationObject'] as const) {
+      if (!ValidationService.isValidBase64Url(payload[field])) {
+        return {
+          ok: false,
+          error: `Campo ${field} inválido`,
+          field: `attResp.response.${field}`,
+        };
+      }
+    }
+
+    if (
+      ValidationService.clientDataType(payload.clientDataJSON) !==
+      'webauthn.create'
+    ) {
+      return {
+        ok: false,
+        error: 'Tipo de respuesta incorrecto',
+        field: 'attResp.response.clientDataJSON',
+      };
+    }
+
+    if (
+      payload.authenticatorData !== undefined &&
+      payload.authenticatorData !== null &&
+      !ValidationService.isValidBase64Url(payload.authenticatorData)
+    ) {
+      return {
+        ok: false,
+        error: 'Campo authenticatorData inválido',
+        field: 'attResp.response.authenticatorData',
+      };
+    }
+
+    if (payload.transports !== undefined && payload.transports !== null) {
+      const transports = payload.transports;
       if (
         !Array.isArray(transports) ||
         transports.length > 8 ||
@@ -390,74 +479,58 @@ export class ValidationService {
         return {
           ok: false,
           error: 'Transports inválidos',
-          field: 'attResp.transports',
+          field: 'attResp.response.transports',
         };
       }
-    }
-
-    if (response.rawId !== response.id) {
-      return {
-        ok: false,
-        error: 'id y rawId no coinciden',
-        field: 'attResp.rawId',
-      };
     }
 
     return { ok: true };
   }
 
   static validateAuthenticationResponse(attResp: unknown): ValidationResult {
-    if (!attResp || typeof attResp !== 'object') {
-      return {
-        ok: false,
-        error: 'Respuesta de autenticación inválida',
-        field: 'attResp',
-      };
+    const envelope = ValidationService.validateCredentialEnvelope(
+      attResp,
+      'autenticación'
+    );
+    if (!envelope.ok) {
+      return envelope;
     }
-
-    const response = attResp as Record<string, unknown>;
-
-    if (response.type !== 'webauthn.get') {
-      return {
-        ok: false,
-        error: 'Tipo de respuesta incorrecto',
-        field: 'attResp.type',
-      };
-    }
+    const payload = envelope.inner;
 
     for (const field of [
-      'id',
-      'rawId',
       'clientDataJSON',
       'authenticatorData',
       'signature',
     ] as const) {
-      if (!ValidationService.isValidBase64Url(response[field])) {
+      if (!ValidationService.isValidBase64Url(payload[field])) {
         return {
           ok: false,
           error: `Campo ${field} inválido`,
-          field: `attResp.${field}`,
+          field: `attResp.response.${field}`,
         };
       }
     }
 
     if (
-      response.userHandle !== undefined &&
-      response.userHandle !== null &&
-      !ValidationService.isValidBase64Url(response.userHandle)
+      ValidationService.clientDataType(payload.clientDataJSON) !==
+      'webauthn.get'
+    ) {
+      return {
+        ok: false,
+        error: 'Tipo de respuesta incorrecto',
+        field: 'attResp.response.clientDataJSON',
+      };
+    }
+
+    if (
+      payload.userHandle !== undefined &&
+      payload.userHandle !== null &&
+      !ValidationService.isValidBase64Url(payload.userHandle)
     ) {
       return {
         ok: false,
         error: 'Campo userHandle inválido',
-        field: 'attResp.userHandle',
-      };
-    }
-
-    if (response.rawId !== response.id) {
-      return {
-        ok: false,
-        error: 'id y rawId no coinciden',
-        field: 'attResp.rawId',
+        field: 'attResp.response.userHandle',
       };
     }
 
