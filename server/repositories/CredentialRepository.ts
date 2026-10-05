@@ -4,12 +4,14 @@ import { WebAuthnCredential } from '@/server/models';
 // operacionees db prisma
 
 export class CredentialRepository {
+
   async findByUserId(userId: string): Promise<WebAuthnCredential[]> {
     const records = await prisma.webAuthnCredential.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
     });
-    return records.map((record) => WebAuthnCredential.fromPrisma(record));
+    // revisar el typo de record
+    return records.map((record: any) => WebAuthnCredential.fromPrisma(record));
   }
 
   async findByCredentialId(
@@ -21,14 +23,6 @@ export class CredentialRepository {
     return record ? WebAuthnCredential.fromPrisma(record) : null;
   }
 
-  /**
-   * Búsqueda **por usuario + credencial**.
-   *
-   * Es la consulta que debe usarse durante el login: sin el filtro por
-   * `userId`, un atacante podría reclamar una credencial que pertenece a
-   * otra cuenta (la credencial es única globalmente, así que el `findFirst`
-   * la encuentra igual y habría que comprobarlo después).
-   */
   async findByUserIdAndCredentialId(
     userId: string,
     credentialId: string
