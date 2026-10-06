@@ -13,7 +13,6 @@ import type { OfflineUnlockProps } from '@/types';
 import { generateSalt } from '@/lib/crypto/generateSalt';
 import { deriveKey } from '@/lib/crypto/kdfKey';
 import Link from 'next/link';
-import { Arrow } from '@/components/icons/Arrow';
 
 export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
   const handleImport = useStoragePass((state) => state.handleImport);
@@ -157,11 +156,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
         className="absolute top-4 left-4 p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 transition-all duration-300"
         aria-label="Volver al inicio"
         title="Volver al inicio"
-      >
-        <div className="w-5 h-5 rotate-180">
-          <Arrow />
-        </div>
-      </Link>
+      />
       <div className="offline w-full grid place-items-center rounded-3xl p-6 md:p-8">
         <div className="w-full grid place-items-center gap-2">
           <div className="w-full flex gap-3 ">
@@ -177,7 +172,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
                 htmlFor="file"
                 className="w-full h-full flex flex-col items-center justify-center cursor-pointer border rounded-lg border-zinc-300 dark:border-zinc-500/30"
               >
-                <div className="vault-icon-frame w-16 h-16 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
+                <div className="w-16 h-16 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                   <Add />
                 </div>
                 <span className="text-sm text-zinc-800 dark:text-zinc-200 font-medium">
