@@ -94,7 +94,7 @@ export const AddPassword = () => {
     setErrors({ ...errors, password: undefined });
     sileo.success({
       title: 'Se ha generado una nueva contraseña.',
-      duration: 1000,
+      duration: 600,
     });
   };
 
@@ -146,7 +146,7 @@ export const AddPassword = () => {
     if (saved) {
       sileo.success({
         title: 'Contraseña agregada correctamente.',
-        duration: 1000,
+        duration: 600,
       });
     }
   };
@@ -155,7 +155,7 @@ export const AddPassword = () => {
     copyToClipboard(keys.password);
     sileo.success({
       title: 'Contraseña copiada al portapapeles.',
-      duration: 1000,
+      duration: 600,
     });
   };
 

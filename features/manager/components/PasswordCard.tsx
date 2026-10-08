@@ -21,7 +21,7 @@ export const PasswordCard = ({
 }: PasswordCardProps) => {
   const handleCopy = (text: string, title: string) => {
     onCopyToClipboard(text);
-    sileo.success({ title, duration: 1000 });
+    sileo.success({ title, duration: 600 });
   };
 
   return (
