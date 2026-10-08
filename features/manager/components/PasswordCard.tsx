@@ -46,7 +46,7 @@ export const PasswordCard = ({
           )}
         </div>
         <button
-          className="flex-shrink-0 p-1 rounded-md hover:bg-vault-amber/10 transition-colors"
+          className="flex-shrink-0 z-10 p-1 rounded-md hover:bg-vault-amber/10 transition-colors cursor-pointer"
           aria-label={
             password.favorite ? 'Quitar de favoritos' : 'Agregar a favoritos'
           }
@@ -117,16 +117,16 @@ export const PasswordCard = ({
             </div>
           </div>
 
-          <div className="hidden sm:flex items-center gap-1">
+          <div className="hidden z-10 sm:flex items-center gap-1">
             <button
-              className="p-1 rounded hover:bg-vault-amber/10 transition-colors"
+              className="p-1 rounded hover:bg-vault-amber/10 transition-colors cursor-pointer"
               aria-label="Editar contraseña"
               onClick={() => onEditPassword(password)}
             >
               <Edit />
             </button>
             <button
-              className="p-1 rounded hover:bg-destructive/10 text-destructive transition-colors"
+              className="p-1 rounded hover:bg-destructive/10 text-destructive transition-colors cursor-pointer"
               aria-label="Eliminar contraseña"
               onClick={() => onDeletePassword(password.id)}
             >
