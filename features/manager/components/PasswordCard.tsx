@@ -7,6 +7,7 @@ import { Edit } from '@/components/icons/Edit';
 import { Delete } from '@/components/icons/Delete';
 import { Star } from '@/components/icons/Star';
 import { StarFilled } from '@/components/icons/StarFilled';
+import { IconButton } from '@/features/manager/components/ui/Button';
 import type { PasswordCardProps } from '@/types';
 
 export const PasswordCard = ({
@@ -45,15 +46,15 @@ export const PasswordCard = ({
             </a>
           )}
         </div>
-        <button
-          className="flex-shrink-0 z-10 p-1 rounded-md hover:bg-vault-amber/10 transition-colors cursor-pointer"
-          aria-label={
+        <IconButton
+          label={
             password.favorite ? 'Quitar de favoritos' : 'Agregar a favoritos'
           }
+          className="flex-shrink-0 z-10 rounded-md"
           onClick={() => onToggleFavorite(password.id)}
         >
           {password.favorite ? <StarFilled /> : <Star />}
-        </button>
+        </IconButton>
       </div>
 
       <div className="p-3">
@@ -66,18 +67,19 @@ export const PasswordCard = ({
               <span className="text-xs font-mono truncate bg-secondary px-2 py-1.5 rounded flex-1 pr-7 flex">
                 {password.username}
               </span>
-              <button
+              <IconButton
+                size="xs"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2"
+                label="Copiar usuario"
                 onClick={() =>
                   handleCopy(
                     password.username,
                     'Usuario copiado al portapapeles.'
                   )
                 }
-                className="absolute right-1.5 top-1/2 -translate-y-1/2 p-0.5 rounded hover:bg-vault-amber/10 transition-colors"
-                aria-label="Copiar usuario"
               >
                 <Copy />
-              </button>
+              </IconButton>
             </div>
           </div>
 
@@ -90,48 +92,47 @@ export const PasswordCard = ({
                 {showPasswords[password.id] ? password.password : '•••••••'}
               </span>
               <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex gap-0.5">
-                <button
-                  onClick={() => onTogglePasswordVisibility(password.id)}
-                  className="p-0.5 rounded hover:bg-vault-amber/10 transition-colors"
-                  aria-label={
+                <IconButton
+                  size="xs"
+                  label={
                     showPasswords[password.id]
                       ? 'Ocultar contraseña'
                       : 'Mostrar contraseña'
                   }
+                  onClick={() => onTogglePasswordVisibility(password.id)}
                 >
                   {showPasswords[password.id] ? <EyeClose /> : <Eye />}
-                </button>
-                <button
+                </IconButton>
+                <IconButton
+                  size="xs"
+                  label="Copiar contraseña"
                   onClick={() =>
                     handleCopy(
                       password.password,
                       'Contraseña copiada al portapapeles.'
                     )
                   }
-                  className="p-0.5 rounded hover:bg-vault-amber/10 transition-colors"
-                  aria-label="Copiar contraseña"
                 >
                   <Copy />
-                </button>
+                </IconButton>
               </div>
             </div>
           </div>
 
           <div className="hidden z-10 sm:flex items-center gap-1">
-            <button
-              className="p-1 rounded hover:bg-vault-amber/10 transition-colors cursor-pointer"
-              aria-label="Editar contraseña"
+            <IconButton
+              label="Editar contraseña"
               onClick={() => onEditPassword(password)}
             >
               <Edit />
-            </button>
-            <button
-              className="p-1 rounded hover:bg-destructive/10 text-destructive transition-colors cursor-pointer"
-              aria-label="Eliminar contraseña"
+            </IconButton>
+            <IconButton
+              variant="destructive"
+              label="Eliminar contraseña"
               onClick={() => onDeletePassword(password.id)}
             >
               <Delete />
-            </button>
+            </IconButton>
           </div>
         </div>
       </div>

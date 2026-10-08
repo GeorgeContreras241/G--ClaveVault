@@ -1,11 +1,12 @@
 'use client';
 import { sileo } from 'sileo';
 import { Button } from '@/components/ui/button';
-import { Copy } from '@/components/icons/Copy';
 import { useState } from 'react';
 import { useStoragePass } from '@/storage/useStoragePass';
 import { generatePassword } from '@/lib/utils/manager/generatePassword';
 import { copyToClipboard } from '@/lib/utils/manager/copyToClipboard';
+import { ChevronButton } from '@/features/manager/components/ui/Button';
+import { PasswordActions } from '@/features/manager/components/ui/PasswordActions';
 import type { EditPasswordProps, FormErrors } from '@/types';
 import { toPasswordEntry } from '@/lib/utils/manager/toPasswordEntry';
 import { useMode } from '@/hooks/useMode';
@@ -153,25 +154,11 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
           <label className="font-sora text-sm font-semibold">
             Editar Contraseña
           </label>
-          <button
-            type="button"
+          <ChevronButton
+            open={isFormVisible}
+            label={isFormVisible ? 'Ocultar formulario' : 'Mostrar formulario'}
             onClick={() => setIsFormVisible(!isFormVisible)}
-            className="vault-icon-frame w-7 h-7 cursor-pointer"
-          >
-            <svg
-              className={`w-4 h-4 text-white transition-transform duration-200 ${isFormVisible ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-          </button>
+          />
         </div>
 
         {isFormVisible && (
@@ -279,59 +266,12 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
                   }}
                   className={`w-full px-3 py-1.5 text-sm bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all pr-20 ${errors.password ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
                 />
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
-                  <button
-                    type="button"
-                    onClick={handleGeneratePassword}
-                    className="p-1 rounded hover:bg-vault-amber/10 transition-colors"
-                    title="Generar contraseña"
-                  >
-                    <svg
-                      className="w-3.5 h-3.5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="p-1 rounded hover:bg-vault-amber/10 transition-colors"
-                    title={showPassword ? 'Ocultar' : 'Mostrar'}
-                  >
-                    <svg
-                      className="w-3.5 h-3.5 text-white"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d={
-                          showPassword
-                            ? 'M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21'
-                            : 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'
-                        }
-                      />
-                    </svg>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleCopyToClipboard}
-                    className="p-1 rounded text-white hover:bg-vault-amber/10 transition-colors"
-                  >
-                    <Copy />
-                  </button>
-                </div>
+                <PasswordActions
+                  showPassword={showPassword}
+                  onGenerate={handleGeneratePassword}
+                  onToggleVisibility={() => setShowPassword(!showPassword)}
+                  onCopy={handleCopyToClipboard}
+                />
               </div>
               {errors.password && (
                 <p className="text-destructive text-xs mt-1">
@@ -345,25 +285,16 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
                 <label className="text-xs font-medium text-muted-foreground">
                   Configuración
                 </label>
-                <button
-                  type="button"
+                <ChevronButton
+                  open={isConfigVisible}
+                  size="xs"
+                  label={
+                    isConfigVisible
+                      ? 'Ocultar configuración'
+                      : 'Mostrar configuración'
+                  }
                   onClick={() => setIsConfigVisible(!isConfigVisible)}
-                  className="vault-icon-frame w-6 h-6 cursor-pointer"
-                >
-                  <svg
-                    className={`w-3 h-3 text-white transition-transform duration-200 ${isConfigVisible ? 'rotate-180' : ''}`}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
+                />
               </div>
 
               {isConfigVisible && (
