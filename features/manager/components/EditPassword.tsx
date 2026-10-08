@@ -159,7 +159,7 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
             className="vault-icon-frame w-7 h-7 cursor-pointer"
           >
             <svg
-              className={`w-4 h-4 transition-transform duration-200 ${isFormVisible ? 'rotate-180' : ''}`}
+              className={`w-4 h-4 text-white transition-transform duration-200 ${isFormVisible ? 'rotate-180' : ''}`}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -287,7 +287,7 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
                     title="Generar contraseña"
                   >
                     <svg
-                      className="w-3.5 h-3.5 text-muted-foreground"
+                      className="w-3.5 h-3.5 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -307,7 +307,7 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
                     title={showPassword ? 'Ocultar' : 'Mostrar'}
                   >
                     <svg
-                      className="w-3.5 h-3.5 text-muted-foreground"
+                      className="w-3.5 h-3.5 text-white"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -327,7 +327,7 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
                   <button
                     type="button"
                     onClick={handleCopyToClipboard}
-                    className="p-1 rounded hover:bg-vault-amber/10 transition-colors"
+                    className="p-1 rounded text-white hover:bg-vault-amber/10 transition-colors"
                   >
                     <Copy />
                   </button>
@@ -351,7 +351,7 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
                   className="vault-icon-frame w-6 h-6 cursor-pointer"
                 >
                   <svg
-                    className={`w-3 h-3 transition-transform duration-200 ${isConfigVisible ? 'rotate-180' : ''}`}
+                    className={`w-3 h-3 text-white transition-transform duration-200 ${isConfigVisible ? 'rotate-180' : ''}`}
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
