@@ -1,11 +1,11 @@
 'use client';
-import { ReactNode } from 'react';
-import { OfflineUnlock } from '@/features/offline/OfflineUnlock';
+import { OfflineUnlock } from './OfflineUnlock';
 import { useStoragePass } from '@/storage/useStoragePass';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import type { AuthGuardProps } from '@/features/offline';
 
-export const AuthGuard = ({ children }: { children: ReactNode }) => {
+export const AuthGuard = ({ children }: AuthGuardProps) => {
   const isUnLocked = useStoragePass((state) => state.isUnLocked);
   const setIsUnLocked = useStoragePass((state) => state.setIsUnLocked);
 

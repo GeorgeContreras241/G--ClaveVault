@@ -1,6 +1,6 @@
 'use client';
 import { useEffect } from 'react';
-import Add from '@/components/icons/Add';
+import Add from '@/features/offline/components/icons/Add';
 import { sileoError } from '@/constants/sileoConfig';
 import { sileo, Toaster } from 'sileo';
 import { useState } from 'react';
@@ -9,7 +9,7 @@ import { validateVaultInputs } from '@/features/offline/utils/validateVaultInput
 import { Eye } from '@/components/icons/Eye';
 import { EyeClose } from '@/components/icons/EyeClose';
 import { validatePassword } from '@/features/offline/utils/validatePassword';
-import type { OfflineUnlockProps } from '@/types';
+import type { OfflineUnlockProps } from '@/features/offline';
 import { generateSalt } from '@/lib/crypto/generateSalt';
 import { deriveKey } from '@/lib/crypto/kdfKey';
 import Link from 'next/link';

@@ -12,10 +12,6 @@ export interface PasswordFormKeys {
   favorite: boolean;
 }
 
-export interface OfflineUnlockProps {
-  onSuccess: (value: boolean) => void;
-}
-
 export type VaultCipherPayload = {
   iv: Uint8Array | number[];
   data: Uint8Array | number[];

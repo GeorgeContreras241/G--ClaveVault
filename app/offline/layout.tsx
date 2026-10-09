@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { OfflineShell } from '@/features/offline/OfflineShell';
+import { OfflineShell } from '@/features/offline';
 
 export const metadata: Metadata = {
   title: 'Gestor offline',
