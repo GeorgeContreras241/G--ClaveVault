@@ -1,8 +1,8 @@
 import type { CookieJar, CookieOptions } from '@/types/index';
 import { randomToken, timingSafeEqual } from '@/server/utils/crypto';
+import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from '@/constants/csrf';
 
-export const CSRF_COOKIE_NAME = 'csrf_token';
-export const CSRF_HEADER_NAME = 'x-csrf-token';
+export { CSRF_COOKIE_NAME, CSRF_HEADER_NAME };
 
 /** Caducidad de la cookie; se renueva automáticamente en cada petición. */
 const CSRF_TOKEN_TTL_SECONDS = 60 * 60;
