@@ -1,4 +1,5 @@
-import type { PasswordEntry, PasswordFormKeys } from '@/types';
+import type { PasswordFormKeys } from '@/types';
+import type { PasswordEntry } from '@/features/vault-management';
 
 export function toPasswordEntry(keys: PasswordFormKeys): PasswordEntry {
   return {

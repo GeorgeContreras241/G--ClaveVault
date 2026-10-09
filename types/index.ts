@@ -1,12 +1,4 @@
-export interface PasswordEntry {
-  id: string;
-  title: string;
-  username: string;
-  password: string;
-  favorite: boolean;
-  url: string;
-  category: string;
-}
+import type { PasswordEntry } from '@/features/vault-management';
 
 /** Form state shared by AddPasswords / EditPassword (includes legacy `application` field). */
 export interface PasswordFormKeys {
@@ -20,31 +12,8 @@ export interface PasswordFormKeys {
   favorite: boolean;
 }
 
-export interface EditPasswordProps {
-  password: PasswordEntry;
-  onClose: () => void;
-}
-
-export interface PasswordCardProps {
-  password: PasswordEntry;
-  showPasswords: { [key: string]: boolean };
-  onTogglePasswordVisibility: (id: string) => void;
-  onCopyToClipboard: (text: string) => void;
-  onEditPassword: (password: PasswordEntry) => void;
-  onDeletePassword: (id: string) => void;
-  onToggleFavorite: (id: string) => void;
-  getCategoryIcon: (category: string) => React.ReactNode;
-}
-
 export interface OfflineUnlockProps {
   onSuccess: (value: boolean) => void;
-}
-
-export interface HeaderManagerProps {
-  setSearchTerm: (value: string) => void;
-  setSelectedCategory: (value: string) => void;
-  selectedCategory: string;
-  searchTerm: string;
 }
 
 export type VaultCipherPayload = {
@@ -91,13 +60,6 @@ export type ImportResult = {
 export type ExportResult = (entries: PasswordEntry[]) => Promise<void>;
 
 export type ToogleDeriveKey = (password: string) => Promise<void>;
-
-export interface FormErrors {
-  title?: string;
-  username?: string;
-  password?: string;
-  url?: string;
-}
 
 export type PassStorage = {
   salt: Uint8Array | null;

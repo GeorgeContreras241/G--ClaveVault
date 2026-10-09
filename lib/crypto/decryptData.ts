@@ -1,4 +1,5 @@
-import type { DecryptResult, PasswordEntry, VaultCipherPayload } from '@/types';
+import type { DecryptResult, VaultCipherPayload } from '@/types';
+import type { PasswordEntry } from '@/features/vault-management';
 
 export const decrypt = async (
   key: CryptoKey,

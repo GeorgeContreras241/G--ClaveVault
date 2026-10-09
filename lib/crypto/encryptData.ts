@@ -1,4 +1,5 @@
-import type { EncryptResult, PasswordEntry } from '@/types';
+import type { EncryptResult } from '@/types';
+import type { PasswordEntry } from '@/features/vault-management';
 
 export const encrypt = async (
   key: CryptoKey,

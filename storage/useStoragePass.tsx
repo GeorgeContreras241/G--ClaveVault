@@ -5,7 +5,8 @@ import { deriveKey } from '@/lib/crypto/kdfKey';
 import { loadVault } from '@/lib/vault/loadVault';
 import { decrypt } from '@/lib/crypto/decryptData';
 import { sileo } from 'sileo';
-import type { PasswordEntry, PassStorage, ImportResult } from '@/types';
+import type { PassStorage, ImportResult } from '@/types';
+import type { PasswordEntry } from '@/features/vault-management';
 
 export const useStoragePass = create<PassStorage>((set, get) => ({
   salt: null,
