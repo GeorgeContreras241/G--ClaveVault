@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { Loading } from '@/components/shared/Loading';
 import { getUser } from '@/lib/get-user';
 import { redirect } from 'next/navigation';
-import { PasswordsContent } from '@/features/online/PasswordsContent';
+import { PasswordsContent } from '@/features/online';
 
 export default function PasswordsPage() {
   return (

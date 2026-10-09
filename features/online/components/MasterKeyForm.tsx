@@ -19,12 +19,9 @@ import { useStoragePass } from '@/storage/useStoragePass';
 import { decrypt } from '@/lib/crypto/decryptData';
 import { deriveKey } from '@/lib/crypto/kdfKey';
 import { generateSalt } from '@/lib/crypto/generateSalt';
+import type { MasterKeyFormProps } from '@/features/online';
 
-export function MasterKeyForm({
-  setLook,
-}: {
-  setLook: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+export function MasterKeyForm({ setLook }: MasterKeyFormProps) {
   const [key, setKey] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
