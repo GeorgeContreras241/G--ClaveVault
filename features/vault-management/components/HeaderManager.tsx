@@ -1,7 +1,7 @@
 'use client';
 import { LogOut } from 'lucide-react';
-import { Export } from '@/components/icons/Export';
-import { Search } from '@/components/icons/Search';
+import { Export } from '@/features/vault-management/components/icons/Export';
+import { Search } from '@/features/vault-management/components/icons/Search';
 import { Button } from '@/components/ui/button';
 import { useStoragePass } from '@/storage/useStoragePass';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';

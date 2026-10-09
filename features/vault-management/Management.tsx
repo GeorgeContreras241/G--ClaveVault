@@ -8,10 +8,10 @@ import { copyToClipboard } from '@/lib/utils/manager/copyToClipboard';
 import { AddPassword } from '@/features/vault-management/components/AddPassword';
 import { EditPassword } from '@/features/vault-management/components/EditPassword';
 import { Web } from '@/components/icons/Web';
-import { App } from '@/components/icons/App';
-import { Card } from '@/components/icons/Card';
-import { Lock } from '@/components/icons/Lock';
-import { LockEmpty } from '@/components/icons/LockEmpty';
+import { App } from '@/features/vault-management/components/icons/App';
+import { Card } from '@/features/vault-management/components/icons/Card';
+import { Lock } from '@/features/vault-management/components/icons/Lock';
+import { LockEmpty } from '@/features/vault-management/components/icons/LockEmpty';
 
 import { PasswordCard } from './components/PasswordCard';
 
