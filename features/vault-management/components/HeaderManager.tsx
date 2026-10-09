@@ -6,9 +6,9 @@ import { Button } from '@/components/ui/button';
 import { useStoragePass } from '@/storage/useStoragePass';
 import { ThemeToggle } from '@/components/shared/ThemeToggle';
 import { CATEGORY_BUTTONS } from '@/constants/navigationButtons';
-import { HeaderManagerProps } from '@/types';
+import { HeaderManagerProps } from '@/features/vault-management';
 import { useRouter } from 'next/navigation';
-import { apiFetch } from '@/lib/http/apiFetch';
+import { apiFetch } from '@/features/auth/lib/apiFetch';
 import { useMode } from '@/hooks/useMode';
 
 export const HeaderManager = ({

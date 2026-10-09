@@ -1,4 +1,4 @@
-import { Manager } from '@/features/manager/Manager';
+import { Manager } from '@/features/vault-management/Management';
 import { AuthGuard } from '@/features/offline/AuthGuard';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';

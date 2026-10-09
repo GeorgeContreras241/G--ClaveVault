@@ -5,14 +5,14 @@ import { useState } from 'react';
 import { useStoragePass } from '@/storage/useStoragePass';
 import { generatePassword } from '@/lib/utils/manager/generatePassword';
 import { copyToClipboard } from '@/lib/utils/manager/copyToClipboard';
-import { ChevronButton } from '@/features/manager/components/ui/Button';
-import { PasswordActions } from '@/features/manager/components/ui/PasswordActions';
-import type { FormErrors } from '@/types';
+import { ChevronButton } from '@/features/vault-management/components/ui/Button';
+import { PasswordActions } from '@/features/vault-management/components/ui/PasswordActions';
+import type { FormErrors } from '@/features/vault-management';
 import { toPasswordEntry } from '@/lib/utils/manager/toPasswordEntry';
 import { useMode } from '@/hooks/useMode';
 import { encrypt } from '@/lib/crypto/encryptData';
 import { bytesToBase64 } from '@/lib/encoding/base64';
-import { apiFetch } from '@/lib/http/apiFetch';
+import { apiFetch } from '@/features/auth/lib/apiFetch';
 
 export const AddPassword = () => {
   const mode = useMode();

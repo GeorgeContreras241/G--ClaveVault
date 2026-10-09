@@ -1,13 +1,7 @@
 'use client';
 import { Copy } from '@/components/icons/Copy';
-import { IconButton } from '@/features/manager/components/ui/Button';
-
-export interface PasswordActionsProps {
-  showPassword: boolean;
-  onGenerate: () => void;
-  onToggleVisibility: () => void;
-  onCopy: () => void;
-}
+import { IconButton } from '@/features/vault-management/components/ui/Button';
+import type { PasswordActionsProps } from '@/features/vault-management';
 
 /**
  * Acciones del campo contraseña: generar, mostrar/ocultar y copiar.

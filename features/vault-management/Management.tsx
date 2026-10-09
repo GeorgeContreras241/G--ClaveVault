@@ -3,11 +3,10 @@
 import { useState } from 'react';
 import { sileo } from 'sileo';
 import { useStoragePass } from '@/storage/useStoragePass';
-import { HeaderManager } from '@/features/manager/components/HeaderManager';
+import { HeaderManager } from '@/features/vault-management/components/HeaderManager';
 import { copyToClipboard } from '@/lib/utils/manager/copyToClipboard';
-import { AddPassword } from '@/features/manager/components/AddPassword';
-import { EditPassword } from '@/features/manager/components/EditPassword';
-
+import { AddPassword } from '@/features/vault-management/components/AddPassword';
+import { EditPassword } from '@/features/vault-management/components/EditPassword';
 import { Web } from '@/components/icons/Web';
 import { App } from '@/components/icons/App';
 import { Card } from '@/components/icons/Card';
@@ -16,11 +15,11 @@ import { LockEmpty } from '@/components/icons/LockEmpty';
 
 import { PasswordCard } from './components/PasswordCard';
 
-import type { PasswordEntry } from '@/types';
+import type { PasswordEntry, ShowPasswords } from '@/features/vault-management';
 import { useMode } from '@/hooks/useMode';
 import { encrypt } from '@/lib/crypto/encryptData';
 import { bytesToBase64 } from '@/lib/encoding/base64';
-import { apiFetch } from '@/lib/http/apiFetch';
+import { apiFetch } from '@/features/auth/lib/apiFetch';
 
 export const Manager = () => {
   const mode = useMode();
@@ -35,9 +34,7 @@ export const Manager = () => {
   const salt = useStoragePass((state) => state.salt);
   const setVersion = useStoragePass((state) => state.setVersion);
   const [searchTerm, setSearchTerm] = useState('');
-  const [showPasswords, setShowPasswords] = useState<{
-    [key: string]: boolean;
-  }>({});
+  const [showPasswords, setShowPasswords] = useState<ShowPasswords>({});
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [editingPassword, setEditingPassword] = useState<PasswordEntry | null>(
     null

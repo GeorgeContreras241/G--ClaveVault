@@ -7,8 +7,8 @@ import { Edit } from '@/components/icons/Edit';
 import { Delete } from '@/components/icons/Delete';
 import { Star } from '@/components/icons/Star';
 import { StarFilled } from '@/components/icons/StarFilled';
-import { IconButton } from '@/features/manager/components/ui/Button';
-import type { PasswordCardProps } from '@/types';
+import { IconButton } from '@/features/vault-management/components/ui/Button';
+import type { PasswordCardProps } from '@/features/vault-management';
 
 export const PasswordCard = ({
   password,
