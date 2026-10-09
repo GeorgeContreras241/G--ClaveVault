@@ -16,7 +16,7 @@ import { LockEmpty } from '@/components/icons/LockEmpty';
 import { PasswordCard } from './components/PasswordCard';
 
 import type { PasswordEntry, ShowPasswords } from '@/features/vault-management';
-import { useMode } from '@/hooks/useMode';
+import { useMode } from '@/features/vault-management/hooks/useMode';
 import { encrypt } from '@/lib/crypto/encryptData';
 import { bytesToBase64 } from '@/lib/encoding/base64';
 import { apiFetch } from '@/features/auth/lib/apiFetch';
