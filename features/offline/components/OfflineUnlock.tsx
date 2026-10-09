@@ -8,7 +8,7 @@ import { useStoragePass } from '@/storage/useStoragePass';
 import { validateVaultInputs } from '@/features/offline/utils/validateVaultInputs';
 import { Eye } from '@/components/icons/Eye';
 import { EyeClose } from '@/components/icons/EyeClose';
-import { validatePassword } from '@/features/offline/utils/validatePassword';
+import { validatePassword } from '@/lib/validation/validatePassword';
 import type { OfflineUnlockProps } from '@/features/offline';
 import { generateSalt } from '@/lib/crypto/generateSalt';
 import { deriveKey } from '@/lib/crypto/kdfKey';
