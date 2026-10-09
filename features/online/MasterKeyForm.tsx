@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Loading } from '@/components/shared/Loading';
 import { validatePassword } from '@/features/offline/utils/validatePassword';
-import { apiFetch } from '@/lib/http/apiFetch';
+import { apiFetch } from '@/features/auth/lib/apiFetch';
 import { useStoragePass } from '@/storage/useStoragePass';
 // cryptography - Criptografia
 import { decrypt } from '@/lib/crypto/decryptData';

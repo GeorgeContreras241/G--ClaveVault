@@ -1,5 +1,4 @@
-const CSRF_COOKIE_NAME = 'csrf_token';
-const CSRF_HEADER_NAME = 'X-CSRF-Token';
+import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from '@/constants/csrf';
 
 const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 
@@ -21,15 +20,7 @@ function readCookie(name: string): string | null {
   return null;
 }
 
-/**
- * Wrapper de `fetch` para la API de ClaveVault.
- *
- * Centraliza lo que toda llamada a la API necesita:
- * - envía `X-CSRF-Token` (doble cookie) en las peticiones que modifican
- *   estado, de modo que ninguna ruta olvide la protección;
- * - fija `Content-Type: application/json` cuando hay cuerpo JSON;
- * - añade `credentials: 'include'` para que viajen las cookies de sesión.
- */
+
 export async function apiFetch(
   path: string,
   init: RequestInit = {}

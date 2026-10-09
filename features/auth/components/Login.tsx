@@ -1,22 +1,17 @@
 'use client';
-import { startRegistration } from '@simplewebauthn/browser';
+import { startAuthentication } from '@simplewebauthn/browser';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { apiFetch } from '@/lib/http/apiFetch';
+import { apiFetch } from '@/features/auth/lib/apiFetch';
+import type { WebAuthnLoginProps } from '@/features/auth';
 
-interface WebAuthnRegisterProps {
-  email: string;
-  validateForm: () => boolean;
-}
-
-export const WebAuthnRegister = ({
-  email,
-  validateForm,
-}: WebAuthnRegisterProps) => {
+export const Login = ({ email, validateForm }: WebAuthnLoginProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
-  const handleRegisterWebauthn = async () => {
+  const handleLoginWebauthn = async () => {
     if (!validateForm()) {
       return;
     }
@@ -25,7 +20,7 @@ export const WebAuthnRegister = ({
     setError(null);
 
     try {
-      const res = await apiFetch('/api/auth/register/options', {
+      const res = await apiFetch('/api/auth/login/options', {
         method: 'POST',
         body: JSON.stringify({ email }),
       });
@@ -34,20 +29,26 @@ export const WebAuthnRegister = ({
         throw new Error(data.error);
       }
 
-      const attResp = await startRegistration({ optionsJSON: data.options });
+      const asseResp = await startAuthentication({ optionsJSON: data.options });
 
-      const verifyRes = await apiFetch('/api/auth/register/verify', {
+      const verificationResp = await apiFetch('/api/auth/login/verify', {
         method: 'POST',
-        body: JSON.stringify({ attResp, challengeId: data.challengeId }),
+        body: JSON.stringify({
+          attResp: asseResp,
+          challengeId: data.challengeId,
+        }),
       });
-      const verifyData = await verifyRes.json();
-      if (!verifyData.ok) {
-        throw new Error(verifyData.error);
+      const verificationData = await verificationResp.json();
+      if (!verificationData.ok) {
+        throw new Error(verificationData.error);
       }
-
-      alert('Registro exitoso');
+      router.push('/passwords');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al registrarse');
+      if (err instanceof Error && err.message.includes('timed out')) {
+        setError('Tiempo agotado. Inténtalo nuevamente.');
+        return;
+      }
+      setError(err instanceof Error ? err.message : 'Error al iniciar sesión');
     } finally {
       setIsLoading(false);
     }
@@ -57,7 +58,7 @@ export const WebAuthnRegister = ({
     <div className="flex flex-col gap-1">
       <Button
         type="button"
-        onClick={handleRegisterWebauthn}
+        onClick={handleLoginWebauthn}
         disabled={isLoading}
         variant="outline"
         className="w-full h-10"
@@ -84,7 +85,7 @@ export const WebAuthnRegister = ({
             />
           </svg>
         ) : (
-          'Registrarse'
+          'Acceder'
         )}
       </Button>
       <div className="h-3 flex items-center text-center justify-center">

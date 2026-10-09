@@ -1,16 +1,16 @@
 'use client';
-
 import WebAuthnIcon from '@/components/icons/WebAuthn';
-import { WebAuthnRegister } from './WebAuthnRegister';
-import { WebAuthnLogin } from './WebAuthnLogin';
+import { Register } from './components/Register';
+import { Login } from './components/Login';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useState } from 'react';
+import type { AuthFormErrors } from '@/features/auth';
 
 export const WebAuthn = () => {
   const [email, setEmail] = useState('');
-  const [errors, setErrors] = useState<{ email?: string }>({});
+  const [errors, setErrors] = useState<AuthFormErrors>({});
 
   const validateEmail = (email: string): boolean => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -18,7 +18,7 @@ export const WebAuthn = () => {
   };
 
   const validateForm = (): boolean => {
-    const newErrors: { email?: string } = {};
+    const newErrors: AuthFormErrors = {};
 
     if (!email.trim()) {
       newErrors.email = 'El email es obligatorio';
@@ -47,9 +47,7 @@ export const WebAuthn = () => {
       <div className="w-full p-6 rounded-lg border border-border bg-background">
         <form className="flex flex-col gap-2">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium">
-              Correo electrónico
-            </Label>
+            <Label htmlFor="email">Correo electrónico</Label>
             <div className="relative">
               <Input
                 id="email"
@@ -85,8 +83,8 @@ export const WebAuthn = () => {
           <Separator className="my-1" />
 
           <div className="grid grid-cols-2 gap-3">
-            <WebAuthnRegister email={email} validateForm={validateForm} />
-            <WebAuthnLogin email={email} validateForm={validateForm} />
+            <Register email={email} validateForm={validateForm} />
+            <Login email={email} validateForm={validateForm} />
           </div>
         </form>
       </div>

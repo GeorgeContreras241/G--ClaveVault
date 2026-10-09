@@ -1,21 +1,15 @@
 'use client';
-import { startAuthentication } from '@simplewebauthn/browser';
+import { startRegistration } from '@simplewebauthn/browser';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { apiFetch } from '@/lib/http/apiFetch';
+import { apiFetch } from '@/features/auth/lib/apiFetch';
+import type { WebAuthnRegisterProps } from '@/features/auth';
 
-interface WebAuthnLoginProps {
-  email: string;
-  validateForm: () => boolean;
-}
-
-export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
+export const Register = ({ email, validateForm }: WebAuthnRegisterProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
-  const handleLoginWebauthn = async () => {
+  const handleRegisterWebauthn = async () => {
     if (!validateForm()) {
       return;
     }
@@ -24,7 +18,7 @@ export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
     setError(null);
 
     try {
-      const res = await apiFetch('/api/auth/login/options', {
+      const res = await apiFetch('/api/auth/register/options', {
         method: 'POST',
         body: JSON.stringify({ email }),
       });
@@ -33,26 +27,20 @@ export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
         throw new Error(data.error);
       }
 
-      const asseResp = await startAuthentication({ optionsJSON: data.options });
+      const attResp = await startRegistration({ optionsJSON: data.options });
 
-      const verificationResp = await apiFetch('/api/auth/login/verify', {
+      const verifyRes = await apiFetch('/api/auth/register/verify', {
         method: 'POST',
-        body: JSON.stringify({
-          attResp: asseResp,
-          challengeId: data.challengeId,
-        }),
+        body: JSON.stringify({ attResp, challengeId: data.challengeId }),
       });
-      const verificationData = await verificationResp.json();
-      if (!verificationData.ok) {
-        throw new Error(verificationData.error);
+      const verifyData = await verifyRes.json();
+      if (!verifyData.ok) {
+        throw new Error(verifyData.error);
       }
-      router.push('/passwords');
+
+      alert('Registro exitoso');
     } catch (err) {
-      if (err instanceof Error && err.message.includes('timed out')) {
-        setError('Tiempo agotado. Inténtalo nuevamente.');
-        return;
-      }
-      setError(err instanceof Error ? err.message : 'Error al iniciar sesión');
+      setError(err instanceof Error ? err.message : 'Error al registrarse');
     } finally {
       setIsLoading(false);
     }
@@ -62,7 +50,7 @@ export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
     <div className="flex flex-col gap-1">
       <Button
         type="button"
-        onClick={handleLoginWebauthn}
+        onClick={handleRegisterWebauthn}
         disabled={isLoading}
         variant="outline"
         className="w-full h-10"
@@ -89,7 +77,7 @@ export const WebAuthnLogin = ({ email, validateForm }: WebAuthnLoginProps) => {
             />
           </svg>
         ) : (
-          'Acceder'
+          'Registrarse'
         )}
       </Button>
       <div className="h-3 flex items-center text-center justify-center">
