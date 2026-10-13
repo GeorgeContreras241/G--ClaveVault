@@ -227,7 +227,7 @@ sequenceDiagram
 
     U->>UI: Arrastra archivo .enc
     U->>UI: Ingresa master password
-    UI->>AG: Valida password (min 8 chars)
+    UI->>AG: Valida password (8–128 chars + reglas de calidad)
     AG->>CM: Carga vault (salt + iv + data)
     CM->>CM: PBKDF2(password, salt) -> AES Key
     CM->>CM: AES-256-GCM.decrypt(data, iv, key)
@@ -1003,7 +1003,7 @@ sequenceDiagram
     alt Primera vez
         U->>UI: Arrastra archivo .enc
         U->>UI: Ingresa master password
-        UI->>UI: Validar password (min 8 chars)
+        UI->>UI: Validar password (8–128 chars + reglas de calidad)
         UI->>CM: openVault(file, password)
         CM->>CM: Leer salt(16) + iv(12) + data del archivo
         CM->>CM: PBKDF2(password, salt, 200000) -> AES Key
@@ -1365,20 +1365,22 @@ Para futuras versiones se contempla implementar:
 **Descripción:** El usuario crea un nuevo vault cifrado desde cero.
 
 **Entradas:**
-- Master password (mínimo 8 caracteres)
+- Master password (8–128 caracteres; al crear se exige 12+ y variedad)
 - Nombre del vault (opcional)
 
 **Salidas:**
 - Archivo `.enc` cifrado descargable
 
 **Validaciones:**
-- Password mínimo 8 caracteres
-- Password confirmado correctamente
+- Password entre 8 y 128 caracteres, sin caracteres de control
+- Al crear: 12+ caracteres, mayúsculas + minúsculas + números/símbolos, sin
+  secuencias (`1234`) ni contraseñas comunes
 
 **Errores Posibles:**
 | Error | Causa | Solución |
 |---|---|---|
 | Password muy corta | Menos de 8 caracteres | Ingresar password más larga |
+| Password muy débil | No cumple las reglas de calidad al crear | Usar una clave más larga y variada |
 | Error de cifrado | API Web Crypto no disponible | Usar navegador compatible |
 
 ```mermaid
@@ -2032,7 +2034,8 @@ el servicio, así que una ruta nueva no puede "olvidar" validar.
 | `validateAuthenticationResponse` | `type === 'webauthn.get'`, mismos campos más `signature`, `userHandle` opcional y `id === rawId` |
 | `validateLoginVerifyPayload` / `validateRegisterVerifyPayload` | `challengeId` + respuesta WebAuthn correspondiente |
 | `validateVaultPayload` | `salt` = 16 bytes, **`iv` = exactamente 12 bytes**, `encryptedData` dentro del límite de 5 MB, todo base64 válido |
-| `validatePassword` | Longitud 8–128 |
+| `validatePassword` (servidor) | Longitud 8–128 |
+| `validatePassword` (cliente, `commons/lib/validation/validatePassword.ts`) | **Estructural** (bloquea siempre): 8–128 caracteres, sin caracteres de control, no solo espacios. **Calidad** (avisos, o errores con `strict` al crear): 12+ caracteres, ≥3 clases de caracteres, sin repeticiones/secuencias ni contraseñas comunes. Devuelve además `score` 0–4 y `strength` para el indicador de fuerza |
 
 ```typescript
 // Uso típico dentro de una ruta

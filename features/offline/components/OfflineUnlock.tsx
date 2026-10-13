@@ -9,6 +9,7 @@ import { validateVaultInputs } from '@/features/offline/utils/validateVaultInput
 import { Eye } from '@/commons/components/icons/Eye';
 import { EyeClose } from '@/commons/components/icons/EyeClose';
 import { validatePassword } from '@/commons/lib/validation/validatePassword';
+import { StrengthMeter } from '@/commons/components/shared/StrengthMeter';
 import type { OfflineUnlockProps } from '@/features/offline';
 import { generateSalt } from '@/commons/lib/crypto/generateSalt';
 import { deriveKey } from '@/commons/lib/crypto/kdfKey';
@@ -23,6 +24,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
   );
 
   const [file, setFile] = useState<File | null>(null);
+  const [password, setPassword] = useState('');
   const [viewPass, setViewPass] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [passwordError, setPasswordError] = useState('');
@@ -33,8 +35,11 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
   }, [handleReset]);
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const password = e.target.value;
-    validatePassword(password);
+    setPassword(e.target.value);
+    // El error se limpia mientras se escribe; se valida de nuevo al enviar.
+    if (passwordError) {
+      setPasswordError('');
+    }
   };
 
   const handleClearFile = () => {
@@ -43,6 +48,14 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
   };
 
   const handleNoFileScenario = async (password: string) => {
+    // Sin archivo se crea un vault nuevo: ahí sí se exige una clave fuerte.
+    const validation = validatePassword(password, { strict: true });
+    if (!validation.success) {
+      const message = validation.error ?? 'La contraseña es demasiado débil';
+      setPasswordError(message);
+      sileo.error({ title: message });
+      return;
+    }
     sileo.warning({
       title: 'Error Fatal',
       description: 'Seguro que desea continuar sin archivo',
@@ -251,6 +264,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
               placeholder="Ingresa Aqui"
               id="password"
               name="password"
+              value={password}
               autoComplete="off"
               spellCheck="false"
               autoCorrect="off"
@@ -269,6 +283,9 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
               {viewPass ? <Eye /> : <EyeClose />}
             </button>
           </div>
+          {password.length > 0 && (
+            <StrengthMeter validation={validatePassword(password)} />
+          )}
           <button
             className="w-full bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-lg p-3 cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-vault-amber/30 shadow-lg font-medium font-mono"
             type="submit"
