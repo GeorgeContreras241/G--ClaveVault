@@ -69,7 +69,7 @@ export default function Home() {
                 <p className="text-xs text-zinc-600 dark:text-zinc-400 md:text-sm">
                   Sin internet · archivo cifrado local
                 </p>
-                <span className="vault-status-live text-green-800 flex justify-start md:justify-center">
+                <span className="vault-status-live flex justify-start md:justify-center">
                   Disponible
                 </span>
               </div>

@@ -7,12 +7,6 @@
 @theme {
   --color-vault-amber: oklch(65.443% 0.29681 264.478);
   --color-vault-amber-dim: oklch(75.443% 0.29681 264.478);
-  --color-vault-teal: #3dd6c3;
-  --color-vault-panel: color-mix(
-    in oklab,
-    var(--color-zinc-950) 72%,
-    transparent
-  );
   --font-family-body: var(--font-ibm), ui-sans-serif, system-ui, sans-serif;
   --font-family-display: var(--font-sora), ui-serif, Georgia, serif;
 }
@@ -26,8 +20,6 @@
 }
 
 :root {
-  --vault-glow: rgba(232, 184, 74, 0.14);
-  --vault-line: rgba(15, 23, 42, 0.08);
   --vault-surface: rgba(255, 255, 255, 0.72);
   --vault-border: rgba(15, 23, 42, 0.1);
   --background: oklch(1 0 0);
@@ -62,12 +54,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --sidebar-r2ing: oklch(45.443% 0.29681 264.478);
 }
 
 .dark {
-  --vault-glow: rgba(232, 184, 74, 0.22);
-  --vault-line: rgba(148, 163, 184, 0.06);
   --vault-surface: rgba(9, 9, 11, 0.55);
   --vault-border: rgba(148, 163, 184, 0.199);
   --background: oklch(0.145 0 0);
@@ -115,29 +104,6 @@
   }
 }
 
-@keyframes vault-shimmer {
-  0% {
-    background-position: 200% center;
-  }
-
-  100% {
-    background-position: -200% center;
-  }
-}
-
-@keyframes vault-pulse-ring {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: scale(1);
-  }
-
-  50% {
-    opacity: 0.65;
-    transform: scale(1.02);
-  }
-}
-
 .vault-rise {
   animation: vault-rise 0.75s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -156,32 +122,6 @@
 
 .vault-rise-delay-4 {
   animation-delay: 0.32s;
-}
-
-.vault-grid {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.45;
-  background-image:
-    linear-gradient(var(--vault-line) 1px, transparent 1px),
-    linear-gradient(90deg, var(--vault-line) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(
-    ellipse 70% 60% at 50% 40%,
-    black 20%,
-    transparent 75%
-  );
-}
-
-.vault-grain {
-  position: fixed;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.04;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
 .vault-panel {
@@ -277,10 +217,6 @@
   font-size: 0.6rem;
   font-weight: 600;
   text-transform: uppercase;
-}
-
-.dark .vault-status-soon {
-  color: var(--color-zinc-500);
 }
 
 /* Animation View Transcition Experimental Next js */
