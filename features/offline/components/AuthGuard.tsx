@@ -6,10 +6,10 @@ import { Footer } from '@/commons/components/layout/Footer';
 import type { AuthGuardProps } from '@/features/offline';
 
 export const AuthGuard = ({ children }: AuthGuardProps) => {
-  const isUnLocked = useStoragePass((state) => state.isUnLocked);
-  const setIsUnLocked = useStoragePass((state) => state.setIsUnLocked);
+  const isUnlocked = useStoragePass((state) => state.isUnlocked);
+  const setIsUnlocked = useStoragePass((state) => state.setIsUnlocked);
 
-  if (!isUnLocked) {
+  if (!isUnlocked) {
     return (
       <div className="h-[100dvh] w-full py-6 relative z-10">
         <div className="max-w-4xl mx-auto px-4 flex flex-col h-full">
@@ -18,7 +18,7 @@ export const AuthGuard = ({ children }: AuthGuardProps) => {
           </div>
           <main className="flex-1 flex items-center justify-center h-full">
             <div className="w-full">
-              <OfflineUnlock onSuccess={() => setIsUnLocked(true)} />
+              <OfflineUnlock onSuccess={() => setIsUnlocked(true)} />
             </div>
           </main>
           <div className="w-full">
