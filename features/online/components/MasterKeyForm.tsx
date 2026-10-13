@@ -8,17 +8,17 @@ import {
   AlertTriangle,
   WifiOff,
 } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import { Loading } from '@/components/shared/Loading';
-import { validatePassword } from '@/lib/validation/validatePassword';
+import { Input } from '@/commons/components/ui/input';
+import { Button } from '@/commons/components/ui/button';
+import { Label } from '@/commons/components/ui/label';
+import { Loading } from '@/commons/components/shared/Loading';
+import { validatePassword } from '@/commons/lib/validation/validatePassword';
 import { apiFetch } from '@/features/auth/lib/apiFetch';
-import { useStoragePass } from '@/storage/useStoragePass';
+import { useStoragePass } from '@/commons/storage/useStoragePass';
 // cryptography - Criptografia
-import { decrypt } from '@/lib/crypto/decryptData';
-import { deriveKey } from '@/lib/crypto/kdfKey';
-import { generateSalt } from '@/lib/crypto/generateSalt';
+import { decrypt } from '@/commons/lib/crypto/decryptData';
+import { deriveKey } from '@/commons/lib/crypto/kdfKey';
+import { generateSalt } from '@/commons/lib/crypto/generateSalt';
 import type { MasterKeyFormProps } from '@/features/online';
 
 export function MasterKeyForm({ setLook }: MasterKeyFormProps) {

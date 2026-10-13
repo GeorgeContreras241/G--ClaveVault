@@ -1,9 +1,9 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { VideoBackground } from '@/components/shared/VideoBackground';
-import { AppProviders } from '@/components/providers/AppProviders';
-import { ASSETS } from '@/constants/assets';
+import { VideoBackground } from '@/commons/components/shared/VideoBackground';
+import { AppProviders } from '@/commons/components/providers/AppProviders';
+import { ASSETS } from '@/commons/constants/assets';
 import { useEffect, useState } from 'react';
 
 export const SplitLayout = ({ children }: { children: React.ReactNode }) => {

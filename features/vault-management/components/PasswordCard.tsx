@@ -1,8 +1,8 @@
 'use client';
 import { sileo } from 'sileo';
 import { Copy } from '@/features/vault-management/components/icons/Copy';
-import { Eye } from '@/components/icons/Eye';
-import { EyeClose } from '@/components/icons/EyeClose';
+import { Eye } from '@/commons/components/icons/Eye';
+import { EyeClose } from '@/commons/components/icons/EyeClose';
 import { Edit } from '@/features/vault-management/components/icons/Edit';
 import { Delete } from '@/features/vault-management/components/icons/Delete';
 import { Star } from '@/features/vault-management/components/icons/Star';

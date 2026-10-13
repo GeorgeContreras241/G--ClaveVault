@@ -1,8 +1,8 @@
 'use client';
 import { OfflineUnlock } from './OfflineUnlock';
-import { useStoragePass } from '@/storage/useStoragePass';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { useStoragePass } from '@/commons/storage/useStoragePass';
+import { Header } from '@/commons/components/layout/Header';
+import { Footer } from '@/commons/components/layout/Footer';
 import type { AuthGuardProps } from '@/features/offline';
 
 export const AuthGuard = ({ children }: AuthGuardProps) => {

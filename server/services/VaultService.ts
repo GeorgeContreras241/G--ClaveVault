@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db';
+import { prisma } from '@/commons/lib/db';
 
 export class VaultService {
   static async findByUserId(userId: string) {

@@ -1,17 +1,17 @@
 'use client';
 import { useEffect } from 'react';
 import Add from '@/features/offline/components/icons/Add';
-import { sileoError } from '@/constants/sileoConfig';
+import { sileoError } from '@/commons/constants/sileoConfig';
 import { sileo, Toaster } from 'sileo';
 import { useState } from 'react';
-import { useStoragePass } from '@/storage/useStoragePass';
+import { useStoragePass } from '@/commons/storage/useStoragePass';
 import { validateVaultInputs } from '@/features/offline/utils/validateVaultInputs';
-import { Eye } from '@/components/icons/Eye';
-import { EyeClose } from '@/components/icons/EyeClose';
-import { validatePassword } from '@/lib/validation/validatePassword';
+import { Eye } from '@/commons/components/icons/Eye';
+import { EyeClose } from '@/commons/components/icons/EyeClose';
+import { validatePassword } from '@/commons/lib/validation/validatePassword';
 import type { OfflineUnlockProps } from '@/features/offline';
-import { generateSalt } from '@/lib/crypto/generateSalt';
-import { deriveKey } from '@/lib/crypto/kdfKey';
+import { generateSalt } from '@/commons/lib/crypto/generateSalt';
+import { deriveKey } from '@/commons/lib/crypto/kdfKey';
 import Link from 'next/link';
 
 export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {

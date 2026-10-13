@@ -1,4 +1,4 @@
-import { getCachedSiteConfig } from '@/lib/cache/site';
+import { getCachedSiteConfig } from '@/commons/lib/cache/site';
 
 type JsonLdProps = {
   data: Record<string, unknown>;

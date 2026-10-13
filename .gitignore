@@ -47,5 +47,5 @@ next-env.d.ts
 /.cursor
 /skills-lock.json
 
-/lib/generated/
+/commons/lib/generated/
 .neon

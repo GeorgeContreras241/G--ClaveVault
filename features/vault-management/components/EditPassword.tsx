@@ -1,20 +1,20 @@
 'use client';
 import { sileo } from 'sileo';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/commons/components/ui/button';
 import { useState } from 'react';
-import { useStoragePass } from '@/storage/useStoragePass';
-import { generatePassword } from '@/lib/utils/manager/generatePassword';
-import { copyToClipboard } from '@/lib/utils/manager/copyToClipboard';
+import { useStoragePass } from '@/commons/storage/useStoragePass';
+import { generatePassword } from '@/commons/manager/generatePassword';
+import { copyToClipboard } from '@/commons/manager/copyToClipboard';
 import { ChevronButton } from '@/features/vault-management/components/ui/Button';
 import { PasswordActions } from '@/features/vault-management/components/ui/PasswordActions';
 import type {
   EditPasswordProps,
   FormErrors,
 } from '@/features/vault-management';
-import { toPasswordEntry } from '@/lib/utils/manager/toPasswordEntry';
+import { toPasswordEntry } from '@/commons/manager/toPasswordEntry';
 import { useMode } from '@/features/vault-management/hooks/useMode';
-import { encrypt } from '@/lib/crypto/encryptData';
-import { bytesToBase64 } from '@/lib/encoding/base64';
+import { encrypt } from '@/commons/lib/crypto/encryptData';
+import { bytesToBase64 } from '@/commons/lib/encoding/base64';
 import { apiFetch } from '@/features/auth/lib/apiFetch';
 
 export const EditPassword = ({ password, onClose }: EditPasswordProps) => {

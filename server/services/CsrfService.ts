@@ -1,6 +1,6 @@
 import type { CookieJar, CookieOptions } from '@/types/index';
 import { randomToken, timingSafeEqual } from '@/server/utils/crypto';
-import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from '@/constants/csrf';
+import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from '@/commons/constants/csrf';
 
 export { CSRF_COOKIE_NAME, CSRF_HEADER_NAME };
 

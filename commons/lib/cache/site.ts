@@ -1,5 +1,5 @@
 import { cacheLife, cacheTag } from 'next/cache';
-import { siteConfig } from '@/lib/site';
+import { siteConfig } from '@/commons/lib/site';
 
 export async function getCachedSiteConfig() {
   'use cache';

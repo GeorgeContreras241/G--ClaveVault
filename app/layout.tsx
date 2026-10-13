@@ -1,10 +1,10 @@
 import type { Metadata, Viewport } from 'next';
 import { IBM_Plex_Sans, Sora, Inter } from 'next/font/google';
-import { WebApplicationJsonLd } from '@/components/seo/JsonLd';
-import { SplitLayout } from '@/components/layout/SplitLayout';
-import { siteConfig } from '@/lib/site';
+import { WebApplicationJsonLd } from '@/commons/components/seo/JsonLd';
+import { SplitLayout } from '@/commons/components/layout/SplitLayout';
+import { siteConfig } from '@/commons/lib/site';
 import './globals.css';
-import { cn } from '@/lib/utils';
+import { cn } from '@/commons/lib/utils';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
 

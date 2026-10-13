@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db';
+import { prisma } from '@/commons/lib/db';
 import { WebAuthnCredential } from '@/server/models';
 
 // operacionees db prisma

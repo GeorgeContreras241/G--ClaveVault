@@ -1,5 +1,5 @@
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { Header } from '@/commons/components/layout/Header';
+import { Footer } from '@/commons/components/layout/Footer';
 
 export const metadata = {
   title: 'Online',

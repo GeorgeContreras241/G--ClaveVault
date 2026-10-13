@@ -1,4 +1,4 @@
-import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from '@/constants/csrf';
+import { CSRF_COOKIE_NAME, CSRF_HEADER_NAME } from '@/commons/constants/csrf';
 
 const MUTATING_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 

@@ -2,7 +2,7 @@
 import { startAuthentication } from '@simplewebauthn/browser';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/commons/components/ui/button';
 import { apiFetch } from '@/features/auth/lib/apiFetch';
 import type { WebAuthnLoginProps } from '@/features/auth';
 

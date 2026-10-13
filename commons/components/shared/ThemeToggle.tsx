@@ -2,8 +2,8 @@
 
 import { useTheme } from 'next-themes';
 import { useSyncExternalStore } from 'react';
-import { Dark } from '@/components/icons/Dark';
-import { Light } from '@/components/icons/Light';
+import { Dark } from '@/commons/components/icons/Dark';
+import { Light } from '@/commons/components/icons/Light';
 
 const emptySubscribe = () => () => {};
 

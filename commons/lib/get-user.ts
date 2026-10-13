@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/db';
+import { prisma } from '@/commons/lib/db';
 import { SessionService } from '@/server/services';
 
 export async function getUser() {

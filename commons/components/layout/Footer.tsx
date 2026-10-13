@@ -1,7 +1,7 @@
 import GitHub from '../icons/GitHub';
 import Linkedin from '../icons/LinkedIn';
 
-import { ThemeToggle } from '@/components/shared/ThemeToggle';
+import { ThemeToggle } from '@/commons/components/shared/ThemeToggle';
 
 export const Footer = ({ className }: { className?: string }) => {
   return (

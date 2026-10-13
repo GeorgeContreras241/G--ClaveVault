@@ -2,12 +2,12 @@
 'use client';
 import { useState } from 'react';
 import { sileo } from 'sileo';
-import { useStoragePass } from '@/storage/useStoragePass';
+import { useStoragePass } from '@/commons/storage/useStoragePass';
 import { HeaderManager } from '@/features/vault-management/components/HeaderManager';
-import { copyToClipboard } from '@/lib/utils/manager/copyToClipboard';
+import { copyToClipboard } from '@/commons/manager/copyToClipboard';
 import { AddPassword } from '@/features/vault-management/components/AddPassword';
 import { EditPassword } from '@/features/vault-management/components/EditPassword';
-import { Web } from '@/components/icons/Web';
+import { Web } from '@/commons/components/icons/Web';
 import { App } from '@/features/vault-management/components/icons/App';
 import { Card } from '@/features/vault-management/components/icons/Card';
 import { Lock } from '@/features/vault-management/components/icons/Lock';
@@ -17,8 +17,8 @@ import { PasswordCard } from './components/PasswordCard';
 
 import type { PasswordEntry, ShowPasswords } from '@/features/vault-management';
 import { useMode } from '@/features/vault-management/hooks/useMode';
-import { encrypt } from '@/lib/crypto/encryptData';
-import { bytesToBase64 } from '@/lib/encoding/base64';
+import { encrypt } from '@/commons/lib/crypto/encryptData';
+import { bytesToBase64 } from '@/commons/lib/encoding/base64';
 import { apiFetch } from '@/features/auth/lib/apiFetch';
 
 export const Manager = () => {

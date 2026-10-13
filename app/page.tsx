@@ -1,11 +1,11 @@
 import { Suspense } from 'react';
-import Archive from '../components/icons/Archive';
+import Archive from '@/commons/components/icons/Archive';
 import Link from 'next/link';
-import { Target } from '@/components/shared/Target';
-import { target } from '@/constants/target';
-import { WebAuthnAction } from '@/components/home/WebAuthnAction';
-import { WebAuthnFallback } from '@/components/home/WebAuthnFallback';
-import { Footer } from '@/components/layout/Footer';
+import { Target } from '@/commons/components/shared/Target';
+import { target } from '@/commons/constants/target';
+import { WebAuthnAction } from '@/commons/components/home/WebAuthnAction';
+import { WebAuthnFallback } from '@/commons/components/home/WebAuthnFallback';
+import { Footer } from '@/commons/components/layout/Footer';
 
 export default function Home() {
   return (

@@ -2,10 +2,10 @@
 import { LogOut } from 'lucide-react';
 import { Export } from '@/features/vault-management/components/icons/Export';
 import { Search } from '@/features/vault-management/components/icons/Search';
-import { Button } from '@/components/ui/button';
-import { useStoragePass } from '@/storage/useStoragePass';
-import { ThemeToggle } from '@/components/shared/ThemeToggle';
-import { CATEGORY_BUTTONS } from '@/constants/navigationButtons';
+import { Button } from '@/commons/components/ui/button';
+import { useStoragePass } from '@/commons/storage/useStoragePass';
+import { ThemeToggle } from '@/commons/components/shared/ThemeToggle';
+import { CATEGORY_BUTTONS } from '@/commons/constants/navigationButtons';
 import { HeaderManagerProps } from '@/features/vault-management';
 import { useRouter } from 'next/navigation';
 import { apiFetch } from '@/features/auth/lib/apiFetch';

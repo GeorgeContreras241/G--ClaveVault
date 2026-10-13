@@ -1,7 +1,7 @@
 'use client';
 import { startRegistration } from '@simplewebauthn/browser';
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
+import { Button } from '@/commons/components/ui/button';
 import { apiFetch } from '@/features/auth/lib/apiFetch';
 import type { WebAuthnRegisterProps } from '@/features/auth';
 

@@ -1,9 +1,9 @@
 import { create } from 'zustand';
-import { encrypt } from '@/lib/crypto/encryptData';
-import { buildVaultFile } from '@/lib/vault/saveVault';
-import { deriveKey } from '@/lib/crypto/kdfKey';
-import { loadVault } from '@/lib/vault/loadVault';
-import { decrypt } from '@/lib/crypto/decryptData';
+import { encrypt } from '@/commons/lib/crypto/encryptData';
+import { buildVaultFile } from '@/commons/lib/vault/saveVault';
+import { deriveKey } from '@/commons/lib/crypto/kdfKey';
+import { loadVault } from '@/commons/lib/vault/loadVault';
+import { decrypt } from '@/commons/lib/crypto/decryptData';
 import { sileo } from 'sileo';
 import type { PassStorage, ImportResult } from '@/types';
 import type { PasswordEntry } from '@/features/vault-management';

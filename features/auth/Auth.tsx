@@ -1,10 +1,10 @@
 'use client';
-import WebAuthnIcon from '@/components/icons/WebAuthn';
+import WebAuthnIcon from '@/commons/components/icons/WebAuthn';
 import { Register } from './components/Register';
 import { Login } from './components/Login';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Separator } from '@/components/ui/separator';
+import { Input } from '@/commons/components/ui/input';
+import { Label } from '@/commons/components/ui/label';
+import { Separator } from '@/commons/components/ui/separator';
 import { useState } from 'react';
 import type { AuthFormErrors } from '@/features/auth';
 

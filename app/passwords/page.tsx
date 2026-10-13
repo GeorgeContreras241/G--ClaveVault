@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
-import { Loading } from '@/components/shared/Loading';
-import { getUser } from '@/lib/get-user';
+import { Loading } from '@/commons/components/shared/Loading';
+import { getUser } from '@/commons/lib/get-user';
 import { redirect } from 'next/navigation';
 import { PasswordsContent } from '@/features/online';
 

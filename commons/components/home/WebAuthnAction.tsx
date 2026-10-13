@@ -1,5 +1,5 @@
 'use client';
-import WebAuthn from '@/components/icons/WebAuthn';
+import WebAuthn from '@/commons/components/icons/WebAuthn';
 import Link from 'next/link';
 import { sileo } from 'sileo';
 
