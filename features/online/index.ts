@@ -1,8 +1,8 @@
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
 
-export { OnlineProvider } from './components/OnlineProvider';
+export { OnlineFlow } from './components/OnlineFlow';
 export { MasterKeyForm } from './components/MasterKeyForm';
-export { PasswordsContent } from './Layout/LayoutProvider';
+export { PasswordsContent } from './layout/PasswordsContent';
 
 /** Controla el desbloqueo de la bóveda online: formulario → Manager. */
 export interface MasterKeyFormProps {

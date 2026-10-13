@@ -1,6 +1,6 @@
 'use client';
 import { Copy } from '@/features/vault-management/components/icons/Copy';
-import { IconButton } from '@/features/vault-management/components/ui/Button';
+import { IconButton } from '@/features/vault-management/components/ui/IconButton';
 import type { PasswordActionsProps } from '@/features/vault-management';
 
 /**

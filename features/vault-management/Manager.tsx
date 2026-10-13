@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import { sileo } from 'sileo';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
-import { HeaderManager } from '@/features/vault-management/components/HeaderManager';
-import { copyToClipboard } from '@/commons/manager/copyToClipboard';
+import { VaultHeader } from '@/features/vault-management/components/VaultHeader';
+import { copyToClipboard } from '@/commons/lib/password/copyToClipboard';
 import { AddPassword } from '@/features/vault-management/components/AddPassword';
 import { EditPassword } from '@/features/vault-management/components/EditPassword';
-import { Web } from '@/commons/components/icons/Web';
+import { Web } from '@/features/vault-management/components/icons/Web';
 import { App } from '@/features/vault-management/components/icons/App';
 import { Card } from '@/features/vault-management/components/icons/Card';
 import { Lock } from '@/features/vault-management/components/icons/Lock';
@@ -19,13 +19,13 @@ import type { PasswordEntry, ShowPasswords } from '@/features/vault-management';
 import { useMode } from '@/features/vault-management/hooks/useMode';
 import { encrypt } from '@/commons/lib/crypto/encryptData';
 import { bytesToBase64 } from '@/commons/lib/encoding/base64';
-import { apiFetch } from '@/features/auth/lib/apiFetch';
+import { apiFetch } from '@/commons/lib/apiFetch';
 
 export const Manager = () => {
   const mode = useMode();
   const dataPassword = useStoragePass((state) => state.dataPassword);
-  const setDataPasswordDelate = useStoragePass(
-    (state) => state.setDataPasswordDelate
+  const setDataPasswordDelete = useStoragePass(
+    (state) => state.setDataPasswordDelete
   );
   const setDataPasswordFavorite = useStoragePass(
     (state) => state.setDataPasswordFavorite
@@ -67,7 +67,7 @@ export const Manager = () => {
           return;
         }
         if (data.ok && data.version) {
-          setDataPasswordDelate(id);
+          setDataPasswordDelete(id);
           setVersion(data.version);
           saved = true;
         }
@@ -76,7 +76,7 @@ export const Manager = () => {
         return;
       }
     } else {
-      setDataPasswordDelate(id);
+      setDataPasswordDelete(id);
       saved = true;
     }
 
@@ -118,7 +118,7 @@ export const Manager = () => {
   return (
     <div className="min-h-[90dvh] h-full">
       <div className="max-w-6xl mx-auto flex flex-col gap-4 pt-10">
-        <HeaderManager
+        <VaultHeader
           selectedCategory={selectedCategory}
           setSelectedCategory={setSelectedCategory}
           setSearchTerm={setSearchTerm}

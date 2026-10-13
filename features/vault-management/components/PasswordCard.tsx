@@ -7,7 +7,7 @@ import { Edit } from '@/features/vault-management/components/icons/Edit';
 import { Delete } from '@/features/vault-management/components/icons/Delete';
 import { Star } from '@/features/vault-management/components/icons/Star';
 import { StarFilled } from '@/features/vault-management/components/icons/StarFilled';
-import { IconButton } from '@/features/vault-management/components/ui/Button';
+import { IconButton } from '@/features/vault-management/components/ui/IconButton';
 import type { PasswordCardProps } from '@/features/vault-management';
 
 export const PasswordCard = ({

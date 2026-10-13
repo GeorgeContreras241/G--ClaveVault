@@ -2,7 +2,7 @@
 import { startRegistration } from '@simplewebauthn/browser';
 import { useState } from 'react';
 import { Button } from '@/commons/components/ui/button';
-import { apiFetch } from '@/features/auth/lib/apiFetch';
+import { apiFetch } from '@/commons/lib/apiFetch';
 import type { WebAuthnRegisterProps } from '@/features/auth';
 
 export const Register = ({ email, validateForm }: WebAuthnRegisterProps) => {

@@ -34,7 +34,7 @@ export interface IconButtonProps
 }
 
 /**
- * Botón de solo icono usado en toda la feature de manager
+ * Botón de solo icono usado en toda la feature vault-management
  * (copiar, mostrar/ocultar, editar, eliminar, favorito...).
  * `label` se usa como `aria-label` y como tooltip nativo.
  */

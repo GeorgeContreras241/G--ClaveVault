@@ -5,18 +5,18 @@ import { Search } from '@/features/vault-management/components/icons/Search';
 import { Button } from '@/commons/components/ui/button';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
 import { ThemeToggle } from '@/commons/components/shared/ThemeToggle';
-import { CATEGORY_BUTTONS } from '@/commons/constants/navigationButtons';
-import { HeaderManagerProps } from '@/features/vault-management';
+import { CATEGORY_BUTTONS } from '@/commons/constants/categoryButtons';
+import { VaultHeaderProps } from '@/features/vault-management';
 import { useRouter } from 'next/navigation';
-import { apiFetch } from '@/features/auth/lib/apiFetch';
+import { apiFetch } from '@/commons/lib/apiFetch';
 import { useMode } from '@/features/vault-management/hooks/useMode';
 
-export const HeaderManager = ({
+export const VaultHeader = ({
   setSearchTerm,
   setSelectedCategory,
   selectedCategory,
   searchTerm,
-}: HeaderManagerProps) => {
+}: VaultHeaderProps) => {
   const router = useRouter();
   const mode = useMode();
   const handleExport = useStoragePass((state) => state.handleExport);

@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 export type {
   IconButtonProps,
   ChevronButtonProps,
-} from './components/ui/Button';
+} from './components/ui/IconButton';
 
 /** Entrada de una contraseña dentro de la bóveda. */
 export interface PasswordEntry {
@@ -44,7 +44,7 @@ export interface PasswordCardProps {
   getCategoryIcon: (category: string) => ReactNode;
 }
 
-export interface HeaderManagerProps {
+export interface VaultHeaderProps {
   setSearchTerm: (value: string) => void;
   setSelectedCategory: (value: string) => void;
   selectedCategory: string;

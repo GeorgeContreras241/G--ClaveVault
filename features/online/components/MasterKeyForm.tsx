@@ -15,7 +15,7 @@ import { Label } from '@/commons/components/ui/label';
 import { Loading } from '@/commons/components/shared/Loading';
 import { StrengthMeter } from '@/commons/components/shared/StrengthMeter';
 import { validatePassword } from '@/commons/lib/validation/validatePassword';
-import { apiFetch } from '@/features/auth/lib/apiFetch';
+import { apiFetch } from '@/commons/lib/apiFetch';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
 import { FeatureCard } from '@/features/online/components/FeatureCard';
 import { TipList } from '@/features/online/components/TipList';
