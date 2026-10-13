@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import type { ReactNode } from 'react';
 import {
   Shield,
   KeyRound,
@@ -12,14 +13,33 @@ import { Input } from '@/commons/components/ui/input';
 import { Button } from '@/commons/components/ui/button';
 import { Label } from '@/commons/components/ui/label';
 import { Loading } from '@/commons/components/shared/Loading';
+import { StrengthMeter } from '@/commons/components/shared/StrengthMeter';
 import { validatePassword } from '@/commons/lib/validation/validatePassword';
 import { apiFetch } from '@/features/auth/lib/apiFetch';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
+import { FeatureCard } from '@/features/online/components/FeatureCard';
+import { TipList } from '@/features/online/components/TipList';
+import { VaultPanel } from '@/features/online/components/VaultPanel';
 // cryptography - Criptografia
 import { decrypt } from '@/commons/lib/crypto/decryptData';
 import { deriveKey } from '@/commons/lib/crypto/kdfKey';
 import { generateSalt } from '@/commons/lib/crypto/generateSalt';
 import type { MasterKeyFormProps } from '@/features/online';
+
+/** Recomendaciones de seguridad para la master key. */
+const SECURITY_TIPS: ReactNode[] = [
+  'Usa entre 16 y 32 caracteres con letras, números y símbolos.',
+  'Evita palabras comunes, fechas o información personal.',
+  'No reutilices esta contraseña en ningún otro servicio.',
+  <>
+    Considera usar una passphrase de 4+ palabras aleatorias (ej:{' '}
+    <span className="font-mono text-foreground/70">
+      correct-horse-battery-staple
+    </span>
+    .
+  </>,
+  'Anótala en un lugar seguro offline si temes olvidarla.',
+];
 
 export function MasterKeyForm({ setLook }: MasterKeyFormProps) {
   const [key, setKey] = useState('');
@@ -41,7 +61,7 @@ export function MasterKeyForm({ setLook }: MasterKeyFormProps) {
 
     const validatePasswordResult = validatePassword(password);
     if (!validatePasswordResult.success) {
-      setError('Master Key inválida.');
+      setError(validatePasswordResult.error ?? 'Master Key inválida.');
       return;
     }
     setLoading(true);
@@ -56,6 +76,12 @@ export function MasterKeyForm({ setLook }: MasterKeyFormProps) {
       }
       const data = await response.json();
       if (!data.hasVault) {
+        // Creación de vault nuevo: aquí sí se exige una clave fuerte.
+        const strictValidation = validatePassword(password, { strict: true });
+        if (!strictValidation.success) {
+          setError(strictValidation.error ?? 'Master Key demasiado débil.');
+          return;
+        }
         const salt = await generateSalt();
         if (!salt) {
           throw new Error(
@@ -139,31 +165,33 @@ export function MasterKeyForm({ setLook }: MasterKeyFormProps) {
       </div>
 
       <div className="vault-rise vault-rise-delay-3 w-full mb-8 md:mb-10">
-        <form
-          onSubmit={handleSubmit}
-          className="vault-panel rounded-xl p-4 md:p-6 space-y-3 md:space-y-4"
-        >
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="password">Master Key</Label>
-              {error && (
-                <p className="text-xs md:text-sm text-destructive">{error}</p>
+        <VaultPanel>
+          <form onSubmit={handleSubmit} className="space-y-3 md:space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Master Key</Label>
+                {error && (
+                  <p className="text-xs md:text-sm text-destructive">{error}</p>
+                )}
+              </div>
+              <Input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Ingresa tu master key"
+                value={key}
+                onChange={handlePasswordChange}
+                aria-invalid={!!error}
+              />
+              {key.length > 0 && (
+                <StrengthMeter validation={validatePassword(key)} />
               )}
             </div>
-            <Input
-              type="password"
-              id="password"
-              name="password"
-              placeholder="Ingresa tu master key"
-              value={key}
-              onChange={handlePasswordChange}
-              aria-invalid={!!error}
-            />
-          </div>
-          <Button type="submit" className="w-full">
-            Acceder
-          </Button>
-        </form>
+            <Button type="submit" className="w-full">
+              Acceder
+            </Button>
+          </form>
+        </VaultPanel>
       </div>
 
       <div className="vault-rise vault-rise-delay-3 w-full grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-8 md:mb-10">
@@ -190,67 +218,16 @@ export function MasterKeyForm({ setLook }: MasterKeyFormProps) {
       </div>
 
       <div className="vault-rise vault-rise-delay-4 w-full mb-8 md:mb-10">
-        <div className="vault-panel rounded-xl p-4 md:p-6">
+        <VaultPanel>
           <div className="flex items-center gap-3 mb-4 md:mb-5">
             <AlertTriangle className="w-4 h-4 md:w-5 md:h-5 text-vault-amber" />
             <h2 className="font-sora text-base md:text-lg font-semibold">
               Recomendaciones de seguridad
             </h2>
           </div>
-          <ul className="space-y-2.5 md:space-y-3 text-xs md:text-sm text-muted-foreground">
-            <li className="flex items-start gap-3">
-              <span className="mt-1 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-vault-amber" />
-              Usa entre 16 y 32 caracteres con letras, números y símbolos.
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="mt-1 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-vault-amber" />
-              Evita palabras comunes, fechas o información personal.
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="mt-1 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-vault-amber" />
-              No reutilices esta contraseña en ningún otro servicio.
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="mt-1 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-vault-amber" />
-              Considera usar una passphrase de 4+ palabras aleatorias (ej:{' '}
-              <span className="font-mono text-foreground/70">
-                correct-horse-battery-staple
-              </span>
-              ).
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="mt-1 flex-shrink-0 w-1.5 h-1.5 rounded-full bg-vault-amber" />
-              Anótala en un lugar seguro offline si temes olvidarla.
-            </li>
-          </ul>
-        </div>
+          <TipList items={SECURITY_TIPS} />
+        </VaultPanel>
       </div>
     </section>
-  );
-}
-
-function FeatureCard({
-  icon,
-  title,
-  description,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="vault-action-card border border-neutral-900 rounded-xl p-3.5 md:p-5 flex flex-row items-center gap-3 md:gap-4 text-left group cursor-default">
-      <div className="vault-icon-frame w-8 h-8 md:w-10 md:h-10 flex-shrink-0">
-        {icon}
-      </div>
-      <div className="flex flex-col">
-        <h3 className="font-sora font-semibold text-xs md:text-sm mb-0.5 md:mb-1">
-          {title}
-        </h3>
-        <p className="text-[11px] md:text-xs text-muted-foreground leading-relaxed">
-          {description}
-        </p>
-      </div>
-    </div>
   );
 }
