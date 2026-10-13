@@ -1,8 +1,8 @@
 import { Suspense } from 'react';
 import Archive from '@/commons/components/icons/Archive';
 import Link from 'next/link';
-import { Target } from '@/commons/components/shared/Target';
-import { target } from '@/commons/constants/target';
+import { CapabilityChip } from '@/commons/components/shared/CapabilityChip';
+import { CAPABILITIES } from '@/commons/constants/capabilities';
 import { WebAuthnAction } from '@/commons/components/home/WebAuthnAction';
 import { WebAuthnFallback } from '@/commons/components/home/WebAuthnFallback';
 import { Footer } from '@/commons/components/layout/Footer';
@@ -36,8 +36,8 @@ export default function Home() {
                 className="vault-rise vault-rise-delay-2 grid grid-cols-3 gap-2 sm:gap-3"
                 aria-label="Capacidades"
               >
-                {target.map((item) => (
-                  <Target key={item.text} text={item.text} />
+                {CAPABILITIES.map((item) => (
+                  <CapabilityChip key={item.text} text={item.text} />
                 ))}
               </section>
             </div>

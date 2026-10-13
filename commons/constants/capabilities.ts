@@ -1,4 +1,4 @@
-export const target = [
+export const CAPABILITIES = [
   {
     text: 'Autenticación WebAuthn',
   },

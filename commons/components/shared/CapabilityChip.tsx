@@ -1,4 +1,4 @@
-export const Target = ({ text }: { text: string }) => {
+export const CapabilityChip = ({ text }: { text: string }) => {
   return (
     <article
       className="group relative flex min-h-[2.75rem] items-center justify-center rounded-lg border px-2 py-2 text-center transition duration-300
@@ -14,4 +14,3 @@ export const Target = ({ text }: { text: string }) => {
     </article>
   );
 };
-// quitar demaciado generico
