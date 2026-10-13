@@ -8,7 +8,7 @@ import { Separator } from '@/commons/components/ui/separator';
 import { useState } from 'react';
 import type { AuthFormErrors } from '@/features/auth';
 
-export const WebAuthn = () => {
+export const AuthScreen = () => {
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<AuthFormErrors>({});
 
