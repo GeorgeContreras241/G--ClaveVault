@@ -1,7 +1,7 @@
 export default function OfflineLoading() {
   return (
     <div
-      className="grid min-h-dvh place-items-center px-2"
+      className="grid min-h-full place-items-center px-2"
       aria-busy="true"
       aria-label="Cargando gestor offline"
     >

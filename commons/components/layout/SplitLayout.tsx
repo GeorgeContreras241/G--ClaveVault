@@ -38,11 +38,13 @@ export const SplitLayout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Contenido - se expande al navegar */}
       <div
-        className={`flex-1 flex items-center justify-center p-4 lg:p-8 transition-all duration-500 ease-in-out ${
+        className={`flex-1 min-h-0 overflow-y-auto transition-all duration-500 ease-in-out ${
           isHome ? '' : 'lg:w-full'
         }`}
       >
-        <AppProviders>{children}</AppProviders>
+        <div className="flex min-h-full flex-col items-center justify-center p-4 lg:p-8">
+          <AppProviders>{children}</AppProviders>
+        </div>
       </div>
     </div>
   );

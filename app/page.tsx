@@ -9,7 +9,7 @@ import { Footer } from '@/commons/components/layout/Footer';
 
 export default function Home() {
   return (
-    <main className="home relative z-10 grid min-h-dvh place-items-center px-3 py-10 md:px-6 md:py-12">
+    <main className="home relative z-10 grid w-full place-items-center px-3 py-10 md:px-6 md:py-12">
       <div className="flex w-full max-w-3xl flex-col items-center gap-8 md:gap-10">
         <section
           id="main-content"

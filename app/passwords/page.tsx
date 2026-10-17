@@ -6,7 +6,14 @@ import { PasswordsContent } from '@/features/online';
 
 export default function PasswordsPage() {
   return (
-    <Suspense fallback={<Loading text="Cargando contraseñas..." />}>
+    <Suspense
+      fallback={
+        <Loading
+          className="min-h-[calc(100dvh-5rem)] w-full"
+          text="Cargando contraseñas..."
+        />
+      }
+    >
       <PasswordsInit />
     </Suspense>
   );

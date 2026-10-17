@@ -2,7 +2,7 @@ import { AuthScreen } from '@/features/auth/AuthScreen';
 
 export default function Online() {
   return (
-    <main className="flex-1 flex items-center justify-center h-full">
+    <main className="flex flex-1 items-center justify-center">
       <AuthScreen />
     </main>
   );

@@ -140,14 +140,14 @@ export function MasterKeyForm({ setLook }: MasterKeyFormProps) {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center py-20">
+      <div className="flex min-h-[calc(100dvh-5rem)] items-center justify-center py-20">
         <Loading size="lg" text="Accediendo al vault..." />
       </div>
     );
   }
 
   return (
-    <section className="relative flex flex-col items-center w-full min-h-full px-4 pb-8 md:pb-12">
+    <section className="relative flex w-full flex-col items-center pb-4 md:pb-8">
       <div className="vault-rise w-full flex flex-col items-center text-center mb-6 md:mb-8">
         <div className="flex flex-row items-center justify-center gap-3 mb-4 md:mb-5">
           <div className="vault-rise vault-rise-delay-1 mb-4 md:mb-6 flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-vault-amber/10 border border-vault-amber/20">

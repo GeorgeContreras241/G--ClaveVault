@@ -15,7 +15,7 @@ export default function OfflineError({
   }, [error]);
 
   return (
-    <main className="grid min-h-dvh place-items-center px-4 py-12">
+    <main className="grid min-h-full place-items-center px-4 py-12">
       <div className="vault-panel w-full max-w-md space-y-4 rounded-2xl p-6 text-center">
         <h1 className="font-sora text-xl font-semibold text-zinc-900 dark:text-zinc-50">
           Algo salió mal

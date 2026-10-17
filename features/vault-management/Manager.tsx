@@ -116,7 +116,7 @@ export const Manager = () => {
   });
 
   return (
-    <div className="min-h-[90dvh] h-full">
+    <div className="w-full flex-1">
       <div className="max-w-6xl mx-auto flex flex-col gap-4 pt-10">
         <VaultHeader
           selectedCategory={selectedCategory}
