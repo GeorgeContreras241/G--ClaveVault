@@ -198,9 +198,9 @@ graph TB
 
 | Componente | Responsabilidad |
 |---|---|
-| `server/services/` | Lógica de negocio: AuthService, SessionService |
-| `server/repositories/` | Acceso a datos: UserRepository, CredentialRepository |
-| `server/models/` | Modelos de dominio: User, WebAuthnCredential, Challenge |
+| `server/features/` | Lógica de negocio agrupada por dominio: `auth/`, `session/`, `challenge/`, `csrf/`, `rate-limit/`, `vault/` |
+| `server/validation/` | Validación de entrada: core, auth, vault, lectura segura del body |
+| `server/shared/` | Utilidades compartidas: cookies, crypto, IP |
 | `server/config/` | Configuración: WebAuthn RP config |
 
 ### Infraestructura
@@ -510,7 +510,7 @@ Registro de auditoría de acciones del usuario.
 ## Entidad: Session (en desuso)
 
 > **Estado:** las sesiones ya no se almacenan en PostgreSQL. Viven en Redis
-> (`server/services/SessionService.ts`): la cookie `session_token` contiene
+> (`server/features/session/SessionService.ts`): la cookie `session_token` contiene
 > un token aleatorio de 256 bits y en Redis solo se guarda su huella
 > `sha256(token)`, con TTL de 30 minutos renovado en cada petición.
 > El modelo permanece en `schema.prisma` por compatibilidad y puede
@@ -1149,7 +1149,7 @@ sequenceDiagram
 ### Registro WebAuthn (Código)
 
 ```typescript
-// server/services/AuthService.ts
+// server/features/auth/AuthService.ts
 export async function generateRegistrationOptions(email: string) {
   const user = await userRepository.findByEmail(email);
 
@@ -1228,7 +1228,7 @@ export async function verifyRegistration(
 
 **Código de Sesión:**
 ```typescript
-// server/services/SessionService.ts
+// server/features/session/SessionService.ts
 static async create(userId: string, jar?: CookieJar) {
   const token = randomToken(32);                    // 256 bits
   const hash = await sha256Hex(token);              // solo esto se guarda
@@ -2003,7 +2003,7 @@ const user = await prisma.user.findUnique({
 | `vault:write` | userId | 120 | 60 s | `POST /api/auth/me` |
 
 ```typescript
-// server/services/RateLimitService.ts
+// server/features/rate-limit/RateLimitService.ts
 static async hit(key: string, limit: number, windowSeconds: number) {
   const count = await kv.incr(`rl:${key}`);
   if (count === 1) await kv.expire(`rl:${key}`, windowSeconds); // solo al nacer
@@ -2021,7 +2021,7 @@ quedarse sin contar.
 
 ## Validación de Datos
 
-**Estado:** ✅ Centralizada en `server/services/ValidationService.ts`.
+**Estado:** ✅ Centralizada en `server/validation/index.ts`.
 **Ninguna ruta escribe sus propios `if` de validación**: todas delegan en
 el servicio, así que una ruta nueva no puede "olvidar" validar.
 
@@ -2120,7 +2120,7 @@ describe('Cifrado AES-256-GCM', () => {
 ```typescript
 // __tests__/services/AuthService.test.ts
 import { describe, it, expect } from 'vitest';
-import { generateRegistrationOptions } from '@/server/services/AuthService';
+import { generateRegistrationOptions } from '@/server/features/auth/AuthService';
 
 describe('AuthService', () => {
   it('debería generar opciones de registro válidas', async () => {
@@ -2637,7 +2637,7 @@ export function MiComponente({ prop1, prop2 }: MiComponenteProps) {
 
 ### 2. Crear servicio (si aplica)
 ```typescript
-// server/services/MiService.ts
+// server/features/ejemplo/MiService.ts
 export async function miFuncion() {
   // Lógica de negocio
 }
