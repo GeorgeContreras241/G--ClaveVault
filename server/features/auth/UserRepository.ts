@@ -1,5 +1,5 @@
 import { prisma } from '@/commons/lib/db';
-import { User } from '@/server/models';
+import { User } from './User';
 
 // operacionees db prisma
 

@@ -1,5 +1,5 @@
 import { prisma } from '@/commons/lib/db';
-import { WebAuthnCredential } from '@/server/models';
+import { WebAuthnCredential } from './WebAuthnCredential';
 
 // operacionees db prisma
 

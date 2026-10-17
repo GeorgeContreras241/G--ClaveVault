@@ -1,11 +1,12 @@
-import { AuthService } from '@/server/services';
-import { UserRepository, CredentialRepository } from '@/server/repositories';
-import { ValidationService } from '@/server/services/ValidationService';
+import { AuthService } from '@/server/features/auth/AuthService';
+import { UserRepository } from '@/server/features/auth/UserRepository';
+import { CredentialRepository } from '@/server/features/auth/CredentialRepository';
+import { ValidationService } from '@/server/validation';
 import { authRateLimit, handleRouteError, ok } from '@/server/http';
 
-const userRepo = new UserRepository();
-const credentialRepo = new CredentialRepository();
-const authService = new AuthService(userRepo, credentialRepo);
+const userRepo = new UserRepository();// db
+const credentialRepo = new CredentialRepository();//db
+const authService = new AuthService(userRepo, credentialRepo);//webauthn
 
 export async function POST(request: Request) {
   try {

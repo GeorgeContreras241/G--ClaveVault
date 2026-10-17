@@ -30,6 +30,9 @@ import {
 } from './types';
 import { validateVaultPayload } from './vault';
 
+export { NO_STORE } from './types';
+export type { Failure, JsonReadResult, ValidationResult } from './types';
+
 /**
  * Servicio central de validaciones de entrada del servidor.
  *

@@ -1,9 +1,11 @@
 import type { AuthenticationResponseJSON } from '@simplewebauthn/server';
-import { AuthService, SessionService } from '@/server/services';
-import { UserRepository, CredentialRepository } from '@/server/repositories';
-import { ValidationService } from '@/server/services/ValidationService';
-import { CsrfService } from '@/server/services/CsrfService';
-import { nextCookieJar } from '@/server/utils/cookies';
+import { AuthService } from '@/server/features/auth/AuthService';
+import { SessionService } from '@/server/features/session/SessionService';
+import { UserRepository } from '@/server/features/auth/UserRepository';
+import { CredentialRepository } from '@/server/features/auth/CredentialRepository';
+import { ValidationService } from '@/server/validation';
+import { CsrfService } from '@/server/features/csrf/CsrfService';
+import { nextCookieJar } from '@/server/shared/cookies';
 import { authRateLimit, handleRouteError, ok } from '@/server/http';
 
 const userRepo = new UserRepository();

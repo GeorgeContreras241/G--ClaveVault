@@ -1,6 +1,6 @@
-import { nextCookieJar } from '@/server/utils/cookies';
-import { randomToken, sha256Hex } from '@/server/utils/crypto';
-import { getKv } from '@/server/redis/client';
+import { nextCookieJar } from '@/server/shared/cookies';
+import { randomToken, sha256Hex } from '@/server/shared/crypto';
+import { SessionRepository } from './SessionRepository';
 import type { CookieJar } from '@/types/index';
 
 export const SESSION_COOKIE_NAME = 'session_token';
@@ -8,22 +8,16 @@ export const SESSION_COOKIE_NAME = 'session_token';
 /** Tiempo de inactividad antes de cerrar la sesión (30 minutos). */
 const SESSION_TIMEOUT_SECONDS = 30 * 60;
 
-const KEY_PREFIX = 'session:';
-
-function keyFor(hash: string): string {
-  return `${KEY_PREFIX}${hash}`;
-}
-
 async function jarOr(jar?: CookieJar): Promise<CookieJar> {
   return jar ?? (await nextCookieJar());
 }
 
 /**
- * Sesiones en Redis con token de 256 bits del que solo se persiste el hash.
+ * Sesiones con token de 256 bits del que solo se persiste el hash.
  *
  * - Cookie `httpOnly` + `SameSite=Lax` + `Secure` en producción.
- * - La clave de Redis es `sha256(token)`: volcar Redis no permite
- *   reconstruir cookies válidas.
+ * - La clave de persistencia es `sha256(token)`: volcar el almacén no
+ *   permite reconstruir cookies válidas.
  * - TTL = inactividad de 30 min y se renueva al validar, así que las
  *   sesiones caducadas desaparecen solas sin limpieza de tablas.
  * - Se elimina el uso de la tabla `sessions` de Prisma (puede borrarse
@@ -36,9 +30,9 @@ export class SessionService {
     const token = randomToken(32);
     const hash = await sha256Hex(token);
 
-    await getKv().set(
-      keyFor(hash),
-      JSON.stringify({ userId, createdAt: Date.now() }),
+    await SessionRepository.save(
+      hash,
+      { userId, createdAt: Date.now() },
       SESSION_TIMEOUT_SECONDS
     );
 
@@ -62,28 +56,21 @@ export class SessionService {
     }
 
     const hash = await sha256Hex(token);
-    const raw = await getKv().get(keyFor(hash));
-    if (!raw) {
+    const lookup = await SessionRepository.findByHash(hash);
+
+    if (lookup.status === 'missing') {
       return null;
     }
 
-    let payload: { userId?: string };
-    try {
-      payload = JSON.parse(raw) as { userId?: string };
-    } catch {
-      await getKv().del(keyFor(hash));
-      return null;
-    }
-
-    if (!payload.userId) {
-      await getKv().del(keyFor(hash));
+    if (lookup.status === 'corrupt' || !lookup.session.userId) {
+      await SessionRepository.delete(hash);
       return null;
     }
 
     // Deslizante: mientras haya actividad la sesión sigue viva.
-    await getKv().expire(keyFor(hash), SESSION_TIMEOUT_SECONDS);
+    await SessionRepository.touch(hash, SESSION_TIMEOUT_SECONDS);
 
-    return { userId: payload.userId };
+    return { userId: lookup.session.userId };
   }
 
   static async destroy(jar?: CookieJar): Promise<void> {
@@ -91,7 +78,7 @@ export class SessionService {
     const token = store.get(SESSION_COOKIE_NAME);
     if (token) {
       const hash = await sha256Hex(token);
-      await getKv().del(keyFor(hash));
+      await SessionRepository.delete(hash);
     }
 
     store.delete(SESSION_COOKIE_NAME);

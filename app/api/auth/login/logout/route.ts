@@ -1,5 +1,5 @@
-import { SessionService } from '@/server/services';
-import { CsrfError, CsrfService } from '@/server/services/CsrfService';
+import { SessionService } from '@/server/features/session/SessionService';
+import { CsrfError, CsrfService } from '@/server/features/csrf/CsrfService';
 import { handleRouteError, ok } from '@/server/http';
 
 export async function POST(request: Request) {

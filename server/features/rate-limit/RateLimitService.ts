@@ -1,4 +1,4 @@
-import { getKv } from '@/server/redis/client';
+import { RateLimitRepository } from './RateLimitRepository';
 
 export interface RateLimitDecision {
   allowed: boolean;
@@ -7,9 +7,12 @@ export interface RateLimitDecision {
   retryAfter: number;
 }
 
-/** Prefijo compartido por todos los contadores (facilita un `SCAN` manual). */
-const KEY_PREFIX = 'rl:';
-
+/**
+ * Rate limiting por ventana deslizante simple.
+ *
+ * No toca el almacén directamente: delega en {@link RateLimitRepository}.
+ * El servicio decide si la petición pasa y construye la respuesta 429.
+ */
 export class RateLimitService {
   /**
    * Incrementa el contador de `key` y decide si la petición pasa.
@@ -22,16 +25,13 @@ export class RateLimitService {
     limit: number,
     windowSeconds: number
   ): Promise<RateLimitDecision> {
-    const kv = getKv();
-    const scopedKey = `${KEY_PREFIX}${key}`;
-
-    const count = await kv.incr(scopedKey);
+    const count = await RateLimitRepository.increment(key);
     if (count === 1) {
-      await kv.expire(scopedKey, windowSeconds);
+      await RateLimitRepository.expire(key, windowSeconds);
     }
 
     if (count > limit) {
-      const remainingTtl = await kv.ttl(scopedKey);
+      const remainingTtl = await RateLimitRepository.ttl(key);
       return {
         allowed: false,
         remaining: 0,

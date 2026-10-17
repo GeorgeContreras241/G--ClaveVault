@@ -1,8 +1,8 @@
-import { RegistrationError } from '@/server/services/AuthService';
-import { CsrfError, CsrfService } from '@/server/services/CsrfService';
-import { RateLimitService } from '@/server/services/RateLimitService';
-import { NO_STORE } from '@/server/services/ValidationService';
-import { getClientIp } from '@/server/utils/ip';
+import { RegistrationError } from '@/server/features/auth/AuthService';
+import { CsrfError, CsrfService } from '@/server/features/csrf/CsrfService';
+import { RateLimitService } from '@/server/features/rate-limit/RateLimitService';
+import { NO_STORE } from '@/server/validation';
+import { getClientIp } from '@/server/shared/ip';
 
 /** Respuesta `200` con cabecera `no-store` aplicada por defecto. */
 export function ok(data: Record<string, unknown> = {}): Response {

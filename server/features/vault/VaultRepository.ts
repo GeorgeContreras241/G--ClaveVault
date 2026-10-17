@@ -1,8 +1,15 @@
 import { prisma } from '@/commons/lib/db';
 
-export class VaultService {
+/**
+ * Acceso a datos de la bóveda cifrada.
+ *
+ * Solo persiste: no decide nada sobre el contenido ni sobre quién puede
+ * leerlo. Los bytes llegan ya como `Uint8Array` y aquí se convierten al
+ * formato que espera Prisma.
+ */
+export class VaultRepository {
   static async findByUserId(userId: string) {
-    const vault = await prisma.vault.findUnique({
+    return prisma.vault.findUnique({
       where: { userId },
       select: {
         salt: true,
@@ -12,7 +19,6 @@ export class VaultService {
         updatedAt: true,
       },
     });
-    return vault;
   }
 
   static async upsert(
@@ -20,7 +26,7 @@ export class VaultService {
     salt: Uint8Array,
     iv: Uint8Array,
     encryptedData: Uint8Array,
-    version: number = 1
+    version: number
   ) {
     return prisma.vault.upsert({
       where: { userId },

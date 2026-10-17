@@ -9,10 +9,11 @@ import type {
   RegistrationResponseJSON,
   AuthenticatorTransportFuture,
 } from '@simplewebauthn/server';
-import { UserRepository, CredentialRepository } from '@/server/repositories';
-import { WebAuthnCredential } from '@/server/models';
+import { UserRepository } from './UserRepository';
+import { CredentialRepository } from './CredentialRepository';
+import { WebAuthnCredential } from './WebAuthnCredential';
 import { webauthnConfig } from '@/server/config';
-import { ChallengeService } from '@/server/services/ChallengeService';
+import { ChallengeService } from '@/server/features/challenge/ChallengeService';
 
 export class AuthService {
   constructor(

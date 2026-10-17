@@ -1,7 +1,8 @@
-import { SessionService, VaultService } from '@/server/services';
-import { ValidationService } from '@/server/services/ValidationService';
-import { RateLimitService } from '@/server/services/RateLimitService';
-import { CsrfService } from '@/server/services/CsrfService';
+import { SessionService } from '@/server/features/session/SessionService';
+import { VaultService } from '@/server/features/vault/VaultService';
+import { ValidationService } from '@/server/validation';
+import { RateLimitService } from '@/server/features/rate-limit/RateLimitService';
+import { CsrfService } from '@/server/features/csrf/CsrfService';
 import { fail, handleRouteError, ok } from '@/server/http';
 
 const NO_STORE = ValidationService.NO_STORE;

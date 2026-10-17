@@ -1,5 +1,5 @@
 import { prisma } from '@/commons/lib/db';
-import { SessionService } from '@/server/services';
+import { SessionService } from '@/server/features/session/SessionService';
 
 export async function getUser() {
   const session = await SessionService.validate();

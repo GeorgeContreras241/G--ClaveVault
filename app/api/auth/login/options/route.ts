@@ -1,6 +1,7 @@
-import { AuthService } from '@/server/services';
-import { UserRepository, CredentialRepository } from '@/server/repositories';
-import { ValidationService } from '@/server/services/ValidationService';
+import { AuthService } from '@/server/features/auth/AuthService';
+import { UserRepository } from '@/server/features/auth/UserRepository';
+import { CredentialRepository } from '@/server/features/auth/CredentialRepository';
+import { ValidationService } from '@/server/validation';
 import { authRateLimit, handleRouteError, ok } from '@/server/http';
 
 const userRepo = new UserRepository();

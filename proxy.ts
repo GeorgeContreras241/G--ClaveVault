@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { SessionService } from '@/server/services';
-import { CsrfService, CSRF_COOKIE_NAME } from '@/server/services/CsrfService';
-import { readOnlyJar } from '@/server/utils/cookies';
+import { SessionService } from '@/server/features/session/SessionService';
+import {
+  CsrfService,
+  CSRF_COOKIE_NAME,
+} from '@/server/features/csrf/CsrfService';
+import { readOnlyJar } from '@/server/shared/cookies';
 
 /** Zona privada: requiere sesión válida. */
 function isProtected(pathname: string): boolean {
