@@ -98,6 +98,7 @@ export function MasterKeyForm({ setLook }: MasterKeyFormProps) {
         setSalt(salt);
         setDerivedKey(derivedKey);
         setDataPasswordInit([]);
+        setLook(true);
         return;
       }
 
