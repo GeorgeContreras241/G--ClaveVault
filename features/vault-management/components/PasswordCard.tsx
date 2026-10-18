@@ -20,9 +20,13 @@ export const PasswordCard = ({
   onToggleFavorite,
   getCategoryIcon,
 }: PasswordCardProps) => {
-  const handleCopy = (text: string, title: string) => {
-    onCopyToClipboard(text);
-    sileo.success({ title, duration: 600 });
+  const handleCopy = async (text: string, title: string) => {
+    const copied = await onCopyToClipboard(text);
+    if (copied) {
+      sileo.success({ title, duration: 600 });
+    } else {
+      sileo.error({ title: 'No se pudo copiar al portapapeles' });
+    }
   };
 
   return (
