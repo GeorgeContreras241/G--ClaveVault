@@ -75,6 +75,7 @@ export function MasterKeyForm({ setLook }: MasterKeyFormProps) {
         );
       }
       const data = await response.json();
+      // Si la respuesta es false y true no hay vault, mientras que si son dos hay un previamente creado
       if (!data.hasVault) {
         // Creación de vault nuevo: aquí sí se exige una clave fuerte.
         const strictValidation = validatePassword(password, { strict: true });
