@@ -1,7 +1,7 @@
 import { prisma } from '@/commons/lib/db';
 import { User } from './User';
 
-// operacionees db prisma
+// operaciones db prisma
 
 export class UserRepository {
   async findByEmail(email: string): Promise<User | null> {
