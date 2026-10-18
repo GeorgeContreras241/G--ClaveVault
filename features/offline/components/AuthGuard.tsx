@@ -1,6 +1,7 @@
 'use client';
 import { OfflineUnlock } from './OfflineUnlock';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
+import { useAutoLock } from '@/features/vault-management/hooks/useAutoLock';
 import { Header } from '@/commons/components/layout/Header';
 import { Footer } from '@/commons/components/layout/Footer';
 import type { AuthGuardProps } from '@/features/offline';
@@ -8,6 +9,7 @@ import type { AuthGuardProps } from '@/features/offline';
 export const AuthGuard = ({ children }: AuthGuardProps) => {
   const isUnlocked = useStoragePass((state) => state.isUnlocked);
   const setIsUnlocked = useStoragePass((state) => state.setIsUnlocked);
+  useAutoLock(undefined, isUnlocked);
 
   if (!isUnlocked) {
     return (
