@@ -19,4 +19,9 @@ export const CATEGORY_BUTTONS = [
     label: 'Apps',
     value: 'app',
   },
+  {
+    id: 'card',
+    label: 'Cards',
+    value: 'card',
+  },
 ];
