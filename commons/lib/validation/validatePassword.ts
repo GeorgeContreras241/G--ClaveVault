@@ -8,9 +8,8 @@
  *   único que se exige al desbloquear un vault o importar un `.enc`, para no
  *   dejar fuera a nadie cuya clave ya existe.
  * - **De calidad** (avisos; errores con `strict`): longitud cómoda, variedad de
- *   caracteres (o passphrase de 20+ caracteres), ausencia de repeticiones
- *   (`aaa`), secuencias (`abcd`, `1234`) y contraseñas muy comunes. Solo se
- *   bloquean al crear una clave nueva.
+ *   caracteres (o passphrase de 20+ caracteres), secuencias (`abcd`, `1234`) y
+ *   contraseñas muy comunes. Solo se bloquean al crear una clave nueva.
  *
  * Devuelve además `score` (0–4) y `strength` para pintar un indicador de
  * fuerza mientras el usuario escribe.
@@ -30,8 +29,6 @@ const PASSPHRASE_LENGTH = 20;
 
 /** `\u0000`–`\u001f` (controles) y `\u007f` (supr). */
 const CONTROL_CHARACTERS = /[\u0000-\u001f\u007f]/;
-/** Mismo carácter repetido 3 veces seguidas: `aaa`, `111`, `###`. */
-const REPEATED_CHARACTERS = /(.)\1{2}/;
 const EDGE_SPACES = /^\s|\s$/;
 
 /** Contraseñas más frecuentes en filtraciones (comparadas en minúsculas). */
@@ -189,7 +186,6 @@ export const validatePassword = (
 
   // ── reglas de calidad: avisos, o errores en modo strict ─────────────
   const classes = countCharacterClasses(password);
-  const repeated = REPEATED_CHARACTERS.test(password);
   const sequence = hasSequence(password);
   const common = COMMON_PASSWORDS.has(password.trim().toLowerCase());
   // Una passphrase larga no necesita mayúsculas ni símbolos: sus palabras y
@@ -205,9 +201,6 @@ export const validatePassword = (
   }
   if (classes < 3 && !isPassphrase) {
     qualityIssues.push('Combina mayúsculas, minúsculas, números y símbolos');
-  }
-  if (repeated) {
-    qualityIssues.push('Evita repetir un carácter 3 veces seguidas (ej. aaa)');
   }
   if (sequence) {
     qualityIssues.push('Evita secuencias como abcd o 1234');
@@ -236,7 +229,7 @@ export const validatePassword = (
   if (classes >= 4) {
     score += 1;
   }
-  if (!repeated && !sequence && !common) {
+  if (!sequence && !common) {
     score += 1;
   }
 
