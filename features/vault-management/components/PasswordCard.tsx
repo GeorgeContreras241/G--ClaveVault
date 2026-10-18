@@ -123,7 +123,7 @@ export const PasswordCard = ({
             </div>
           </div>
 
-          <div className="hidden z-10 sm:flex items-center gap-1">
+          <div className="flex z-10 items-center gap-1 flex-shrink-0">
             <IconButton
               label="Editar contraseña"
               onClick={() => onEditPassword(password)}
