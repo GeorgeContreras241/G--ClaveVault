@@ -39,10 +39,16 @@ export async function apiFetch(
     }
   }
 
+  const timeoutSignal =
+    typeof AbortSignal !== 'undefined' && 'timeout' in AbortSignal
+      ? AbortSignal.timeout(15000)
+      : undefined;
+
   return fetch(path, {
     credentials: 'include',
     ...init,
     method,
     headers,
+    signal: init.signal ?? timeoutSignal,
   });
 }
