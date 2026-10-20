@@ -1,6 +1,5 @@
-// Refacor en proceso
 'use client';
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { sileo } from 'sileo';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
 import { VaultHeader } from '@/features/vault-management/components/VaultHeader';
@@ -17,18 +16,29 @@ import { PasswordCard } from './components/PasswordCard';
 
 import type { PasswordEntry, ShowPasswords } from '@/features/vault-management';
 import { useMode } from '@/features/vault-management/hooks/useMode';
-import { encrypt } from '@/commons/lib/crypto/encryptData';
-import { bytesToBase64 } from '@/commons/lib/encoding/base64';
-import { apiFetch } from '@/commons/lib/apiFetch';
+import { commitVaultOnline } from '@/commons/lib/vault/commitVault';
+
+const getCategoryIcon = (category: string) => {
+  switch (category) {
+    case 'web':
+      return <Web />;
+    case 'app':
+      return <App />;
+    case 'card':
+      return <Card />;
+    default:
+      return <Lock />;
+  }
+};
 
 export const Manager = () => {
   const mode = useMode();
   const dataPassword = useStoragePass((state) => state.dataPassword);
+  const setDataPasswordInit = useStoragePass(
+    (state) => state.setDataPasswordInit
+  );
   const setDataPasswordDelete = useStoragePass(
     (state) => state.setDataPasswordDelete
-  );
-  const setDataPasswordFavorite = useStoragePass(
-    (state) => state.setDataPasswordFavorite
   );
   const derivedKey = useStoragePass((state) => state.derivedKey);
   const salt = useStoragePass((state) => state.salt);
@@ -39,81 +49,116 @@ export const Manager = () => {
   const [editingPassword, setEditingPassword] = useState<PasswordEntry | null>(
     null
   );
+  const [deletingId, setDeletingId] = useState<string | null>(null);
 
-  const togglePasswordVisibility = (id: string) => {
+  const togglePasswordVisibility = useCallback((id: string) => {
     setShowPasswords((prev) => ({
       ...prev,
       [id]: !prev[id],
     }));
-  };
+  }, []);
 
-  const handleDeletePassword = async (id: string) => {
-    let saved = false;
-
-    if (mode === 'online' && derivedKey && salt) {
-      try {
-        const updatedPasswords = dataPassword.filter((p) => p.id !== id);
-        const encrypted = await encrypt(derivedKey, updatedPasswords);
-        const res = await apiFetch('/api/auth/me', {
-          method: 'POST',
-          body: JSON.stringify({
-            salt: bytesToBase64(salt),
-            iv: bytesToBase64(encrypted.iv),
-            encryptedData: bytesToBase64(encrypted.data),
-          }),
+  const commitEntries = useCallback(
+    async (entries: PasswordEntry[]): Promise<boolean> => {
+      if (mode !== 'online' || !derivedKey || !salt) {
+        return true;
+      }
+      const result = await commitVaultOnline({ derivedKey, salt, entries });
+      if (!result.ok) {
+        sileo.error({
+          title: 'No se pudo guardar en el servidor',
+          description: result.error,
+          duration: 5000,
         });
-        const data = await res.json();
-        if (!data) {
-          return;
-        }
-        if (data.ok && data.version) {
-          setDataPasswordDelete(id);
-          setVersion(data.version);
-          saved = true;
-        }
-      } catch (error) {
-        console.error('Error guardando vault:', error);
+        return false;
+      }
+      setVersion(result.version);
+      return true;
+    },
+    [mode, derivedKey, salt, setVersion]
+  );
+
+  const handleDeletePassword = useCallback(
+    async (id: string) => {
+      if (deletingId) {
         return;
       }
-    } else {
-      setDataPasswordDelete(id);
-      saved = true;
-    }
+      setDeletingId(id);
+      try {
+        const previous = dataPassword;
+        const next = previous.filter((p) => p.id !== id);
+        const saved = await commitEntries(next);
+        if (!saved) {
+          return;
+        }
+        setDataPasswordDelete(id);
+        sileo.success({
+          title: 'Contraseña eliminada.',
+          duration: 1000,
+        });
+      } finally {
+        setDeletingId(null);
+      }
+    },
+    [dataPassword, commitEntries, setDataPasswordDelete, deletingId]
+  );
 
-    if (saved) {
-      sileo.success({
-        title: 'Contraseña eliminada.',
-        duration: 1000,
+  const handleRequestDelete = useCallback(
+    (id: string) => {
+      const entry = dataPassword.find((p) => p.id === id);
+      sileo.warning({
+        title: 'Eliminar contraseña',
+        description: entry
+          ? `Se eliminará "${entry.title}". Esta acción no se puede deshacer.`
+          : 'Esta acción no se puede deshacer.',
+        duration: 8000,
+        button: {
+          title: 'Eliminar',
+          onClick: () => {
+            void handleDeletePassword(id);
+          },
+        },
       });
-    }
-  };
+    },
+    [dataPassword, handleDeletePassword]
+  );
 
-  const getCategoryIcon = (category: string) => {
-    switch (category) {
-      case 'web':
-        return <Web />;
-      case 'app':
-        return <App />;
-      case 'card':
-        return <Card />;
-      default:
-        return <Lock />;
-    }
-  };
+  const handleToggleFavorite = useCallback(
+    async (id: string) => {
+      const previous = dataPassword;
+      const entry = previous.find((p) => p.id === id);
+      if (!entry) {
+        return;
+      }
+      const next = previous.map((p) =>
+        p.id === id ? { ...p, favorite: !p.favorite } : p
+      );
+      // Optimista local + rollback si el servidor rechaza (online).
+      setDataPasswordInit(next);
+      const saved = await commitEntries(next);
+      if (!saved) {
+        setDataPasswordInit(previous);
+      }
+    },
+    [dataPassword, commitEntries, setDataPasswordInit]
+  );
 
-  const filteredPasswords = dataPassword.filter((password) => {
-    const matchesSearch =
-      password.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      password.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (password.url &&
-        password.url.toLowerCase().includes(searchTerm.toLowerCase()));
-    const matchesCategory =
-      selectedCategory === 'all' ||
-      (selectedCategory === 'favorites'
-        ? password.favorite
-        : password.category === selectedCategory);
-    return matchesSearch && matchesCategory;
-  });
+  const filteredPasswords = useMemo(() => {
+    const term = searchTerm.toLowerCase();
+    return dataPassword.filter((password) => {
+      const title = (password.title ?? '').toLowerCase();
+      const username = (password.username ?? '').toLowerCase();
+      const url = (password.url ?? '').toLowerCase();
+      const matchesSearch =
+        title.includes(term) || username.includes(term) || url.includes(term);
+      const matchesCategory =
+        selectedCategory === 'all' ||
+        (selectedCategory === 'favorites'
+          ? password.favorite
+          : password.category === selectedCategory);
+      return matchesSearch && matchesCategory;
+    });
+  }, [dataPassword, searchTerm, selectedCategory]);
 
   return (
     <div className="w-full flex-1">
@@ -128,6 +173,7 @@ export const Manager = () => {
           <section>
             {editingPassword ? (
               <EditPassword
+                key={editingPassword.id}
                 password={editingPassword}
                 onClose={() => setEditingPassword(null)}
               />
@@ -146,8 +192,8 @@ export const Manager = () => {
                   onTogglePasswordVisibility={togglePasswordVisibility}
                   onCopyToClipboard={copyToClipboard}
                   onEditPassword={setEditingPassword}
-                  onDeletePassword={handleDeletePassword}
-                  onToggleFavorite={setDataPasswordFavorite}
+                  onDeletePassword={handleRequestDelete}
+                  onToggleFavorite={handleToggleFavorite}
                   getCategoryIcon={getCategoryIcon}
                 />
               ))}

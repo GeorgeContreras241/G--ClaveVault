@@ -55,28 +55,21 @@ export type ImportResult = {
 
 export type ExportResult = (entries: PasswordEntry[]) => Promise<void>;
 
-export type ToggleDeriveKey = (password: string) => Promise<void>;
-
 export type PassStorage = {
   salt: Uint8Array | null;
   derivedKey: CryptoKey | null;
-  loading: boolean;
   dataPassword: PasswordEntry[];
   isUnlocked: boolean;
-  isResetting: boolean;
   version: number;
-  setDataPassword: () => void;
   setDataPasswordInit: (data: PasswordEntry[]) => void;
   setDataPasswordUpdate: (data: PasswordEntry) => void;
   setDataPasswordEdit: (data: PasswordEntry) => void;
   setDataPasswordFavorite: (id: string) => void;
   setDataPasswordDelete: (id: string) => void;
-  setLoading: (loading: boolean) => void;
   setDerivedKey: (key: CryptoKey) => void;
   setSalt: (salt: Uint8Array) => void;
   setIsUnlocked: (value: boolean) => void;
   setVersion: (version: number) => void;
-  toggleDeriveKey: ToggleDeriveKey;
   handleExport: ExportResult;
   handleImport: (file: File, password: string) => Promise<ImportResult>;
   handleReset: () => Promise<void>;

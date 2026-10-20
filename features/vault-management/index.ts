@@ -37,10 +37,10 @@ export interface PasswordCardProps {
   password: PasswordEntry;
   showPasswords: ShowPasswords;
   onTogglePasswordVisibility: (id: string) => void;
-  onCopyToClipboard: (text: string) => void;
+  onCopyToClipboard: (text: string) => Promise<boolean>;
   onEditPassword: (password: PasswordEntry) => void;
   onDeletePassword: (id: string) => void;
-  onToggleFavorite: (id: string) => void;
+  onToggleFavorite: (id: string) => void | Promise<void>;
   getCategoryIcon: (category: string) => ReactNode;
 }
 

@@ -2035,7 +2035,7 @@ el servicio, así que una ruta nueva no puede "olvidar" validar.
 | `validateLoginVerifyPayload` / `validateRegisterVerifyPayload` | `challengeId` + respuesta WebAuthn correspondiente |
 | `validateVaultPayload` | `salt` = 16 bytes, **`iv` = exactamente 12 bytes**, `encryptedData` dentro del límite de 5 MB, todo base64 válido |
 | `validatePassword` (servidor) | Longitud 8–128 |
-| `validatePassword` (cliente, `commons/lib/validation/validatePassword.ts`) | **Estructural** (bloquea siempre): 8–128 caracteres, sin caracteres de control, no solo espacios. **Calidad** (avisos, o errores con `strict` al crear): 12+ caracteres, ≥3 clases de caracteres, sin repeticiones/secuencias ni contraseñas comunes. Devuelve además `score` 0–4 y `strength` para el indicador de fuerza |
+| `validatePassword` (cliente, `commons/lib/validation/validatePassword.ts`) | **Estructural** (bloquea siempre): 8–128 caracteres, sin caracteres de control, no solo espacios. **Calidad** (avisos, o errores con `strict` al crear): 12+ caracteres, ≥3 clases de caracteres, sin secuencias ni contraseñas comunes. Devuelve además `score` 0–4 y `strength` para el indicador de fuerza |
 
 ```typescript
 // Uso típico dentro de una ruta

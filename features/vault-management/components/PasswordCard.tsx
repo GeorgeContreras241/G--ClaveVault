@@ -20,9 +20,13 @@ export const PasswordCard = ({
   onToggleFavorite,
   getCategoryIcon,
 }: PasswordCardProps) => {
-  const handleCopy = (text: string, title: string) => {
-    onCopyToClipboard(text);
-    sileo.success({ title, duration: 600 });
+  const handleCopy = async (text: string, title: string) => {
+    const copied = await onCopyToClipboard(text);
+    if (copied) {
+      sileo.success({ title, duration: 600 });
+    } else {
+      sileo.error({ title: 'No se pudo copiar al portapapeles' });
+    }
   };
 
   return (
@@ -119,7 +123,7 @@ export const PasswordCard = ({
             </div>
           </div>
 
-          <div className="hidden z-10 sm:flex items-center gap-1">
+          <div className="flex z-10 items-center gap-1 flex-shrink-0">
             <IconButton
               label="Editar contraseña"
               onClick={() => onEditPassword(password)}

@@ -1,4 +1,5 @@
 'use client';
+import { useState } from 'react';
 import { LogOut } from 'lucide-react';
 import { Export } from '@/features/vault-management/components/icons/Export';
 import { Search } from '@/features/vault-management/components/icons/Search';
@@ -21,8 +22,8 @@ export const VaultHeader = ({
   const mode = useMode();
   const handleExport = useStoragePass((state) => state.handleExport);
   const handleReset = useStoragePass((state) => state.handleReset);
-  const isResetting = useStoragePass((state) => state.isResetting);
   const dataPassword = useStoragePass((state) => state.dataPassword);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   return (
     <header className="vault-panel rounded-xl p-4 md:p-6">
@@ -43,23 +44,33 @@ export const VaultHeader = ({
           <Button
             variant="outline"
             size="sm"
+            disabled={isLoggingOut}
             onClick={async () => {
-              // En modo online además hay que invalidar la sesión en el
-              // servidor: sin esto la cookie seguía viva 30 minutos.
-              if (mode === 'online') {
-                try {
-                  await apiFetch('/api/auth/login/logout', { method: 'POST' });
-                } catch {
-                  // El almacenamiento local se limpia igualmente y el
-                  // servidor caduca la sesión por inactividad.
-                }
+              if (isLoggingOut) {
+                return;
               }
-              await handleReset();
-              router.push('/offline');
+              setIsLoggingOut(true);
+              try {
+                // En modo online además hay que invalidar la sesión en el
+                // servidor: sin esto la cookie seguía viva 30 minutos.
+                if (mode === 'online') {
+                  try {
+                    await apiFetch('/api/auth/login/logout', {
+                      method: 'POST',
+                    });
+                  } catch {
+                    // El almacenamiento local se limpia igualmente y el
+                    // servidor caduca la sesión por inactividad.
+                  }
+                }
+                await handleReset();
+                router.push('/offline');
+              } finally {
+                setIsLoggingOut(false);
+              }
             }}
-            disabled={isResetting}
           >
-            {isResetting ? (
+            {isLoggingOut ? (
               <div className="h-4 w-4 border-b-2 rounded-full border-current animate-spin" />
             ) : (
               <>
@@ -76,6 +87,7 @@ export const VaultHeader = ({
         <input
           type="text"
           placeholder="Buscar contraseñas..."
+          aria-label="Buscar contraseñas"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="w-full pl-10 pr-3 py-2.5 text-body leading-ui bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-vault-amber/30 focus:border-vault-amber transition-all"

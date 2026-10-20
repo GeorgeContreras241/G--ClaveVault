@@ -1,9 +1,11 @@
 export const deriveKey = async (password: string, salt: Uint8Array) => {
   const enc = new TextEncoder();
   const saltArray = new Uint8Array(salt);
+  // NFC evita claves distintas para la misma contraseña según el SO
+  // (macOS produce NFD en el teclado, Windows NFC).
   const keyMaterial = await crypto.subtle.importKey(
     'raw',
-    enc.encode(password),
+    enc.encode(password.normalize('NFC')),
     'PBKDF2',
     false,
     ['deriveKey']

@@ -2,7 +2,7 @@
 import { useEffect } from 'react';
 import Add from '@/features/offline/components/icons/Add';
 import { sileoError } from '@/commons/constants/sileoConfig';
-import { sileo, Toaster } from 'sileo';
+import { sileo } from 'sileo';
 import { useState } from 'react';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
 import { validateVaultInputs } from '@/features/offline/utils/validateVaultInputs';
@@ -31,7 +31,11 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
   const [fileError, setFileError] = useState('');
 
   useEffect(() => {
-    handleReset();
+    // Limpia la sesión en memoria al entrar; el modo offline es volátil por
+    // diseño (no hay persistencia local del vault más allá de la salt).
+    void handleReset().catch(() => {
+      // Un fallo de storage no debe romper la UI del desbloqueo.
+    });
   }, [handleReset]);
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -47,9 +51,9 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
     setFileError('');
   };
 
-  const handleNoFileScenario = async (password: string) => {
+  const handleNoFileScenario = async (pass: string) => {
     // Sin archivo se crea un vault nuevo: ahí sí se exige una clave fuerte.
-    const validation = validatePassword(password, { strict: true });
+    const validation = validatePassword(pass, { strict: true });
     if (!validation.success) {
       const message = validation.error ?? 'La contraseña es demasiado débil';
       setPasswordError(message);
@@ -57,9 +61,9 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
       return;
     }
     sileo.warning({
-      title: 'Error Fatal',
-      description: 'Seguro que desea continuar sin archivo',
-      duration: 5000,
+      title: 'Confirmar',
+      description: '¿Continuar sin archivo? Se creará una bóveda vacía.',
+      duration: 8000,
       fill: 'var(--color-bg-elevated)',
       styles: {
         title: 'text-red! font-bold!',
@@ -67,41 +71,46 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
       },
       button: {
         onClick: async () => {
-          const saltGenerated = await generateSalt();
-          localStorage.setItem(
-            'salt',
-            JSON.stringify(Array.from(saltGenerated))
-          );
-          const drcKeyResult = await deriveKey(password, saltGenerated);
-          setDerivedKey(drcKeyResult);
-          onSuccess(true);
-          sileo.clear();
+          setIsLoading(true);
+          try {
+            const saltGenerated = await generateSalt();
+            localStorage.setItem(
+              'salt',
+              JSON.stringify(Array.from(saltGenerated))
+            );
+            const drcKeyResult = await deriveKey(pass, saltGenerated);
+            setDerivedKey(drcKeyResult);
+            onSuccess(true);
+            sileo.clear();
+          } catch {
+            sileo.error({ title: 'Error al crear la bóveda local' });
+          } finally {
+            setIsLoading(false);
+          }
         },
         title: 'Aceptar',
       },
     });
   };
 
-  const processFileImport = async (file: File, password: string) => {
-    const validation = validateVaultInputs(password);
+  const processFileImport = async (selectedFile: File, pass: string) => {
+    const validation = validateVaultInputs(pass);
     if (validation !== true) {
       sileo.error(validation);
       return false;
     }
 
-    const importResult = await handleImport(file, password);
+    const importResult = await handleImport(selectedFile, pass);
 
     if (importResult.state === false) {
-      sileo.error(sileoError);
+      if (importResult.message) {
+        sileo.error(importResult.message);
+      } else {
+        sileo.error(sileoError);
+      }
       return false;
     }
 
-    if (importResult.salt) {
-      localStorage.setItem(
-        'salt',
-        JSON.stringify(Array.from(importResult.salt))
-      );
-    }
     if (importResult.decryptedData) {
       setDataPasswordInit(importResult.decryptedData);
     }
@@ -112,23 +121,22 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
     e.preventDefault();
 
     const formData = new FormData(e.target as HTMLFormElement);
-    const password = formData.get('password') as string;
+    const pass = formData.get('password') as string;
 
-    const validatePasswordResult = validatePassword(password);
+    const validatePasswordResult = validatePassword(pass);
     if (!validatePasswordResult.success) {
       setPasswordError(validatePasswordResult.error || '');
       sileo.error(sileoError);
       return;
     }
 
-    setIsLoading(true);
-
     try {
       if (!file) {
-        await handleNoFileScenario(password);
+        await handleNoFileScenario(pass);
         return;
       }
-      const success = await processFileImport(file, password);
+      setIsLoading(true);
+      const success = await processFileImport(file, pass);
       if (success) {
         onSuccess(true);
       }
@@ -163,7 +171,6 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
 
   return (
     <div className="w-full flex flex-col items-center justify-center gap-8 py-12 px-3 relative">
-      <Toaster position="top-center" />
       <Link
         href="/"
         className="absolute top-4 left-4 p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 transition-all duration-300"

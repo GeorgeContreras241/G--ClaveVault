@@ -10,15 +10,14 @@ import { PasswordActions } from '@/features/vault-management/components/ui/Passw
 import type { FormErrors } from '@/features/vault-management';
 import { toPasswordEntry } from '@/commons/lib/password/toPasswordEntry';
 import { useMode } from '@/features/vault-management/hooks/useMode';
-import { encrypt } from '@/commons/lib/crypto/encryptData';
-import { bytesToBase64 } from '@/commons/lib/encoding/base64';
-import { apiFetch } from '@/commons/lib/apiFetch';
+import { commitVaultOnline } from '@/commons/lib/vault/commitVault';
 
 export const AddPassword = () => {
   const mode = useMode();
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isConfigVisible, setIsConfigVisible] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const dataPassword = useStoragePass((state) => state.dataPassword);
   const setDataPasswordUpdate = useStoragePass(
@@ -55,8 +54,8 @@ export const AddPassword = () => {
     }
     if (!keys.password.trim()) {
       newErrors.password = 'La contraseña es requerida';
-    } else if (keys.password.length < 4) {
-      newErrors.password = 'Mínimo 4 caracteres';
+    } else if (keys.password.length < 8) {
+      newErrors.password = 'Mínimo 8 caracteres';
     }
     if (keys.url && keys.url.trim()) {
       try {
@@ -91,7 +90,14 @@ export const AddPassword = () => {
   };
 
   const handleGeneratePassword = () => {
-    setKeys({ ...keys, password: generatePassword(passwordOptions) });
+    const generated = generatePassword(passwordOptions);
+    if (!generated) {
+      sileo.error({
+        title: 'Selecciona al menos un tipo de carácter',
+      });
+      return;
+    }
+    setKeys({ ...keys, password: generated });
     setErrors({ ...errors, password: undefined });
     sileo.success({
       title: 'Se ha generado una nueva contraseña.',
@@ -101,63 +107,68 @@ export const AddPassword = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isSubmitting) {
+      return;
+    }
     if (!validateForm()) {
       return;
     }
 
     const id =
-      crypto?.randomUUID?.() || Math.random().toString(36).substring(2, 15);
+      typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `${Date.now().toString(36)}-${Array.from(
+            crypto.getRandomValues(new Uint8Array(8)),
+            (b) => b.toString(16).padStart(2, '0')
+          ).join('')}`;
     const newEntry = toPasswordEntry({ id, ...keys });
 
-    let saved = false;
-
-    if (mode === 'online' && derivedKey && salt) {
-      try {
-        const updatedPasswords = [...dataPassword, newEntry];
-        const encrypted = await encrypt(derivedKey, updatedPasswords);
-        const res = await apiFetch('/api/auth/me', {
-          method: 'POST',
-          body: JSON.stringify({
-            salt: bytesToBase64(salt),
-            iv: bytesToBase64(encrypted.iv),
-            encryptedData: bytesToBase64(encrypted.data),
-          }),
+    setIsSubmitting(true);
+    try {
+      if (mode === 'online' && derivedKey && salt) {
+        const next = [...dataPassword, newEntry];
+        const result = await commitVaultOnline({
+          derivedKey,
+          salt,
+          entries: next,
         });
-        const data = await res.json();
-        if (!data) {
+        if (!result.ok) {
+          sileo.error({
+            title: 'No se pudo guardar la contraseña',
+            description: result.error,
+            duration: 5000,
+          });
           return;
         }
-        if (data.ok && data.version) {
-          setDataPasswordUpdate(newEntry);
-          setVersion(data.version);
-          saved = true;
-        }
-      } catch (error) {
-        console.error('Error guardando vault:', error);
-        return;
+        setDataPasswordUpdate(newEntry);
+        setVersion(result.version);
+      } else {
+        setDataPasswordUpdate(newEntry);
       }
-    } else {
-      setDataPasswordUpdate(newEntry);
-      saved = true;
-    }
 
-    resetForm();
-    setIsFormVisible(false);
-
-    if (saved) {
+      resetForm();
+      setIsFormVisible(false);
       sileo.success({
         title: 'Contraseña agregada correctamente.',
         duration: 600,
       });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handlecopyToClipboard = () => {
-    copyToClipboard(keys.password);
-    sileo.success({
-      title: 'Contraseña copiada al portapapeles.',
-      duration: 600,
-    });
+  const handlecopyToClipboard = async () => {
+    const copied = await copyToClipboard(keys.password);
+    if (copied) {
+      sileo.success({
+        title: 'Contraseña copiada al portapapeles.',
+        duration: 600,
+      });
+    } else {
+      sileo.error({
+        title: 'No se pudo copiar al portapapeles',
+      });
+    }
   };
 
   return (
@@ -177,12 +188,17 @@ export const AddPassword = () => {
         {isFormVisible && (
           <>
             <div>
-              <label className="text-label font-medium leading-ui text-muted-foreground mb-1 block">
+              <label
+                htmlFor="add-entry-title"
+                className="text-label font-medium leading-ui text-muted-foreground mb-1 block"
+              >
                 Título <span className="text-destructive">*</span>
               </label>
               <input
                 type="text"
+                id="add-entry-title"
                 placeholder="Título"
+                autoComplete="off"
                 value={keys.title}
                 onChange={(e) => {
                   setKeys({ ...keys, title: e.target.value });
@@ -200,10 +216,14 @@ export const AddPassword = () => {
             </div>
 
             <div>
-              <label className="text-label font-medium leading-ui text-muted-foreground mb-1 block">
+              <label
+                htmlFor="add-entry-application"
+                className="text-label font-medium leading-ui text-muted-foreground mb-1 block"
+              >
                 Aplicación
               </label>
               <select
+                id="add-entry-application"
                 value={keys.application}
                 onChange={(e) =>
                   setKeys({
@@ -221,12 +241,17 @@ export const AddPassword = () => {
             </div>
 
             <div>
-              <label className="text-label font-medium leading-ui text-muted-foreground mb-1 block">
+              <label
+                htmlFor="add-entry-username"
+                className="text-label font-medium leading-ui text-muted-foreground mb-1 block"
+              >
                 Usuario <span className="text-destructive">*</span>
               </label>
               <input
                 type="text"
+                id="add-entry-username"
                 placeholder="Usuario"
+                autoComplete="username"
                 value={keys.username}
                 onChange={(e) => {
                   setKeys({ ...keys, username: e.target.value });
@@ -244,13 +269,46 @@ export const AddPassword = () => {
             </div>
 
             <div>
-              <label className="text-label font-medium leading-ui text-muted-foreground mb-1 block">
+              <label
+                htmlFor="add-entry-url"
+                className="text-label font-medium leading-ui text-muted-foreground mb-1 block"
+              >
+                URL
+              </label>
+              <input
+                type="text"
+                id="add-entry-url"
+                placeholder="https://ejemplo.com"
+                autoComplete="url"
+                value={keys.url}
+                onChange={(e) => {
+                  setKeys({ ...keys, url: e.target.value });
+                  if (errors.url) {
+                    setErrors({ ...errors, url: undefined });
+                  }
+                }}
+                className={`w-full px-3 py-1.5 text-body bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all ${errors.url ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
+              />
+              {errors.url && (
+                <p className="text-destructive text-caption leading-ui mt-1">
+                  {errors.url}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <label
+                htmlFor="add-entry-password"
+                className="text-label font-medium leading-ui text-muted-foreground mb-1 block"
+              >
                 Contraseña <span className="text-destructive">*</span>
               </label>
               <div className="relative">
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  id="add-entry-password"
                   placeholder="Contraseña"
+                  autoComplete="new-password"
                   value={keys.password}
                   onChange={(e) => {
                     setKeys({ ...keys, password: e.target.value });
@@ -294,18 +352,22 @@ export const AddPassword = () => {
               {isConfigVisible && (
                 <>
                   <div className="flex items-center gap-2">
-                    <label className="text-caption leading-ui text-muted-foreground w-16">
+                    <label
+                      htmlFor="add-password-length"
+                      className="text-caption leading-ui text-muted-foreground w-16"
+                    >
                       Longitud:
                     </label>
                     <input
                       type="number"
-                      min="4"
-                      max="32"
+                      id="add-password-length"
+                      min="8"
+                      max="64"
                       value={passwordOptions.length}
                       onChange={(e) =>
                         setPasswordOptions({
                           ...passwordOptions,
-                          length: parseInt(e.target.value) || 12,
+                          length: parseInt(e.target.value) || 16,
                         })
                       }
                       className="flex-1 px-2 py-1 text-caption bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-vault-amber/30 transition-all"
@@ -344,12 +406,17 @@ export const AddPassword = () => {
             </div>
 
             <div className="flex gap-2">
-              <Button type="submit" className="flex-1 py-1.5 text-body">
-                Agregar
+              <Button
+                type="submit"
+                disabled={isSubmitting}
+                className="flex-1 py-1.5 text-body"
+              >
+                {isSubmitting ? 'Guardando…' : 'Agregar'}
               </Button>
               <Button
                 type="button"
                 variant="secondary"
+                disabled={isSubmitting}
                 onClick={() => {
                   resetForm();
                   setIsFormVisible(false);
