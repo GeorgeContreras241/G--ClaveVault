@@ -27,7 +27,7 @@ export const VaultHeader = ({
   return (
     <header className="vault-panel rounded-xl p-4 md:p-6">
       <div className="flex flex-row justify-between items-center mb-4">
-        <h1 className="font-sora text-xl md:text-4xl font-bold tracking-tight">
+        <h1 className="font-display text-heading md:text-display-lg font-semibold leading-heading md:leading-display tracking-heading">
           Clave vault
         </h1>
         <article className="flex items-center gap-2">
@@ -78,7 +78,7 @@ export const VaultHeader = ({
           placeholder="Buscar contraseñas..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full pl-10 pr-3 py-2.5 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-vault-amber/30 focus:border-vault-amber transition-all"
+          className="w-full pl-10 pr-3 py-2.5 text-body leading-ui bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-vault-amber/30 focus:border-vault-amber transition-all"
         />
       </div>
 

@@ -32,7 +32,7 @@ export const PasswordCard = ({
           {getCategoryIcon(password.category)}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-sora font-semibold text-sm truncate">
+          <h3 className="font-display font-semibold text-subheading leading-heading tracking-heading truncate">
             {password.title}
           </h3>
           {password.url && (
@@ -40,7 +40,7 @@ export const PasswordCard = ({
               href={password.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-xs text-vault-amber hover:underline truncate block"
+              className="text-caption leading-ui text-vault-amber hover:underline truncate block"
             >
               {password.url}
             </a>
@@ -60,11 +60,11 @@ export const PasswordCard = ({
       <div className="p-3">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
+            <label className="text-meta font-medium leading-ui text-muted-foreground uppercase tracking-meta shrink-0">
               User
             </label>
             <div className="relative flex-1 min-w-0">
-              <span className="text-xs font-mono truncate bg-secondary px-2 py-1.5 rounded flex-1 pr-7 flex">
+              <span className="type-technical truncate bg-secondary px-2 py-1.5 rounded flex-1 pr-7 flex">
                 {password.username}
               </span>
               <IconButton
@@ -84,11 +84,11 @@ export const PasswordCard = ({
           </div>
 
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <label className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
+            <label className="text-meta font-medium leading-ui text-muted-foreground uppercase tracking-meta shrink-0">
               Pass
             </label>
             <div className="relative flex-1 min-w-0">
-              <span className="text-xs font-mono truncate bg-secondary px-2 py-1.5 rounded flex-1 pr-14 flex">
+              <span className="type-technical truncate bg-secondary px-2 py-1.5 rounded flex-1 pr-14 flex">
                 {showPasswords[password.id] ? password.password : '•••••••'}
               </span>
               <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex gap-0.5">

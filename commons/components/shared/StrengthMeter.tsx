@@ -44,7 +44,9 @@ export const StrengthMeter = ({ validation }: StrengthMeterProps) => {
           />
         ))}
       </div>
-      <p className={`text-xs font-medium ${LABEL_COLORS[score]}`}>
+      <p
+        className={`text-caption leading-ui font-medium ${LABEL_COLORS[score]}`}
+      >
         Fuerza: {strength}
         {warnings.length > 0 && (
           <span className="font-normal text-zinc-500 dark:text-zinc-400">

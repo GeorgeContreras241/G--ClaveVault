@@ -13,7 +13,7 @@ export const Footer = ({ className }: { className?: string }) => {
       aria-label="Enlaces y preferencias"
     >
       <div className="w-full max-w-5xl flex items-center justify-between gap-4">
-        <p className="hidden text-[0.65rem] font-medium tracking-widest uppercase sm:block text-zinc-600 dark:text-zinc-400">
+        <p className="hidden text-meta font-medium tracking-meta uppercase sm:block text-zinc-600 dark:text-zinc-400">
           ClaveVault · local first
         </p>
 

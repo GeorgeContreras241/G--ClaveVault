@@ -37,8 +37,10 @@ export const AuthScreen = () => {
           <WebAuthnIcon />
         </div>
         <div className="text-center space-y-1">
-          <h1 className="text-xl font-semibold tracking-tight">Bienvenido</h1>
-          <p className="text-sm text-muted-foreground">
+          <h1 className="font-display text-heading font-semibold leading-heading tracking-heading">
+            Bienvenido
+          </h1>
+          <p className="text-body leading-body text-muted-foreground">
             Inicia sesión con huella dactilar, PIN o llave de seguridad
           </p>
         </div>
@@ -71,9 +73,9 @@ export const AuthScreen = () => {
                 <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
               </svg>
             </div>
-            <div className="h-2">
+            <div className="min-h-4">
               {errors.email && (
-                <p className="text-[11px] text-red-500 leading-none text-end">
+                <p className="text-caption text-red-500 leading-none text-end">
                   {errors.email}
                 </p>
               )}
@@ -89,7 +91,7 @@ export const AuthScreen = () => {
         </form>
       </div>
 
-      <p className="text-xs text-center text-muted-foreground max-w-[280px]">
+      <p className="text-caption leading-body text-center text-muted-foreground max-w-[280px]">
         Tu identidad biométrica nunca sale de tu dispositivo. Tecnología
         WebAuthn/FIDO2.
       </p>

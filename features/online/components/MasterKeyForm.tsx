@@ -33,7 +33,7 @@ const SECURITY_TIPS: ReactNode[] = [
   'No reutilices esta contraseña en ningún otro servicio.',
   <>
     Considera usar una passphrase de 4+ palabras aleatorias (ej:{' '}
-    <span className="font-mono text-foreground/70">
+    <span className="type-technical text-foreground/70">
       correct-horse-battery-staple
     </span>
     .
@@ -154,11 +154,11 @@ export function MasterKeyForm({ setLook }: MasterKeyFormProps) {
           <div className="vault-rise vault-rise-delay-1 mb-4 md:mb-6 flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-2xl bg-vault-amber/10 border border-vault-amber/20">
             <KeyRound className="w-5 h-5 md:w-7 md:h-7 text-vault-amber" />
           </div>
-          <h1 className="vault-rise vault-rise-delay-2 font-sora text-2xl md:text-4xl font-bold tracking-tight mb-3 md:mb-4">
+          <h1 className="vault-rise vault-rise-delay-2 font-display text-display-md md:text-display-lg font-semibold leading-display tracking-display mb-3 md:mb-4">
             Crea tu Master Key
           </h1>
         </div>
-        <p className="vault-rise vault-rise-delay-3 text-muted-foreground text-start text-sm md:text-base leading-relaxed">
+        <p className="vault-rise vault-rise-delay-3 text-muted-foreground text-start text-body md:text-body-lg leading-body text-pretty">
           Necesitamos una clave maestra que nunca olvidarás. Con ella se cifran
           y descifran todas tus contraseñas. No se guarda en ningún lugar. Si la
           olvidas, tus datos quedan perdidos para siempre.
@@ -172,7 +172,9 @@ export function MasterKeyForm({ setLook }: MasterKeyFormProps) {
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Master Key</Label>
                 {error && (
-                  <p className="text-xs md:text-sm text-destructive">{error}</p>
+                  <p className="text-caption md:text-body text-destructive">
+                    {error}
+                  </p>
                 )}
               </div>
               <Input
@@ -222,7 +224,7 @@ export function MasterKeyForm({ setLook }: MasterKeyFormProps) {
         <VaultPanel>
           <div className="flex items-center gap-3 mb-4 md:mb-5">
             <AlertTriangle className="w-4 h-4 md:w-5 md:h-5 text-vault-amber" />
-            <h2 className="font-sora text-base md:text-lg font-semibold">
+            <h2 className="font-display text-heading font-semibold leading-heading tracking-heading">
               Recomendaciones de seguridad
             </h2>
           </div>

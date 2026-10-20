@@ -38,10 +38,10 @@ export function WebAuthnAction() {
         <WebAuthn />
       </div>
       <div className="min-w-0 flex-1 space-y-1 text-start md:text-center md:space-y-1.5">
-        <h2 className="font-sora text-base font-semibold text-zinc-900 dark:text-zinc-50 md:text-lg">
+        <h2 className="font-display text-subheading font-semibold leading-heading tracking-heading text-zinc-900 dark:text-zinc-50">
           WebAuthn
         </h2>
-        <p className="text-xs text-zinc-600 dark:text-zinc-400 md:text-sm">
+        <p className="text-caption leading-ui text-zinc-600 dark:text-zinc-400 md:text-body">
           Biometría, PIN o llave de seguridad
         </p>
         <span className="vault-status-soon flex justify-start md:justify-center">

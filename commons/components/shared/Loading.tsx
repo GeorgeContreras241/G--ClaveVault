@@ -33,7 +33,11 @@ export const Loading = ({
       <div
         className={`${sizeClasses[size]} rounded-full border-b-vault-amber border-transparent animate-spin`}
       />
-      {text && <span className="text-sm text-muted-foreground">{text}</span>}
+      {text && (
+        <span className="text-body leading-ui text-muted-foreground">
+          {text}
+        </span>
+      )}
     </div>
   );
 };

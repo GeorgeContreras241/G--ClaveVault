@@ -34,10 +34,10 @@ export const VideoBackground = ({
   return (
     <div className="relative w-full h-full bg-zinc-900 flex flex-col justify-start overflow-hidden">
       <div className="relative z-10 p-8 pb-12">
-        <h1 className="font-sora text-4xl font-bold text-white mb-2">
+        <h1 className="font-display text-display-lg font-semibold leading-display tracking-display text-white mb-2">
           ClaveVault
         </h1>
-        <p className="text-zinc-400 text-sm max-w-xs">
+        <p className="text-body leading-body text-zinc-400 max-w-xs">
           Tus contraseñas, tu control. Encriptación local, cero servidores.
         </p>
       </div>

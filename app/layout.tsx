@@ -1,23 +1,29 @@
 import type { Metadata, Viewport } from 'next';
-import { IBM_Plex_Sans, Sora, Inter } from 'next/font/google';
+import { IBM_Plex_Mono, IBM_Plex_Sans, Space_Grotesk } from 'next/font/google';
 import { WebApplicationJsonLd } from '@/commons/components/seo/JsonLd';
 import { SplitLayout } from '@/commons/components/layout/SplitLayout';
 import { siteConfig } from '@/commons/lib/site';
 import './globals.css';
 import { cn } from '@/commons/lib/utils';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-sans' });
-
-const ibmPlexSans = IBM_Plex_Sans({
+const plexSans = IBM_Plex_Sans({
   subsets: ['latin'],
   weight: ['400', '500', '600'],
   display: 'swap',
-  variable: '--font-ibm',
+  variable: '--font-plex-sans',
 });
 
-const sora = Sora({
+const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],
-  variable: '--font-sora',
+  display: 'swap',
+  variable: '--font-space-grotesk',
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500'],
+  display: 'swap',
+  variable: '--font-plex-mono',
 });
 
 export const metadata: Metadata = {
@@ -71,11 +77,13 @@ export default function RootLayout({
     <html
       lang="es"
       suppressHydrationWarning
-      className={cn('font-sans', inter.variable)}
+      className={cn(
+        plexSans.variable,
+        spaceGrotesk.variable,
+        plexMono.variable
+      )}
     >
-      <body
-        className={`${ibmPlexSans.variable} ${sora.variable} font-sans antialiased bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 overflow-hidden`}
-      >
+      <body className="font-sans antialiased bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 overflow-hidden">
         <WebApplicationJsonLd />
         <SplitLayout>{children}</SplitLayout>
       </body>

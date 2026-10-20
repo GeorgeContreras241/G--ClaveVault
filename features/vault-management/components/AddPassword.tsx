@@ -164,7 +164,7 @@ export const AddPassword = () => {
     <section className="vault-panel rounded-xl p-4">
       <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
         <div className="flex items-center justify-between">
-          <label className="font-sora text-sm font-semibold">
+          <label className="font-display text-subheading font-semibold leading-heading tracking-heading">
             Agregar Contraseña
           </label>
           <ChevronButton
@@ -177,7 +177,7 @@ export const AddPassword = () => {
         {isFormVisible && (
           <>
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">
+              <label className="text-label font-medium leading-ui text-muted-foreground mb-1 block">
                 Título <span className="text-destructive">*</span>
               </label>
               <input
@@ -190,15 +190,17 @@ export const AddPassword = () => {
                     setErrors({ ...errors, title: undefined });
                   }
                 }}
-                className={`w-full px-3 py-1.5 text-sm bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all ${errors.title ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
+                className={`w-full px-3 py-1.5 text-body bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all ${errors.title ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
               />
               {errors.title && (
-                <p className="text-destructive text-xs mt-1">{errors.title}</p>
+                <p className="text-destructive text-caption leading-ui mt-1">
+                  {errors.title}
+                </p>
               )}
             </div>
 
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">
+              <label className="text-label font-medium leading-ui text-muted-foreground mb-1 block">
                 Aplicación
               </label>
               <select
@@ -210,7 +212,7 @@ export const AddPassword = () => {
                     category: e.target.value,
                   })
                 }
-                className="w-full px-3 py-1.5 text-sm bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-vault-amber/30 focus:border-vault-amber transition-all"
+                className="w-full px-3 py-1.5 text-body bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-vault-amber/30 focus:border-vault-amber transition-all"
               >
                 <option value="web">Web</option>
                 <option value="app">App</option>
@@ -219,7 +221,7 @@ export const AddPassword = () => {
             </div>
 
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">
+              <label className="text-label font-medium leading-ui text-muted-foreground mb-1 block">
                 Usuario <span className="text-destructive">*</span>
               </label>
               <input
@@ -232,17 +234,17 @@ export const AddPassword = () => {
                     setErrors({ ...errors, username: undefined });
                   }
                 }}
-                className={`w-full px-3 py-1.5 text-sm bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all ${errors.username ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
+                className={`w-full px-3 py-1.5 text-body bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all ${errors.username ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
               />
               {errors.username && (
-                <p className="text-destructive text-xs mt-1">
+                <p className="text-destructive text-caption leading-ui mt-1">
                   {errors.username}
                 </p>
               )}
             </div>
 
             <div>
-              <label className="text-xs font-medium text-muted-foreground mb-1 block">
+              <label className="text-label font-medium leading-ui text-muted-foreground mb-1 block">
                 Contraseña <span className="text-destructive">*</span>
               </label>
               <div className="relative">
@@ -256,7 +258,7 @@ export const AddPassword = () => {
                       setErrors({ ...errors, password: undefined });
                     }
                   }}
-                  className={`w-full px-3 py-1.5 text-sm bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all pr-20 ${errors.password ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
+                  className={`w-full px-3 py-1.5 text-body bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all pr-20 ${errors.password ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
                 />
                 <PasswordActions
                   showPassword={showPassword}
@@ -266,7 +268,7 @@ export const AddPassword = () => {
                 />
               </div>
               {errors.password && (
-                <p className="text-destructive text-xs mt-1">
+                <p className="text-destructive text-caption leading-ui mt-1">
                   {errors.password}
                 </p>
               )}
@@ -274,7 +276,7 @@ export const AddPassword = () => {
 
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label className="text-xs font-medium text-muted-foreground">
+                <label className="text-label font-medium leading-ui text-muted-foreground">
                   Configuración
                 </label>
                 <ChevronButton
@@ -292,7 +294,7 @@ export const AddPassword = () => {
               {isConfigVisible && (
                 <>
                   <div className="flex items-center gap-2">
-                    <label className="text-xs text-muted-foreground w-16">
+                    <label className="text-caption leading-ui text-muted-foreground w-16">
                       Longitud:
                     </label>
                     <input
@@ -306,7 +308,7 @@ export const AddPassword = () => {
                           length: parseInt(e.target.value) || 12,
                         })
                       }
-                      className="flex-1 px-2 py-1 text-xs bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-vault-amber/30 transition-all"
+                      className="flex-1 px-2 py-1 text-caption bg-background border border-border rounded-lg focus:outline-none focus:ring-1 focus:ring-vault-amber/30 transition-all"
                     />
                   </div>
                   <div className="flex flex-wrap gap-3">
@@ -320,7 +322,7 @@ export const AddPassword = () => {
                     ).map(([key, label]) => (
                       <label
                         key={key}
-                        className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer"
+                        className="flex items-center gap-1.5 text-caption leading-ui text-muted-foreground cursor-pointer"
                       >
                         <input
                           type="checkbox"
@@ -342,7 +344,7 @@ export const AddPassword = () => {
             </div>
 
             <div className="flex gap-2">
-              <Button type="submit" className="flex-1 py-1.5 text-sm">
+              <Button type="submit" className="flex-1 py-1.5 text-body">
                 Agregar
               </Button>
               <Button
@@ -352,7 +354,7 @@ export const AddPassword = () => {
                   resetForm();
                   setIsFormVisible(false);
                 }}
-                className="flex-1 py-1.5 text-sm"
+                className="flex-1 py-1.5 text-body"
               >
                 Cancelar
               </Button>

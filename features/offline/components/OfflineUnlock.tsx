@@ -188,10 +188,10 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
                 <div className="w-16 h-16 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                   <Add />
                 </div>
-                <span className="text-sm text-zinc-800 dark:text-zinc-200 font-medium">
+                <span className="text-body leading-ui text-zinc-800 dark:text-zinc-200 font-medium">
                   Arrastra o haz clic para subir
                 </span>
-                <span className="text-xs text-zinc-600 dark:text-zinc-400 mt-1">
+                <span className="text-caption leading-ui text-zinc-600 dark:text-zinc-400 mt-1">
                   Solo archivos .enc
                 </span>
               </label>
@@ -225,7 +225,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
                 ? 'text-green-700 dark:text-green-400 border-green-300 dark:border-green-400/50 bg-green-100 dark:bg-green-400/10'
                 : 'text-red-700 dark:text-red-400 border-red-300 dark:border-red-400/50 bg-red-100 dark:bg-red-400/10'
             }
-                    text-sm border rounded px-2 py-1 w-full text-center transition-colors duration-300`}
+                    text-body leading-ui border rounded px-2 py-1 w-full text-center transition-colors duration-300`}
           >
             {fileError
               ? fileError
@@ -235,20 +235,20 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
           </span>
         </div>
         <form
-          className="w-full flex flex-col gap-3 mt-4 text-sm"
+          className="w-full flex flex-col gap-3 mt-4 text-body leading-ui"
           onSubmit={handleSubmit}
         >
           <div className="flex justify-between">
             <label
               htmlFor="password"
-              className="font-sora text-[1.5rem] text-start font-bold text-zinc-900 dark:text-zinc-50"
+              className="font-display text-display-md md:text-display-lg text-start font-semibold leading-display tracking-heading text-zinc-900 dark:text-zinc-50"
             >
               Clave Maestra
             </label>
             {passwordError && (
               <span
                 id="password-error"
-                className="text-red-600 dark:text-red-400 text-xs mt-1"
+                className="text-red-600 dark:text-red-400 text-caption mt-1"
                 role="alert"
               >
                 {passwordError}
@@ -258,7 +258,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
           <div className="relative">
             <input
               type={viewPass ? 'text' : 'password'}
-              className={`w-full border rounded-lg px-4 py-2 font-mono pr-10 border-zinc-300 dark:border-zinc-500/30 bg-white dark:bg-zinc-800/50 backdrop-blur-sm placeholder:text-zinc-500 dark:placeholder:text-zinc-400 placeholder:italic placeholder:text-md focus:outline-none focus:ring-2 focus:ring-vault-amber/30 focus:border-vault-amber transition-all duration-300 ${
+              className={`w-full border rounded-lg px-4 py-2 type-technical pr-10 border-zinc-300 dark:border-zinc-500/30 bg-white dark:bg-zinc-800/50 backdrop-blur-sm placeholder:text-zinc-500 dark:placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-vault-amber/30 focus:border-vault-amber transition-all duration-300 ${
                 passwordError ? 'border-red-500 focus:ring-red-500/50' : ''
               }`}
               placeholder="Ingresa Aqui"
@@ -287,7 +287,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
             <StrengthMeter validation={validatePassword(password)} />
           )}
           <button
-            className="w-full bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-lg p-3 cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-vault-amber/30 shadow-lg font-medium font-mono"
+            className="w-full bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-lg p-3 cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-vault-amber/30 shadow-lg text-button font-medium tracking-label"
             type="submit"
             disabled={isLoading}
             aria-busy={isLoading}

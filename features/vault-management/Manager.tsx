@@ -157,10 +157,10 @@ export const Manager = () => {
                 <div className="vault-icon-frame w-12 h-12 mb-4">
                   <LockEmpty />
                 </div>
-                <h3 className="font-sora text-lg font-semibold mb-2">
+                <h3 className="font-display text-heading font-semibold leading-heading tracking-heading mb-2">
                   No se encontraron contraseñas
                 </h3>
-                <p className="text-sm text-muted-foreground max-w-sm">
+                <p className="text-body leading-body text-muted-foreground max-w-sm">
                   {searchTerm
                     ? 'Intenta con otra búsqueda'
                     : 'Agrega tu primera contraseña para comenzar'}
