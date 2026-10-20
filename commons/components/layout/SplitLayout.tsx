@@ -42,7 +42,7 @@ export const SplitLayout = ({ children }: { children: React.ReactNode }) => {
           isHome ? '' : 'lg:w-full'
         }`}
       >
-        <div className="flex min-h-full flex-col items-center justify-center p-4 lg:p-8">
+        <div className="flex min-h-full flex-col items-center justify-center">
           <AppProviders>{children}</AppProviders>
         </div>
       </div>
