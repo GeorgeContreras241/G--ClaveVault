@@ -1,6 +1,8 @@
 'use client';
 
 import { useRef, useEffect, useState } from 'react';
+import { Pause } from '@/commons/components/icons/Pause';
+import { Play } from '@/commons/components/icons/Play';
 
 interface VideoBackgroundProps {
   src: string;
@@ -17,6 +19,7 @@ export const VideoBackground = ({
 }: VideoBackgroundProps) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [loaded, setLoaded] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -27,9 +30,33 @@ export const VideoBackground = ({
     video.playbackRate = playbackRate;
 
     const handleLoaded = () => setLoaded(true);
+    // Mantiene el botón sincronizado si el navegador bloquea la reproducción
+    // automática o si el usuario pausa el vídeo desde los controles nativos.
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+
     video.addEventListener('loadeddata', handleLoaded);
-    return () => video.removeEventListener('loadeddata', handleLoaded);
+    video.addEventListener('play', handlePlay);
+    video.addEventListener('pause', handlePause);
+    return () => {
+      video.removeEventListener('loadeddata', handleLoaded);
+      video.removeEventListener('play', handlePlay);
+      video.removeEventListener('pause', handlePause);
+    };
   }, [playbackRate]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !loaded) {
+      return;
+    }
+
+    if (isPlaying) {
+      void video.play().catch(() => setIsPlaying(false));
+    } else {
+      video.pause();
+    }
+  }, [isPlaying, loaded]);
 
   return (
     <div className="relative w-full h-full bg-zinc-900 flex flex-col justify-start overflow-hidden">
@@ -53,6 +80,17 @@ export const VideoBackground = ({
       >
         <source src={src} type="video/mp4" />
       </video>
+      <button
+        type="button"
+        onClick={() => setIsPlaying((playing) => !playing)}
+        aria-label={
+          isPlaying ? 'Pausar vídeo de fondo' : 'Reproducir vídeo de fondo'
+        }
+        aria-pressed={!isPlaying}
+        className="absolute bottom-6 right-6 z-20 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full bg-black/40 p-2 text-white backdrop-blur-sm transition-colors duration-300 hover:bg-black/60 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+      >
+        {isPlaying ? <Pause /> : <Play />}
+      </button>
     </div>
   );
 };
