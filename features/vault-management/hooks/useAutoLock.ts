@@ -6,9 +6,12 @@ import { useStoragePass } from '@/commons/storage/useStoragePass';
 const IDLE_LOCK_MS = 5 * 60 * 1000;
 
 /**
- * Bloqueo automático: tras N minutos sin interacción (o al ocultar la pestaña)
- * limpia el store (clave derivada y contraseñas en claro). `onLock` permite al
- * contenedor reaccionar (p. ej. volver al formulario de master key).
+ * Bloqueo automático: tras N minutos sin interacción limpia el store (clave
+ * derivada y contraseñas en claro). `onLock` permite al contenedor reaccionar
+ * (p. ej. volver al formulario de master key).
+ *
+ * No se bloquea al ocultar la pestaña: cambiar de pestaña o minimizar no debe
+ * cerrar la sesión. El temporizador de inactividad sigue vigente.
  */
 export function useAutoLock(onLock?: () => void, enabled = true) {
   const handleReset = useStoragePass((state) => state.handleReset);
@@ -31,24 +34,16 @@ export function useAutoLock(onLock?: () => void, enabled = true) {
       timer = setTimeout(lock, IDLE_LOCK_MS);
     };
 
-    const onVisibilityChange = () => {
-      if (document.visibilityState === 'hidden') {
-        lock();
-      }
-    };
-
     resetTimer();
     window.addEventListener('pointerdown', resetTimer);
     window.addEventListener('keydown', resetTimer);
     window.addEventListener('scroll', resetTimer);
-    document.addEventListener('visibilitychange', onVisibilityChange);
 
     return () => {
       clearTimeout(timer);
       window.removeEventListener('pointerdown', resetTimer);
       window.removeEventListener('keydown', resetTimer);
       window.removeEventListener('scroll', resetTimer);
-      document.removeEventListener('visibilitychange', onVisibilityChange);
     };
   }, [enabled, handleReset, onLock]);
 }
