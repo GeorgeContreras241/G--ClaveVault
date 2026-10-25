@@ -254,6 +254,34 @@
   text-transform: uppercase;
 }
 
+/* Scroll interno de la lista en escritorio */
+.vault-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(
+      in oklab,
+      var(--color-vault-amber) 45%,
+      transparent
+    )
+    transparent;
+}
+
+.vault-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+
+.vault-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.vault-scroll::-webkit-scrollbar-thumb {
+  background: color-mix(in oklab, var(--color-vault-amber) 45%, transparent);
+  border-radius: 999px;
+}
+
+.vault-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--color-vault-amber);
+}
+
 /* Animation View Transcition Experimental Next js */
 
 /* .home,.offline{

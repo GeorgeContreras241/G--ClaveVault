@@ -183,7 +183,7 @@ export const Manager = () => {
           </section>
 
           <div className="w-full">
-            <div className="space-y-2">
+            <div className="vault-scroll space-y-2 lg:max-h-[calc(100dvh-22rem)] lg:overflow-y-auto lg:overscroll-contain lg:pr-2">
               {filteredPasswords.map((password) => (
                 <PasswordCard
                   key={password.id}
