@@ -4,14 +4,13 @@ import { WebAuthnCredential } from './WebAuthnCredential';
 // operacionees db prisma
 
 export class CredentialRepository {
-
   async findByUserId(userId: string): Promise<WebAuthnCredential[]> {
     const records = await prisma.webAuthnCredential.findMany({
       where: { userId },
       orderBy: { createdAt: 'desc' },
     });
     // revisar el typo de record
-    return records.map((record: any) => WebAuthnCredential.fromPrisma(record));
+    return records.map((record) => WebAuthnCredential.fromPrisma(record));
   }
 
   async findByCredentialId(

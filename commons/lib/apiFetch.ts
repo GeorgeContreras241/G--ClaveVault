@@ -20,7 +20,6 @@ function readCookie(name: string): string | null {
   return null;
 }
 
-
 export async function apiFetch(
   path: string,
   init: RequestInit = {}

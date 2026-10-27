@@ -1,7 +1,5 @@
 import { cookies } from 'next/headers';
-import type { CookieOptions, CookieJar } from "@/types/index";
-
-
+import type { CookieJar } from '@/types/index';
 
 export async function nextCookieJar(): Promise<CookieJar> {
   const store = await cookies();

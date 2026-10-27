@@ -4,9 +4,9 @@ import { CredentialRepository } from '@/server/features/auth/CredentialRepositor
 import { ValidationService } from '@/server/validation';
 import { authRateLimit, handleRouteError, ok } from '@/server/http';
 
-const userRepo = new UserRepository();// db
-const credentialRepo = new CredentialRepository();//db
-const authService = new AuthService(userRepo, credentialRepo);//webauthn
+const userRepo = new UserRepository(); // db
+const credentialRepo = new CredentialRepository(); //db
+const authService = new AuthService(userRepo, credentialRepo); //webauthn
 
 export async function POST(request: Request) {
   try {

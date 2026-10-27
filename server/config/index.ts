@@ -1,4 +1,7 @@
-
+/**
+ * WebAuthn solo admite dominios como RP ID, nunca direcciones IP.
+ * En desarrollo usa siempre `http://localhost:<puerto>` (nunca 127.0.0.1).
+ */
 export const webauthnConfig = {
   rpName: 'ClaveVault',
   rpID: process.env.RP_ID || 'localhost',

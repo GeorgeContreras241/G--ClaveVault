@@ -49,3 +49,6 @@ next-env.d.ts
 
 /commons/lib/generated/
 .neon
+
+# Artefactos de Playwright MCP (si se usa el output-dir por defecto)
+.playwright-mcp/

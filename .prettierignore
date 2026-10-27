@@ -5,6 +5,7 @@ out/
 build/
 coverage/
 lib/generated/
+commons/lib/generated/
 
 # Lockfiles (generados por el gestor de paquetes)
 package-lock.json

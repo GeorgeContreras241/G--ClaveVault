@@ -39,6 +39,7 @@ const eslintConfig = defineConfig([
     'next-env.d.ts',
     // Generados / no auditables:
     'lib/generated/**',
+    'commons/lib/generated/**',
     'node_modules/**',
     '.agents/**',
     'docs/**',

@@ -52,7 +52,31 @@ const securityHeaders = [
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
-  allowedDevOrigins: ['192.168.0.105'],
+  allowedDevOrigins: ['192.168.0.105', '127.0.0.1'],
+  async redirects() {
+    // WebAuthn no admite IPs como RP ID: en desarrollo se fuerza el host
+    // canónico `localhost`, que sí es un dominio válido.
+    if (isProduction) {
+      return [];
+    }
+
+    const devPort = process.env.PORT ?? '3000';
+
+    return [
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: `127\\.0\\.0\\.1(:${devPort})?` }],
+        destination: `http://localhost:${devPort}/:path*`,
+        permanent: false,
+      },
+      {
+        source: '/:path*',
+        has: [{ type: 'host', value: `\\[::1\\](:${devPort})?` }],
+        destination: `http://localhost:${devPort}/:path*`,
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {
