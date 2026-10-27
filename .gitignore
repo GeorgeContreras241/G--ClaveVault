@@ -17,6 +17,9 @@
 /.next/
 /out/
 
+#opencode
+.opencode/
+
 # production
 /build
 
