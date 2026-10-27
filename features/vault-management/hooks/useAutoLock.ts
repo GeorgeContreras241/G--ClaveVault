@@ -37,13 +37,15 @@ export function useAutoLock(onLock?: () => void, enabled = true) {
     resetTimer();
     window.addEventListener('pointerdown', resetTimer);
     window.addEventListener('keydown', resetTimer);
-    window.addEventListener('scroll', resetTimer);
+    // `scroll` no burbujea: con captura se detecta también el scroll de
+    // contenedores internos (SplitLayout, .vault-scroll), no solo el de window.
+    window.addEventListener('scroll', resetTimer, true);
 
     return () => {
       clearTimeout(timer);
       window.removeEventListener('pointerdown', resetTimer);
       window.removeEventListener('keydown', resetTimer);
-      window.removeEventListener('scroll', resetTimer);
+      window.removeEventListener('scroll', resetTimer, true);
     };
   }, [enabled, handleReset, onLock]);
 }

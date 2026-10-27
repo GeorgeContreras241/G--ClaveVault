@@ -13,12 +13,16 @@ import { StrengthMeter } from '@/commons/components/shared/StrengthMeter';
 import type { OfflineUnlockProps } from '@/features/offline';
 import { generateSalt } from '@/commons/lib/crypto/generateSalt';
 import { deriveKey } from '@/commons/lib/crypto/kdfKey';
+import { Arrow } from '@/commons/components/icons/Arrow';
 import Link from 'next/link';
+
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
 export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
   const handleImport = useStoragePass((state) => state.handleImport);
   const handleReset = useStoragePass((state) => state.handleReset);
   const setDerivedKey = useStoragePass((state) => state.setDerivedKey);
+  const setSalt = useStoragePass((state) => state.setSalt);
   const setDataPasswordInit = useStoragePass(
     (state) => state.setDataPasswordInit
   );
@@ -66,7 +70,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
       duration: 8000,
       fill: 'var(--color-bg-elevated)',
       styles: {
-        title: 'text-red! font-bold!',
+        title: 'text-red! font-semibold!',
         description: 'text-white! text-center!',
       },
       button: {
@@ -79,7 +83,9 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
               JSON.stringify(Array.from(saltGenerated))
             );
             const drcKeyResult = await deriveKey(pass, saltGenerated);
+            setSalt(saltGenerated);
             setDerivedKey(drcKeyResult);
+            setDataPasswordInit([]);
             onSuccess(true);
             sileo.clear();
           } catch {
@@ -147,36 +153,58 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0] || null;
-
-    if (selectedFile) {
-      if (!selectedFile.name.endsWith('.enc')) {
-        setFileError('Solo se permiten archivos .enc');
-        setFile(null);
-        e.target.value = '';
-      } else if (selectedFile.size > 10 * 1024 * 1024) {
-        setFileError('El archivo es demasiado grande (máximo 10MB)');
-        setFile(null);
-        e.target.value = '';
-      } else {
-        setFileError('');
-        setFile(selectedFile);
-      }
-    } else {
+  /** Valida y aplica un archivo; devuelve `false` si no es aceptable. */
+  const applyFile = (selectedFile: File | null): boolean => {
+    if (!selectedFile) {
       setFileError('');
       setFile(null);
+      return true;
     }
+
+    if (!selectedFile.name.endsWith('.enc')) {
+      setFileError('Solo se permiten archivos .enc');
+      setFile(null);
+      return false;
+    }
+
+    if (selectedFile.size > MAX_FILE_BYTES) {
+      setFileError('El archivo es demasiado grande (máximo 10MB)');
+      setFile(null);
+      return false;
+    }
+
+    setFileError('');
+    setFile(selectedFile);
+    return true;
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!applyFile(e.target.files?.[0] ?? null)) {
+      e.target.value = '';
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    applyFile(e.dataTransfer.files?.[0] ?? null);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
   };
 
   return (
     <div className="w-full flex flex-col items-center justify-center gap-8 py-12 px-3 relative">
       <Link
         href="/"
-        className="absolute top-4 left-4 p-2 rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 transition-all duration-300"
+        className="absolute top-4 left-4 flex h-9 w-9 items-center justify-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 transition-all duration-300"
         aria-label="Volver al inicio"
         title="Volver al inicio"
-      />
+      >
+        <span className="block h-4 w-4 rotate-180" aria-hidden="true">
+          <Arrow />
+        </span>
+      </Link>
       <div className="offline w-full grid place-items-center rounded-3xl p-6 md:p-8">
         <div className="w-full grid place-items-center gap-2">
           <div className="w-full flex gap-3 ">
@@ -186,8 +214,13 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
               type="file"
               onChange={handleFileChange}
               accept=".enc"
+              aria-describedby="file-status"
             />
-            <div className="flex-1 h-48 border-2 border-dashed border-zinc-300 dark:border-zinc-500/30 rounded-xl bg-zinc-50 dark:bg-zinc-800/20 hover:bg-zinc-100 dark:hover:bg-zinc-800/40 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group">
+            <div
+              className="flex-1 h-48 border-2 border-dashed border-zinc-300 dark:border-zinc-500/30 rounded-xl bg-zinc-50 dark:bg-zinc-800/20 hover:bg-zinc-100 dark:hover:bg-zinc-800/40 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group"
+              onDrop={handleDrop}
+              onDragOver={handleDragOver}
+            >
               <label
                 htmlFor="file"
                 className="w-full h-full flex flex-col items-center justify-center cursor-pointer border rounded-lg border-zinc-300 dark:border-zinc-500/30"
@@ -227,6 +260,9 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
             )}
           </div>
           <span
+            id="file-status"
+            role="status"
+            aria-live="polite"
             className={`${
               file
                 ? 'text-green-700 dark:text-green-400 border-green-300 dark:border-green-400/50 bg-green-100 dark:bg-green-400/10'
@@ -248,7 +284,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
           <div className="flex justify-between">
             <label
               htmlFor="password"
-              className="font-display text-display-md md:text-display-lg text-start font-semibold leading-display tracking-heading text-zinc-900 dark:text-zinc-50"
+              className="font-display text-display-md md:text-display-lg text-start font-semibold leading-display tracking-display text-zinc-900 dark:text-zinc-50"
             >
               Clave Maestra
             </label>
@@ -293,6 +329,9 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
           {password.length > 0 && (
             <StrengthMeter validation={validatePassword(password)} />
           )}
+          <span id="loading-status" className="sr-only" role="status">
+            {isLoading ? 'Procesando…' : ''}
+          </span>
           <button
             className="w-full bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-lg p-3 cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-vault-amber/30 shadow-lg text-button font-medium tracking-label"
             type="submit"
