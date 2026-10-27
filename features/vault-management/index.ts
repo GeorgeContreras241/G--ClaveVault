@@ -28,9 +28,16 @@ export interface PasswordActionsProps {
   onCopy: () => void;
 }
 
+export interface AddPasswordProps {
+  /** Vuelve al selector cuando otra sesión modificó la bóveda (409). */
+  onLock?: () => void;
+}
+
 export interface EditPasswordProps {
   password: PasswordEntry;
   onClose: () => void;
+  /** Vuelve al selector cuando otra sesión modificó la bóveda (409). */
+  onLock?: () => void;
 }
 
 export interface PasswordCardProps {
@@ -49,6 +56,8 @@ export interface VaultHeaderProps {
   setSelectedCategory: (value: string) => void;
   selectedCategory: string;
   searchTerm: string;
+  /** Vuelve al selector de bóvedas (solo modo online). */
+  onLock?: () => void;
 }
 
 export interface FormErrors {

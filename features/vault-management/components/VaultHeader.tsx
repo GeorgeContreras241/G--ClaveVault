@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { LogOut } from 'lucide-react';
+import { KeyRound, LogOut } from 'lucide-react';
 import { Export } from '@/features/vault-management/components/icons/Export';
 import { Search } from '@/features/vault-management/components/icons/Search';
 import { Button } from '@/commons/components/ui/button';
@@ -17,65 +17,93 @@ export const VaultHeader = ({
   setSelectedCategory,
   selectedCategory,
   searchTerm,
+  onLock,
 }: VaultHeaderProps) => {
   const router = useRouter();
   const mode = useMode();
   const handleExport = useStoragePass((state) => state.handleExport);
   const handleReset = useStoragePass((state) => state.handleReset);
+  const resetSession = useStoragePass((state) => state.resetSession);
   const dataPassword = useStoragePass((state) => state.dataPassword);
+  const activeVaultName = useStoragePass((state) => state.activeVaultName);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
+    try {
+      if (mode === 'online') {
+        try {
+          // Sin esto la cookie seguiría viva hasta 30 minutos.
+          await apiFetch('/api/auth/login/logout', { method: 'POST' });
+        } catch {
+          // La sesión local se limpia igualmente.
+        }
+        await resetSession();
+        router.push('/online');
+      } else {
+        await handleReset();
+        router.push('/offline');
+      }
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
 
   return (
     <header className="vault-panel rounded-xl p-4 md:p-6">
       <div className="flex flex-row justify-between items-center mb-4">
-        <h1 className="font-display text-heading md:text-display-lg font-semibold leading-heading md:leading-display tracking-heading">
-          Clave vault
+        <h1 className="font-display text-display-md md:text-display-lg font-semibold leading-heading md:leading-display tracking-heading md:tracking-display">
+          {activeVaultName ?? 'Clave vault'}
         </h1>
-        <article className="flex items-center gap-2">
+        <article className="flex flex-wrap items-center justify-end gap-2">
           <ThemeToggle className="h-5 w-5" />
+          {mode === 'online' && onLock && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={onLock}
+              aria-label="Cambiar bóveda"
+            >
+              <KeyRound className="h-4 w-4" aria-hidden="true" />
+              <span className="hidden sm:inline">Cambiar bóveda</span>
+            </Button>
+          )}
           <Button
+            type="button"
             variant="outline"
             size="sm"
             onClick={() => handleExport(dataPassword)}
+            aria-label="Exportar bóveda"
           >
-            <Export />
+            <span aria-hidden="true">
+              <Export />
+            </span>
             <span className="hidden sm:inline">Exportar</span>
           </Button>
           <Button
+            type="button"
             variant="outline"
             size="sm"
             disabled={isLoggingOut}
-            onClick={async () => {
-              if (isLoggingOut) {
-                return;
-              }
-              setIsLoggingOut(true);
-              try {
-                // En modo online además hay que invalidar la sesión en el
-                // servidor: sin esto la cookie seguía viva 30 minutos.
-                if (mode === 'online') {
-                  try {
-                    await apiFetch('/api/auth/login/logout', {
-                      method: 'POST',
-                    });
-                  } catch {
-                    // El almacenamiento local se limpia igualmente y el
-                    // servidor caduca la sesión por inactividad.
-                  }
-                }
-                await handleReset();
-                router.push('/offline');
-              } finally {
-                setIsLoggingOut(false);
-              }
-            }}
+            onClick={() => void handleLogout()}
+            aria-label={mode === 'online' ? 'Cerrar sesión' : 'Salir'}
           >
             {isLoggingOut ? (
-              <div className="h-4 w-4 border-b-2 rounded-full border-current animate-spin" />
+              <div
+                className="h-4 w-4 border-b-2 rounded-full border-current animate-spin"
+                aria-hidden="true"
+              />
             ) : (
               <>
-                <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Salir</span>
+                <LogOut className="h-4 w-4" aria-hidden="true" />
+                <span className="hidden sm:inline">
+                  {mode === 'online' ? 'Cerrar sesión' : 'Salir'}
+                </span>
               </>
             )}
           </Button>

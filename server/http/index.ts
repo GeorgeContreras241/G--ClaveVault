@@ -1,5 +1,6 @@
 import { RegistrationError } from '@/server/features/auth/AuthService';
 import { CsrfError, CsrfService } from '@/server/features/csrf/CsrfService';
+import { VaultError } from '@/server/features/vault/VaultError';
 import { RateLimitService } from '@/server/features/rate-limit/RateLimitService';
 import { NO_STORE } from '@/server/validation';
 import { getClientIp } from '@/server/shared/ip';
@@ -30,6 +31,9 @@ export function handleRouteError(error: unknown, fallback: string): Response {
     return CsrfService.toResponse(error);
   }
   if (error instanceof RegistrationError) {
+    return fail(error.message, error.statusCode);
+  }
+  if (error instanceof VaultError) {
     return fail(error.message, error.statusCode);
   }
 

@@ -6,7 +6,8 @@ Gestor de contraseñas con encriptación local, autenticación WebAuthn y sincro
 
 ### Fase 1 - Actual
 - **Encriptación Local**: Contraseñas encriptadas con Web Crypto API (AES-GCM + PBKDF2)
-- **Vault Seguro**: Sistema de bóveda con salt, IV y derived key por usuario
+- **Multi-bóveda**: Varias bóvedas por usuario, cada una con su propio nombre, salt y master key independiente
+- **Vault Seguro**: Sistema de bóveda con salt, IV y derived key por bóveda
 - **Gestión de Credenciales**: CRUD completo con búsqueda, filtros y favoritos
 - **Generador de Contraseñas**: Opciones configurables (longitud, mayúsculas, números, símbolos)
 - **Importación/Exportación**: Archivos `.enc` encriptados
@@ -38,13 +39,13 @@ ClaveVault/
 ├── app/                    # Next.js App Router (páginas, layouts, rutas API)
 │   ├── (auth)/online/      # Ruta /online (login WebAuthn)
 │   ├── offline/            # Ruta /offline (modo local)
-│   ├── passwords/          # Ruta /passwords (dashboard)
-│   └── api/auth/           # Rutas API (login, register, sesión)
+│   ├── passwords/          # Ruta /passwords (selector de bóvedas y gestor)
+│   └── api/                # Rutas API: auth/ y vaults/
 ├── features/               # Módulos de funcionalidad
 │   ├── auth/               # WebAuthn (login, registro)
 │   ├── manager/            # Gestor de contraseñas
 │   ├── offline/            # AuthGuard, OfflineShell, OfflineUnlock
-│   └── online/             # MasterKeyForm, OnlineProvider, PasswordsContent
+│   └── online/             # Selector de bóvedas, desbloqueo y PasswordsContent
 ├── components/             # Componentes presentacionales
 │   ├── home/               # Acción y fallback de la portada
 │   ├── icons/              # Iconos SVG
@@ -65,7 +66,7 @@ ClaveVault/
 │   ├── encoding/           # base64 (contrato de la API de bóveda)
 │   ├── http/               # apiFetch (wrapper con cabecera CSRF)
 │   ├── utils/manager/      # copyToClipboard, generatePassword, toPasswordEntry
-│   └── vault/              # saveVault, loadVault
+│   └── vault/              # saveVault, loadVault, vaultsApi, commitVault
 ├── constants/              # Constantes (assets, categorías, avisos, targets)
 ├── storage/                # Store Zustand (useStoragePass)
 ├── hooks/                  # useMode
@@ -154,7 +155,7 @@ npm run format:check   # Verificar formato
 - **CSRF en dos capas**: validación de `Origin`/`Referer` en `proxy.ts` para todo POST + token de doble cookie (`X-CSRF-Token`, comparado en tiempo constante)
 - **WebAuthn**: retos con TTL de 5 min, uso único atómico e índice aleatorio de 128 bits; la credencial se busca por `userId` y el email sale del reto, no del cliente
 - **Sesiones en Redis**: token de 256 bits del que solo se persiste `sha256`, cookie `httpOnly` + `SameSite=Lax` + `Secure`, expiración deslizante de 30 min
-- **Rate limiting**: 20 intentos / 15 min por IP en autenticación; 120 escrituras / min por usuario en la bóveda (`429` con `Retry-After`)
+- **Rate limiting**: 20 intentos / 15 min por IP en autenticación; 240 lecturas / min, 120 escrituras / min y 20 altas o bajas / hora por usuario en las bóvedas (`429` con `Retry-After`)
 - **Cabeceras HTTP**: CSP, `X-Frame-Options`, `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` y HSTS en producción
 - **Sin caché en la API**: todas las respuestas de `/api/*` llevan `Cache-Control: no-store`
 

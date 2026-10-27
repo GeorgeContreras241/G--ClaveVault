@@ -9,6 +9,73 @@ import {
 const SALT_BYTES = 16;
 const IV_BYTES = 12;
 
+/** Longitud máxima del nombre visible de una bóveda. */
+export const MAX_VAULT_NAME_LENGTH = 80;
+
+/** Controles ASCII y DEL: no aportan nada a un nombre visible. */
+const CONTROL_CHARACTERS = /[\u0000-\u001f\u007f]/;
+
+export function validateVaultName(value: unknown): ValidationResult {
+  return validate(
+    { name: value },
+    {
+      name: [
+        {
+          validate: (v) => isNonEmptyString(v),
+          message: 'El nombre de la bóveda es requerido',
+        },
+        {
+          validate: (v) => !CONTROL_CHARACTERS.test((v as string).trim()),
+          message: 'El nombre contiene caracteres inválidos',
+        },
+        {
+          validate: (v) => (v as string).trim().length <= MAX_VAULT_NAME_LENGTH,
+          message: `El nombre no puede superar ${MAX_VAULT_NAME_LENGTH} caracteres`,
+        },
+      ],
+    }
+  );
+}
+
+export function validateCreateVaultPayload(body: {
+  name?: unknown;
+  salt?: unknown;
+  iv?: unknown;
+  encryptedData?: unknown;
+}): ValidationResult {
+  const name = validateVaultName(body.name);
+  if (!name.ok) {
+    return name;
+  }
+
+  return validateVaultPayload(body);
+}
+
+export function validateUpdateVaultPayload(body: {
+  salt?: unknown;
+  iv?: unknown;
+  encryptedData?: unknown;
+  version?: unknown;
+}): ValidationResult {
+  const payload = validateVaultPayload(body);
+  if (!payload.ok) {
+    return payload;
+  }
+
+  return validate(
+    { version: body.version },
+    {
+      version: [
+        {
+          validate: (v) =>
+            typeof v === 'number' && Number.isInteger(v) && v >= 1,
+          message: 'La versión debe ser un entero positivo',
+        },
+      ],
+    }
+  );
+}
+
 export function validateVaultPayload(body: {
   salt?: unknown;
   iv?: unknown;

@@ -7,12 +7,14 @@ import { generatePassword } from '@/commons/lib/password/generatePassword';
 import { copyToClipboard } from '@/commons/lib/password/copyToClipboard';
 import { ChevronButton } from '@/features/vault-management/components/ui/IconButton';
 import { PasswordActions } from '@/features/vault-management/components/ui/PasswordActions';
-import type { FormErrors } from '@/features/vault-management';
+import type { AddPasswordProps, FormErrors } from '@/features/vault-management';
 import { toPasswordEntry } from '@/commons/lib/password/toPasswordEntry';
 import { useMode } from '@/features/vault-management/hooks/useMode';
 import { commitVaultOnline } from '@/commons/lib/vault/commitVault';
+import { validateUrl } from '@/commons/lib/validation/validateUrl';
+import { validatePassword } from '@/commons/lib/validation/validatePassword';
 
-export const AddPassword = () => {
+export const AddPassword = ({ onLock }: AddPasswordProps) => {
   const mode = useMode();
   const [isFormVisible, setIsFormVisible] = useState(false);
   const [isConfigVisible, setIsConfigVisible] = useState(false);
@@ -25,6 +27,8 @@ export const AddPassword = () => {
   );
   const derivedKey = useStoragePass((state) => state.derivedKey);
   const salt = useStoragePass((state) => state.salt);
+  const activeVaultId = useStoragePass((state) => state.activeVaultId);
+  const version = useStoragePass((state) => state.version);
   const setVersion = useStoragePass((state) => state.setVersion);
   const [keys, setKeys] = useState({
     title: '',
@@ -52,17 +56,14 @@ export const AddPassword = () => {
     if (!keys.username.trim()) {
       newErrors.username = 'El usuario es requerido';
     }
-    if (!keys.password.trim()) {
-      newErrors.password = 'La contraseña es requerida';
-    } else if (keys.password.length < 8) {
-      newErrors.password = 'Mínimo 8 caracteres';
+    const passwordValidation = validatePassword(keys.password);
+    if (!passwordValidation.success) {
+      newErrors.password =
+        passwordValidation.error ?? 'La contraseña no es válida';
     }
-    if (keys.url && keys.url.trim()) {
-      try {
-        new URL(keys.url);
-      } catch {
-        newErrors.url = 'URL inválida';
-      }
+    const urlError = validateUrl(keys.url);
+    if (urlError) {
+      newErrors.url = urlError;
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -125,19 +126,37 @@ export const AddPassword = () => {
 
     setIsSubmitting(true);
     try {
-      if (mode === 'online' && derivedKey && salt) {
+      if (mode === 'online') {
+        if (!derivedKey || !salt || !activeVaultId) {
+          sileo.error({
+            title: 'No se pudo guardar la contraseña',
+            description: 'La bóveda no está desbloqueada. Vuelve a abrirla.',
+            duration: 5000,
+          });
+          return;
+        }
+
         const next = [...dataPassword, newEntry];
         const result = await commitVaultOnline({
+          vaultId: activeVaultId,
+          expectedVersion: version,
           derivedKey,
           salt,
           entries: next,
         });
         if (!result.ok) {
           sileo.error({
-            title: 'No se pudo guardar la contraseña',
-            description: result.error,
+            title: result.conflict
+              ? 'La bóveda cambió en otra sesión'
+              : 'No se pudo guardar la contraseña',
+            description: result.conflict
+              ? 'Vuelve a abrir la bóveda para sincronizarla.'
+              : result.error,
             duration: 5000,
           });
+          if (result.conflict) {
+            onLock?.();
+          }
           return;
         }
         setDataPasswordUpdate(newEntry);
@@ -175,7 +194,7 @@ export const AddPassword = () => {
     <section className="vault-panel rounded-xl p-4">
       <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
         <div className="flex items-center justify-between">
-          <label className="font-display text-subheading font-semibold leading-heading tracking-heading">
+          <label className="text-subheading font-semibold leading-heading tracking-heading">
             Agregar Contraseña
           </label>
           <ChevronButton
@@ -206,10 +225,17 @@ export const AddPassword = () => {
                     setErrors({ ...errors, title: undefined });
                   }
                 }}
+                aria-invalid={Boolean(errors.title)}
+                aria-describedby={
+                  errors.title ? 'add-entry-title-error' : undefined
+                }
                 className={`w-full px-3 py-1.5 text-body bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all ${errors.title ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
               />
               {errors.title && (
-                <p className="text-destructive text-caption leading-ui mt-1">
+                <p
+                  id="add-entry-title-error"
+                  className="text-destructive text-caption leading-ui mt-1"
+                >
                   {errors.title}
                 </p>
               )}
@@ -259,10 +285,17 @@ export const AddPassword = () => {
                     setErrors({ ...errors, username: undefined });
                   }
                 }}
+                aria-invalid={Boolean(errors.username)}
+                aria-describedby={
+                  errors.username ? 'add-entry-username-error' : undefined
+                }
                 className={`w-full px-3 py-1.5 text-body bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all ${errors.username ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
               />
               {errors.username && (
-                <p className="text-destructive text-caption leading-ui mt-1">
+                <p
+                  id="add-entry-username-error"
+                  className="text-destructive text-caption leading-ui mt-1"
+                >
                   {errors.username}
                 </p>
               )}
@@ -287,10 +320,17 @@ export const AddPassword = () => {
                     setErrors({ ...errors, url: undefined });
                   }
                 }}
+                aria-invalid={Boolean(errors.url)}
+                aria-describedby={
+                  errors.url ? 'add-entry-url-error' : undefined
+                }
                 className={`w-full px-3 py-1.5 text-body bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all ${errors.url ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
               />
               {errors.url && (
-                <p className="text-destructive text-caption leading-ui mt-1">
+                <p
+                  id="add-entry-url-error"
+                  className="text-destructive text-caption leading-ui mt-1"
+                >
                   {errors.url}
                 </p>
               )}
@@ -316,6 +356,10 @@ export const AddPassword = () => {
                       setErrors({ ...errors, password: undefined });
                     }
                   }}
+                  aria-invalid={Boolean(errors.password)}
+                  aria-describedby={
+                    errors.password ? 'add-entry-password-error' : undefined
+                  }
                   className={`w-full px-3 py-1.5 text-body bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all pr-20 ${errors.password ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
                 />
                 <PasswordActions
@@ -326,7 +370,10 @@ export const AddPassword = () => {
                 />
               </div>
               {errors.password && (
-                <p className="text-destructive text-caption leading-ui mt-1">
+                <p
+                  id="add-entry-password-error"
+                  className="text-destructive text-caption leading-ui mt-1"
+                >
                   {errors.password}
                 </p>
               )}

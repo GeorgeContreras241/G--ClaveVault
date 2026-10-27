@@ -442,7 +442,7 @@ Representa un usuario registrado en el sistema.
 
 **Relaciones:**
 - Un User tiene muchas WebAuthnCredentials (1:N)
-- Un User tiene un Vault (1:1)
+- Un User tiene muchos Vaults (1:N)
 - Un User tiene muchos AuditLogs (1:N)
 - Un User tiene muchas Sessions (1:N)
 
@@ -470,12 +470,16 @@ Credencial WebAuthn registrada para un usuario.
 
 ## Entidad: Vault
 
-Almacén cifrado de credenciales del usuario.
+Bóveda cifrada de credenciales. Un usuario puede tener varias bóvedas,
+cada una con su propio nombre, `salt`, IV y master key.
 
 | Campo | Tipo | Descripción | Restricciones |
 |---|---|---|---|
 | `id` | String | Identificador único | PK, UUID, auto-generado |
-| `userId` | String | ID del usuario propietario | UNIQUE, UUID, FK implicita |
+| `userId` | String | ID del usuario propietario | FK -> User.id, indexado |
+| `name` | String | Nombre visible de la bóveda | VARCHAR(80), único por usuario |
+| `salt` | Bytes | Sal del KDF de esta bóveda | Obligatorio, 16 bytes |
+| `iv` | Bytes | IV de AES-GCM | Obligatorio, 12 bytes |
 | `encryptedData` | Bytes | Datos cifrados del vault | Obligatorio |
 | `version` | Int | Versión del vault | Default: 1 |
 | `createdAt` | DateTime | Fecha de creación | Default: now(), Timestamptz |
@@ -483,8 +487,12 @@ Almacén cifrado de credenciales del usuario.
 
 **Tabla mapeada:** `vaults`
 
+**Índices:**
+- `vaults_user_id_name_key` UNIQUE en (`userId`, `name`)
+- `vaults_user_id_updated_at_idx` en (`userId`, `updatedAt` DESC)
+
 **Relaciones:**
-- Un Vault pertenece a un User (1:1)
+- Muchos Vaults pertenecen a un User (N:1)
 
 ## Entidad: AuditLog
 
@@ -553,7 +561,7 @@ Entrada de contraseña en el vault del lado del cliente.
 ```mermaid
 erDiagram
     users ||--o{ webauthn_credentials : "tiene"
-    users ||--o| vaults : "tiene"
+    users ||--o{ vaults : "tiene"
     users ||--o{ audit_logs : "genera"
     users ||--o{ sessions : "tiene"
 
@@ -576,7 +584,10 @@ erDiagram
 
     vaults {
         uuid id PK "UUID"
-        uuid userId UK "Referencia a usuario"
+        string userId FK "Referencia a usuario"
+        string name "Nombre visible"
+        bytes salt "Sal PBKDF2"
+        bytes iv "IV AES-GCM"
         bytes encryptedData "Datos cifrados"
         int version "Versión del vault"
         datetime createdAt "Fecha creación"
@@ -614,6 +625,7 @@ erDiagram
 | Tabla | Campo | Tabla Referenciada | Campo Referenciado |
 |---|---|---|---|
 | `webauthn_credentials` | `userId` | `users` | `id` |
+| `vaults` | `userId` | `users` | `id` |
 | `sessions` | `userId` | `users` | `id` |
 
 ## Índices
@@ -621,6 +633,8 @@ erDiagram
 | Tabla | Índice | Campo(s) | Tipo |
 |---|---|---|---|
 | `webauthn_credentials` | `idx_webauthn_credentials_user_id` | `userId` | B-Tree |
+| `vaults` | `vaults_user_id_name_key` | `userId`, `name` | UNIQUE |
+| `vaults` | `vaults_user_id_updated_at_idx` | `userId`, `updatedAt DESC` | B-Tree compuesto |
 | `audit_logs` | `idx_audit_logs_user_id_created_at` | `userId`, `createdAt DESC` | B-Tree compuesto |
 | `sessions` | `idx_sessions_user_id` | `userId` | B-Tree |
 | `users` | `users_email_key` | `email` | UNIQUE |
@@ -632,7 +646,7 @@ erDiagram
 |---|---|---|---|
 | `users` | `users_email_key` | UNIQUE | Email debe ser único |
 | `webauthn_credentials` | `webauthn_credentials_credential_id_key` | UNIQUE | credentialId debe ser único |
-| `vaults` | `vaults_user_id_key` | UNIQUE | Un usuario solo tiene un vault |
+| `vaults` | `vaults_user_id_name_key` | UNIQUE | El nombre de la bóveda es único por usuario |
 | `vaults` | `vaults_user_id_fkey` | FK | userId referencia a users.id |
 | `webauthn_credentials` | `webauthn_credentials_user_id_fkey` | FK | userId referencia a users.id |
 | `sessions` | `sessions_user_id_fkey` | FK | userId referencia a users.id |
@@ -700,7 +714,7 @@ npx prisma migrate reset
 |---|---|
 | Origen | `proxy.ts` rechaza con `403` cualquier POST cuyo `Origin`/`Referer` no coincida con el `Host` (o que no lleve ninguno). |
 | Content-Type | Debe ser `application/json`; si no, `415`. |
-| Tamaño del cuerpo | 64 KB en las rutas de autenticación y 5 MB en `POST /api/auth/me`; `413` al superarlo (lectura por streaming). |
+| Tamaño del cuerpo | 64 KB en las rutas de autenticación y 5 MB en `POST /api/vaults` y `PUT /api/vaults/[id]`; `413` al superarlo (lectura por streaming). |
 | Rate limit | 20 peticiones / 15 min por IP y bucket (`options` y `verify` por separado) en las cuatro rutas WebAuthn; `429` con cabecera `Retry-After`. |
 | Caché | Todas las respuestas llevan `Cache-Control: no-store`. |
 | Validación | Todas las reglas viven en `ValidationService`; ninguna ruta escribe sus propias comprobaciones. |
@@ -899,34 +913,48 @@ X-CSRF-Token: <mismo valor que la cookie csrf_token>
 
 ### GET `/api/auth/me`
 
-Devuelve el vault cifrado del usuario autenticado.
+Devuelve la identidad del usuario autenticado. Ya **no** expone material
+cifrado: las bóvedas se gestionan en `/api/vaults`.
 
 **Respuestas:**
 
 | Código | Descripción | Body |
 |---|---|---|
-| 200 | Sin bóveda todavía | `{ "ok": true, "hasVault": false }` |
-| 200 | Con bóveda | `{ "ok": true, "hasVault": true, "salt": "...", "iv": "...", "encryptedData": "...", "version": 1, "updatedAt": "..." }` |
+| 200 | Usuario autenticado | `{ "ok": true, "user": { "id": "...", "email": "...", "createdAt": "..." } }` |
 | 401 | Sin sesión | `{ "ok": false, "error": "No autenticado" }` |
-| 429 | Límite de lecturas (240/min por usuario) | `{ "ok": false, "error": "Demasiados intentos..." }` |
-
-`salt`, `iv` y `encryptedData` son **base64** (no arrays): es el mismo
-formato que acepta el `POST`.
+| 404 | Usuario inexistente | `{ "ok": false, "error": "Usuario no encontrado" }` |
 
 ---
 
-### POST `/api/auth/me`
+### GET `/api/vaults`
 
-Guarda el vault cifrado del usuario.
+Lista las bóvedas del usuario autenticado. Solo devuelve metadatos:
+`id`, `name`, `version`, `createdAt` y `updatedAt`. El material cifrado
+no se incluye.
 
-**Descripción:** Valida el origen **y** el token CSRF, y después aplica las
-reglas de `validateVaultPayload`: `salt` = 16 bytes, `iv` = exactamente
-12 bytes (AES-GCM) y `encryptedData` dentro del límite de 5 MB, todo en
-base64 válido.
+**Respuestas:**
+
+| Código | Descripción | Body |
+|---|---|---|
+| 200 | Lista de bóvedas | `{ "ok": true, "vaults": [ { "id": "...", "name": "Personal", "version": 3, "createdAt": "...", "updatedAt": "..." } ] }` |
+| 401 | Sin sesión | `{ "ok": false, "error": "No autenticado" }` |
+| 429 | Límite de lecturas (240/min por usuario) | `{ "ok": false, "error": "Demasiados intentos..." }` |
+
+---
+
+### POST `/api/vaults`
+
+Crea una bóveda nueva ya cifrada en el cliente.
+
+**Descripción:** Valida el origen **y** el token CSRF, y aplica
+`validateCreateVaultPayload`: nombre de 1–80 caracteres y las reglas de
+`validateVaultPayload` (`salt` = 16 bytes, `iv` = exactamente 12 bytes y
+`encryptedData` dentro del límite de 5 MB, todo en base64 válido).
 
 **Body:**
 ```json
 {
+  "name": "Personal",
   "salt": "<base64 de 16 bytes>",
   "iv": "<base64 de 12 bytes>",
   "encryptedData": "<base64 cifrado>"
@@ -937,13 +965,79 @@ base64 válido.
 
 | Código | Descripción | Body |
 |---|---|---|
-| 200 | Vault guardado | `{ "ok": true, "version": 2 }` |
-| 400 | Payload inválido | `{ "ok": false, "error": "IV debe decodificar exactamente a 12 bytes", "field": "iv" }` |
+| 200 | Bóveda creada | `{ "ok": true, "vault": { "id": "...", "name": "Personal", "version": 1, "createdAt": "...", "updatedAt": "..." } }` |
+| 400 | Payload inválido | `{ "ok": false, "error": "El nombre de la bóveda es requerido", "field": "name" }` |
 | 401 | Sin sesión | `{ "ok": false, "error": "No autenticado" }` |
 | 403 | Origen o token CSRF inválido | `{ "ok": false, "error": "Token CSRF inválido", "field": "csrf" }` |
+| 409 | Nombre duplicado o límite de 20 bóvedas | `{ "ok": false, "error": "Ya existe una bóveda con ese nombre" }` |
+| 413 / 415 | Cuerpo demasiado grande o Content-Type incorrecto | - |
+| 429 | Límite de altas (20/hora por usuario) | `{ "ok": false, "error": "Demasiados intentos..." }` |
+
+---
+
+### GET `/api/vaults/[id]`
+
+Devuelve el material cifrado de una bóveda concreta para desbloquearla.
+Si la bóveda no existe o pertenece a otro usuario, responde `404`.
+
+**Respuestas:**
+
+| Código | Descripción | Body |
+|---|---|---|
+| 200 | Bóveda encontrada | `{ "ok": true, "vault": { "id": "...", "name": "Personal", "salt": "...", "iv": "...", "encryptedData": "...", "version": 3, "createdAt": "...", "updatedAt": "..." } }` |
+| 400 | UUID inválido | `{ "ok": false, "error": "Identificador de bóveda inválido", "field": "id" }` |
+| 401 | Sin sesión | `{ "ok": false, "error": "No autenticado" }` |
+| 404 | Bóveda inexistente o ajena | `{ "ok": false, "error": "Bóveda no encontrada" }` |
+| 429 | Límite de lecturas (240/min por usuario) | `{ "ok": false, "error": "Demasiados intentos..." }` |
+
+---
+
+### PUT `/api/vaults/[id]`
+
+Reemplaza el blob cifrado de una bóveda. Usa `version` como control de
+concurrencia optimista: si otra pestaña guardó antes, responde `409` y no
+sobrescribe nada.
+
+**Body:**
+```json
+{
+  "salt": "<base64 de 16 bytes>",
+  "iv": "<base64 de 12 bytes>",
+  "encryptedData": "<base64 cifrado>",
+  "version": 3
+}
+```
+
+**Respuestas:**
+
+| Código | Descripción | Body |
+|---|---|---|
+| 200 | Bóveda guardada | `{ "ok": true, "version": 4 }` |
+| 400 | Payload o versión inválidos | `{ "ok": false, "error": "La versión debe ser un entero positivo", "field": "version" }` |
+| 401 | Sin sesión | `{ "ok": false, "error": "No autenticado" }` |
+| 403 | Origen o token CSRF inválido | `{ "ok": false, "error": "Token CSRF inválido", "field": "csrf" }` |
+| 404 | Bóveda inexistente o ajena | `{ "ok": false, "error": "Bóveda no encontrada" }` |
+| 409 | Conflicto de versión | `{ "ok": false, "error": "La bóveda cambió en otra sesión..." }` |
 | 413 / 415 | Cuerpo demasiado grande o Content-Type incorrecto | - |
 | 429 | Límite de escrituras (120/min por usuario) | `{ "ok": false, "error": "Demasiados intentos..." }` |
-| 500 | Error del servidor | `{ "ok": false, "error": "Error al guardar" }` |
+
+---
+
+### DELETE `/api/vaults/[id]`
+
+Elimina una bóveda y todo su contenido cifrado. Requiere confirmación en
+el cliente escribiendo el nombre de la bóveda.
+
+**Respuestas:**
+
+| Código | Descripción | Body |
+|---|---|---|
+| 200 | Bóveda eliminada | `{ "ok": true }` |
+| 400 | UUID inválido | `{ "ok": false, "error": "Identificador de bóveda inválido", "field": "id" }` |
+| 401 | Sin sesión | `{ "ok": false, "error": "No autenticado" }` |
+| 403 | Origen o token CSRF inválido | `{ "ok": false, "error": "Token CSRF inválido", "field": "csrf" }` |
+| 404 | Bóveda inexistente o ajena | `{ "ok": false, "error": "Bóveda no encontrada" }` |
+| 429 | Límite de bajas (20/hora por usuario) | `{ "ok": false, "error": "Demasiados intentos..." }` |
 
 ---
 
@@ -1957,7 +2051,7 @@ Content-Security-Policy:
 - Si no hay ninguno de los dos, o no coinciden → `403 Origen no permitido`.
 - Cubre `app/` y `app/api/`, es decir, rutas y endpoints.
 
-**Capa 2 — doble cookie** (`/api/auth/me` y `/api/auth/login/logout`):
+**Capa 2 — doble cookie** (`/api/vaults` y `/api/auth/login/logout`):
 1. El servidor emite `csrf_token` en una cookie **legible por JavaScript**.
 2. `apiFetch()` la lee y la envía en la cabecera `X-CSRF-Token`.
 3. El servidor compara cookie y cabecera con `timingSafeEqual`
@@ -1974,9 +2068,9 @@ dentro de `@simplewebauthn/server` durante la ceremonia WebAuthn.
 ```typescript
 import { apiFetch } from '@/lib/http/apiFetch';
 
-await apiFetch('/api/auth/me', {
-  method: 'POST',
-  body: JSON.stringify({ salt, iv, encryptedData }),
+await apiFetch('/api/vaults/<id>', {
+  method: 'PUT',
+  body: JSON.stringify({ salt, iv, encryptedData, version }),
 });
 ```
 
@@ -1999,8 +2093,11 @@ const user = await prisma.user.findUnique({
 |---|---|---|---|---|
 | `auth:options` | IP | 20 | 15 min | `*/options` (login y registro) |
 | `auth:verify` | IP | 20 | 15 min | `*/verify` (login y registro) |
-| `vault:read` | userId | 240 | 60 s | `GET /api/auth/me` |
-| `vault:write` | userId | 120 | 60 s | `POST /api/auth/me` |
+| `vault:list` | userId | 240 | 60 s | `GET /api/vaults` |
+| `vault:read` | userId | 240 | 60 s | `GET /api/vaults/[id]` |
+| `vault:write` | userId | 120 | 60 s | `PUT /api/vaults/[id]` |
+| `vault:create` | userId | 20 | 1 h | `POST /api/vaults` |
+| `vault:delete` | userId | 20 | 1 h | `DELETE /api/vaults/[id]` |
 
 ```typescript
 // server/features/rate-limit/RateLimitService.ts
@@ -2034,6 +2131,9 @@ el servicio, así que una ruta nueva no puede "olvidar" validar.
 | `validateAuthenticationResponse` | `type === 'webauthn.get'`, mismos campos más `signature`, `userHandle` opcional y `id === rawId` |
 | `validateLoginVerifyPayload` / `validateRegisterVerifyPayload` | `challengeId` + respuesta WebAuthn correspondiente |
 | `validateVaultPayload` | `salt` = 16 bytes, **`iv` = exactamente 12 bytes**, `encryptedData` dentro del límite de 5 MB, todo base64 válido |
+| `validateVaultName` | Nombre de bóveda no vacío, sin caracteres de control y de hasta 80 caracteres |
+| `validateCreateVaultPayload` | Nombre + payload cifrado de una bóveda nueva |
+| `validateUpdateVaultPayload` | Payload cifrado + `version` entero positivo para el control optimista |
 | `validatePassword` (servidor) | Longitud 8–128 |
 | `validatePassword` (cliente, `commons/lib/validation/validatePassword.ts`) | **Estructural** (bloquea siempre): 8–128 caracteres, sin caracteres de control, no solo espacios. **Calidad** (avisos, o errores con `strict` al crear): 12+ caracteres, ≥3 clases de caracteres, sin secuencias ni contraseñas comunes. Devuelve además `score` 0–4 y `strength` para el indicador de fuerza |
 
@@ -2804,7 +2904,7 @@ Actualmente no hay tests configurados. Estamos planificando implementar Vitest p
 - [ ] Autenticación de dos factores (2FA) adicional
 - [ ] Aplicación móvil nativa (React Native)
 - [ ] Panel de administración
-- [ ] Soporte para múltiples vaults
+- [x] Soporte para múltiples vaults
 
 ## Fase 4 (Futuro) 🔮
 

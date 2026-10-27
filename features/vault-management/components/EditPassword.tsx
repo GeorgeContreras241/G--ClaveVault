@@ -14,8 +14,14 @@ import type {
 import { toPasswordEntry } from '@/commons/lib/password/toPasswordEntry';
 import { useMode } from '@/features/vault-management/hooks/useMode';
 import { commitVaultOnline } from '@/commons/lib/vault/commitVault';
+import { validateUrl } from '@/commons/lib/validation/validateUrl';
+import { validatePassword } from '@/commons/lib/validation/validatePassword';
 
-export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
+export const EditPassword = ({
+  password,
+  onClose,
+  onLock,
+}: EditPasswordProps) => {
   const mode = useMode();
   const [isFormVisible, setIsFormVisible] = useState(true);
   const [isConfigVisible, setIsConfigVisible] = useState(false);
@@ -28,6 +34,8 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
   const dataPassword = useStoragePass((state) => state.dataPassword);
   const derivedKey = useStoragePass((state) => state.derivedKey);
   const salt = useStoragePass((state) => state.salt);
+  const activeVaultId = useStoragePass((state) => state.activeVaultId);
+  const version = useStoragePass((state) => state.version);
   const setVersion = useStoragePass((state) => state.setVersion);
 
   const [keys, setKeys] = useState({
@@ -57,17 +65,14 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
     if (!keys.username.trim()) {
       newErrors.username = 'El usuario es requerido';
     }
-    if (!keys.password.trim()) {
-      newErrors.password = 'La contraseña es requerida';
-    } else if (keys.password.length < 8) {
-      newErrors.password = 'Mínimo 8 caracteres';
+    const passwordValidation = validatePassword(keys.password);
+    if (!passwordValidation.success) {
+      newErrors.password =
+        passwordValidation.error ?? 'La contraseña no es válida';
     }
-    if (keys.url && keys.url.trim()) {
-      try {
-        new URL(keys.url);
-      } catch {
-        newErrors.url = 'URL inválida';
-      }
+    const urlError = validateUrl(keys.url);
+    if (urlError) {
+      newErrors.url = urlError;
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -116,21 +121,39 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
 
     setIsSubmitting(true);
     try {
-      if (mode === 'online' && derivedKey && salt) {
+      if (mode === 'online') {
+        if (!derivedKey || !salt || !activeVaultId) {
+          sileo.error({
+            title: 'No se pudieron guardar los cambios',
+            description: 'La bóveda no está desbloqueada. Vuelve a abrirla.',
+            duration: 5000,
+          });
+          return;
+        }
+
         const next = dataPassword.map((p) =>
           p.id === editedEntry.id ? editedEntry : p
         );
         const result = await commitVaultOnline({
+          vaultId: activeVaultId,
+          expectedVersion: version,
           derivedKey,
           salt,
           entries: next,
         });
         if (!result.ok) {
           sileo.error({
-            title: 'No se pudieron guardar los cambios',
-            description: result.error,
+            title: result.conflict
+              ? 'La bóveda cambió en otra sesión'
+              : 'No se pudieron guardar los cambios',
+            description: result.conflict
+              ? 'Vuelve a abrir la bóveda para sincronizarla.'
+              : result.error,
             duration: 5000,
           });
+          if (result.conflict) {
+            onLock?.();
+          }
           return;
         }
         setDataPasswordEdit(editedEntry);
@@ -160,7 +183,7 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
     <section className="vault-panel rounded-xl p-4">
       <form className="flex flex-col gap-3" onSubmit={handleSubmit}>
         <div className="flex items-center justify-between">
-          <label className="font-display text-subheading font-semibold leading-heading tracking-heading">
+          <label className="text-subheading font-semibold leading-heading tracking-heading">
             Editar Contraseña
           </label>
           <ChevronButton
@@ -191,10 +214,17 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
                     setErrors({ ...errors, title: undefined });
                   }
                 }}
+                aria-invalid={Boolean(errors.title)}
+                aria-describedby={
+                  errors.title ? 'edit-entry-title-error' : undefined
+                }
                 className={inputClass(!!errors.title)}
               />
               {errors.title && (
-                <p className="text-destructive text-caption leading-ui mt-1">
+                <p
+                  id="edit-entry-title-error"
+                  className="text-destructive text-caption leading-ui mt-1"
+                >
                   {errors.title}
                 </p>
               )}
@@ -244,10 +274,17 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
                     setErrors({ ...errors, username: undefined });
                   }
                 }}
+                aria-invalid={Boolean(errors.username)}
+                aria-describedby={
+                  errors.username ? 'edit-entry-username-error' : undefined
+                }
                 className={inputClass(!!errors.username)}
               />
               {errors.username && (
-                <p className="text-destructive text-caption leading-ui mt-1">
+                <p
+                  id="edit-entry-username-error"
+                  className="text-destructive text-caption leading-ui mt-1"
+                >
                   {errors.username}
                 </p>
               )}
@@ -272,10 +309,17 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
                     setErrors({ ...errors, url: undefined });
                   }
                 }}
+                aria-invalid={Boolean(errors.url)}
+                aria-describedby={
+                  errors.url ? 'edit-entry-url-error' : undefined
+                }
                 className={inputClass(!!errors.url)}
               />
               {errors.url && (
-                <p className="text-destructive text-caption leading-ui mt-1">
+                <p
+                  id="edit-entry-url-error"
+                  className="text-destructive text-caption leading-ui mt-1"
+                >
                   {errors.url}
                 </p>
               )}
@@ -301,6 +345,10 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
                       setErrors({ ...errors, password: undefined });
                     }
                   }}
+                  aria-invalid={Boolean(errors.password)}
+                  aria-describedby={
+                    errors.password ? 'edit-entry-password-error' : undefined
+                  }
                   className={`w-full px-3 py-1.5 text-body bg-background border rounded-lg focus:outline-none focus:ring-2 transition-all pr-20 ${errors.password ? 'border-destructive focus:ring-destructive/20' : 'border-border focus:ring-vault-amber/30 focus:border-vault-amber'}`}
                 />
                 <PasswordActions
@@ -311,7 +359,10 @@ export const EditPassword = ({ password, onClose }: EditPasswordProps) => {
                 />
               </div>
               {errors.password && (
-                <p className="text-destructive text-caption leading-ui mt-1">
+                <p
+                  id="edit-entry-password-error"
+                  className="text-destructive text-caption leading-ui mt-1"
+                >
                   {errors.password}
                 </p>
               )}

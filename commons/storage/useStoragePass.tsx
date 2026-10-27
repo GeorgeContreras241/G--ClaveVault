@@ -9,12 +9,27 @@ import { sileo } from 'sileo';
 import type { PassStorage, ImportResult } from '@/types';
 import type { PasswordEntry } from '@/features/vault-management';
 
+/** Nombre de archivo seguro y reconocible para la bóveda exportada. */
+function toFileSlug(name: string | null): string {
+  const slug = (name ?? 'clavevault')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return slug || 'clavevault';
+}
+
 export const useStoragePass = create<PassStorage>((set, get) => ({
   salt: null,
   derivedKey: null,
   dataPassword: [],
   isUnlocked: false,
   version: 1,
+  vaults: [],
+  activeVaultId: null,
+  activeVaultName: null,
 
   setDataPasswordInit: (data: PasswordEntry[]) => set({ dataPassword: data }),
   setDataPasswordUpdate: (data) =>
@@ -39,9 +54,16 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
   setSalt: (salt) => set({ salt }),
   setIsUnlocked: (value) => set({ isUnlocked: value }),
   setVersion: (version) => set({ version }),
+  setVaults: (vaults) => set({ vaults }),
+  setActiveVault: (vault) =>
+    set({
+      activeVaultId: vault?.id ?? null,
+      activeVaultName: vault?.name ?? null,
+    }),
+  clearActiveVault: () => set({ activeVaultId: null, activeVaultName: null }),
 
   handleExport: async (dataPassword) => {
-    const { derivedKey, salt } = get();
+    const { derivedKey, salt, activeVaultName } = get();
 
     try {
       if (!derivedKey) {
@@ -98,9 +120,13 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'pass.enc';
+      a.download = `${toFileSlug(activeVaultName)}.enc`;
+      // Algunos navegadores ignoran el click si el ancla no está en el DOM,
+      // y revocar el object URL de inmediato cancela la descarga.
+      document.body.appendChild(a);
       a.click();
-      URL.revokeObjectURL(url);
+      a.remove();
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 
       sileo.success({
         title: 'Bóveda exportada correctamente.',
@@ -189,8 +215,31 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
   },
 
   handleReset: async () => {
-    set({ isUnlocked: false });
+    // Bloquea la bóveda activa pero conserva la lista para el selector.
     localStorage.removeItem('salt');
-    set({ salt: null, derivedKey: null, dataPassword: [], version: 1 });
+    set({
+      isUnlocked: false,
+      salt: null,
+      derivedKey: null,
+      dataPassword: [],
+      version: 1,
+      activeVaultId: null,
+      activeVaultName: null,
+    });
+  },
+
+  resetSession: async () => {
+    // Cierre de sesión: además de la bóveda, olvida la lista de metadatos.
+    localStorage.removeItem('salt');
+    set({
+      isUnlocked: false,
+      salt: null,
+      derivedKey: null,
+      dataPassword: [],
+      version: 1,
+      activeVaultId: null,
+      activeVaultName: null,
+      vaults: [],
+    });
   },
 }));

@@ -18,6 +18,11 @@ import type { PasswordEntry, ShowPasswords } from '@/features/vault-management';
 import { useMode } from '@/features/vault-management/hooks/useMode';
 import { commitVaultOnline } from '@/commons/lib/vault/commitVault';
 
+type ManagerProps = {
+  /** Vuelve al selector de bóvedas (solo modo online). */
+  onLock?: () => void;
+};
+
 const getCategoryIcon = (category: string) => {
   switch (category) {
     case 'web':
@@ -31,7 +36,7 @@ const getCategoryIcon = (category: string) => {
   }
 };
 
-export const Manager = () => {
+export const Manager = ({ onLock }: ManagerProps) => {
   const mode = useMode();
   const dataPassword = useStoragePass((state) => state.dataPassword);
   const setDataPasswordInit = useStoragePass(
@@ -42,6 +47,8 @@ export const Manager = () => {
   );
   const derivedKey = useStoragePass((state) => state.derivedKey);
   const salt = useStoragePass((state) => state.salt);
+  const activeVaultId = useStoragePass((state) => state.activeVaultId);
+  const version = useStoragePass((state) => state.version);
   const setVersion = useStoragePass((state) => state.setVersion);
   const [searchTerm, setSearchTerm] = useState('');
   const [showPasswords, setShowPasswords] = useState<ShowPasswords>({});
@@ -60,22 +67,45 @@ export const Manager = () => {
 
   const commitEntries = useCallback(
     async (entries: PasswordEntry[]): Promise<boolean> => {
-      if (mode !== 'online' || !derivedKey || !salt) {
+      if (mode !== 'online') {
         return true;
       }
-      const result = await commitVaultOnline({ derivedKey, salt, entries });
-      if (!result.ok) {
+
+      if (!derivedKey || !salt || !activeVaultId) {
         sileo.error({
           title: 'No se pudo guardar en el servidor',
-          description: result.error,
+          description: 'La bóveda no está desbloqueada. Vuelve a abrirla.',
           duration: 5000,
         });
         return false;
       }
+
+      const result = await commitVaultOnline({
+        vaultId: activeVaultId,
+        expectedVersion: version,
+        derivedKey,
+        salt,
+        entries,
+      });
+
+      if (!result.ok) {
+        sileo.error({
+          title: result.conflict
+            ? 'La bóveda cambió en otra sesión'
+            : 'No se pudo guardar en el servidor',
+          description: result.error,
+          duration: 5000,
+        });
+        if (result.conflict) {
+          onLock?.();
+        }
+        return false;
+      }
+
       setVersion(result.version);
       return true;
     },
-    [mode, derivedKey, salt, setVersion]
+    [mode, activeVaultId, version, derivedKey, salt, setVersion, onLock]
   );
 
   const handleDeletePassword = useCallback(
@@ -168,6 +198,7 @@ export const Manager = () => {
           setSelectedCategory={setSelectedCategory}
           setSearchTerm={setSearchTerm}
           searchTerm={searchTerm}
+          onLock={onLock}
         />
         <section className="grid grid-cols-1 xl:grid-cols-[350px_1fr] gap-4 lg:gap-6">
           <section>
@@ -176,9 +207,10 @@ export const Manager = () => {
                 key={editingPassword.id}
                 password={editingPassword}
                 onClose={() => setEditingPassword(null)}
+                onLock={onLock}
               />
             ) : (
-              <AddPassword />
+              <AddPassword onLock={onLock} />
             )}
           </section>
 

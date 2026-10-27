@@ -12,6 +12,15 @@ export interface PasswordFormKeys {
   favorite: boolean;
 }
 
+/** Metadatos de una bóveda que se pueden mostrar antes de desbloquear. */
+export interface VaultSummary {
+  id: string;
+  name: string;
+  version: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export type VaultCipherPayload = {
   iv: Uint8Array | number[];
   data: Uint8Array | number[];
@@ -61,6 +70,9 @@ export type PassStorage = {
   dataPassword: PasswordEntry[];
   isUnlocked: boolean;
   version: number;
+  vaults: VaultSummary[];
+  activeVaultId: string | null;
+  activeVaultName: string | null;
   setDataPasswordInit: (data: PasswordEntry[]) => void;
   setDataPasswordUpdate: (data: PasswordEntry) => void;
   setDataPasswordEdit: (data: PasswordEntry) => void;
@@ -70,11 +82,14 @@ export type PassStorage = {
   setSalt: (salt: Uint8Array) => void;
   setIsUnlocked: (value: boolean) => void;
   setVersion: (version: number) => void;
+  setVaults: (vaults: VaultSummary[]) => void;
+  setActiveVault: (vault: VaultSummary | null) => void;
+  clearActiveVault: () => void;
   handleExport: ExportResult;
   handleImport: (file: File, password: string) => Promise<ImportResult>;
   handleReset: () => Promise<void>;
+  resetSession: () => Promise<void>;
 };
-
 
 // cookies.ts
 

@@ -28,7 +28,12 @@ import {
   type ValidationResult,
   type ValidationSchema,
 } from './types';
-import { validateVaultPayload } from './vault';
+import {
+  validateCreateVaultPayload,
+  validateUpdateVaultPayload,
+  validateVaultName,
+  validateVaultPayload,
+} from './vault';
 
 export { NO_STORE } from './types';
 export type { Failure, JsonReadResult, ValidationResult } from './types';
@@ -105,6 +110,9 @@ export class ValidationService {
   // ── dominio ─────────────────────────────────────────────────────────
 
   static validateVaultPayload = validateVaultPayload;
+  static validateVaultName = validateVaultName;
+  static validateCreateVaultPayload = validateCreateVaultPayload;
+  static validateUpdateVaultPayload = validateUpdateVaultPayload;
   static validateEmail = validateEmail;
   static validatePassword = validatePassword;
   static validateChallengeId = validateChallengeId;
