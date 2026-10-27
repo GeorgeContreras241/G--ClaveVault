@@ -47,16 +47,35 @@ export const AuthScreen = () => {
       </div>
 
       <div className="w-full p-6 rounded-lg border border-border bg-background">
-        <form className="flex flex-col gap-2">
+        <form
+          className="flex flex-col gap-2"
+          onSubmit={(e) => {
+            e.preventDefault();
+            // Enter en el email equivale a pulsar "Acceder".
+            document.getElementById('login-submit')?.click();
+          }}
+        >
           <div className="space-y-2">
             <Label htmlFor="email">Correo electrónico</Label>
             <div className="relative">
               <Input
                 id="email"
+                name="email"
                 type="email"
+                autoComplete="email"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) {
+                    setErrors((current) => ({
+                      ...current,
+                      email: undefined,
+                    }));
+                  }
+                }}
                 placeholder="tu@email.com"
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? 'email-error' : undefined}
                 className={`h-10 pl-10 ${errors.email ? 'border-red-500 focus-visible:ring-red-500/20' : ''}`}
               />
               <svg
@@ -75,7 +94,10 @@ export const AuthScreen = () => {
             </div>
             <div className="min-h-4">
               {errors.email && (
-                <p className="text-caption text-red-500 leading-none text-end">
+                <p
+                  id="email-error"
+                  className="text-caption text-red-500 leading-none text-end"
+                >
                   {errors.email}
                 </p>
               )}

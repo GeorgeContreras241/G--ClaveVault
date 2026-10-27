@@ -1,16 +1,32 @@
 'use client';
-import { startRegistration } from '@simplewebauthn/browser';
+import {
+  startAuthentication,
+  startRegistration,
+} from '@simplewebauthn/browser';
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { sileo } from 'sileo';
 import { Button } from '@/commons/components/ui/button';
 import { apiFetch } from '@/commons/lib/apiFetch';
+import {
+  describeWebAuthnError,
+  getWebAuthnEnvironmentError,
+} from '@/commons/lib/webauthnEnvironment';
 import type { WebAuthnRegisterProps } from '@/features/auth';
 
 export const Register = ({ email, validateForm }: WebAuthnRegisterProps) => {
+  const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleRegisterWebauthn = async () => {
     if (!validateForm()) {
+      return;
+    }
+
+    const environmentError = getWebAuthnEnvironmentError();
+    if (environmentError) {
+      setError(environmentError);
       return;
     }
 
@@ -38,9 +54,55 @@ export const Register = ({ email, validateForm }: WebAuthnRegisterProps) => {
         throw new Error(verifyData.error);
       }
 
-      alert('Registro exitoso');
+      // Auto-login tras registrar. Si el autenticador falla o el usuario
+      // cancela, el registro ya está hecho: se le indica que acceda.
+      try {
+        const loginOptionsRes = await apiFetch('/api/auth/login/options', {
+          method: 'POST',
+          body: JSON.stringify({ email }),
+        });
+        const loginOptionsData = await loginOptionsRes.json();
+        if (!loginOptionsData.ok) {
+          throw new Error(loginOptionsData.error);
+        }
+
+        const assertion = await startAuthentication({
+          optionsJSON: loginOptionsData.options,
+        });
+
+        const loginVerifyRes = await apiFetch('/api/auth/login/verify', {
+          method: 'POST',
+          body: JSON.stringify({
+            attResp: assertion,
+            challengeId: loginOptionsData.challengeId,
+          }),
+        });
+        const loginVerifyData = await loginVerifyRes.json();
+        if (!loginVerifyData.ok) {
+          throw new Error(loginVerifyData.error);
+        }
+
+        sileo.success({
+          title: 'Registro completado',
+          description: 'Bienvenido a ClaveVault.',
+          duration: 1500,
+        });
+        router.push('/passwords');
+      } catch (autoLoginError) {
+        if (process.env.NODE_ENV !== 'production') {
+          console.error('[webauthn:auto-login]', autoLoginError);
+        }
+        sileo.success({
+          title: 'Registro exitoso',
+          description: 'Ya puedes acceder con tu huella o llave.',
+          duration: 4000,
+        });
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error al registrarse');
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('[webauthn:register]', err);
+      }
+      setError(describeWebAuthnError(err));
     } finally {
       setIsLoading(false);
     }
@@ -80,9 +142,11 @@ export const Register = ({ email, validateForm }: WebAuthnRegisterProps) => {
           'Registrarse'
         )}
       </Button>
-      <div className="h-3 flex items-center text-center justify-center">
+      <div className="min-h-3 flex items-center text-center justify-center">
         {error && (
-          <p className="text-caption text-red-500 leading-none">{error}</p>
+          <p role="alert" className="text-caption text-red-500 leading-none">
+            {error}
+          </p>
         )}
       </div>
     </div>

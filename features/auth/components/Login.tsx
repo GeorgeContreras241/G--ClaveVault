@@ -4,6 +4,10 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/commons/components/ui/button';
 import { apiFetch } from '@/commons/lib/apiFetch';
+import {
+  describeWebAuthnError,
+  getWebAuthnEnvironmentError,
+} from '@/commons/lib/webauthnEnvironment';
 import type { WebAuthnLoginProps } from '@/features/auth';
 
 export const Login = ({ email, validateForm }: WebAuthnLoginProps) => {
@@ -13,6 +17,12 @@ export const Login = ({ email, validateForm }: WebAuthnLoginProps) => {
 
   const handleLoginWebauthn = async () => {
     if (!validateForm()) {
+      return;
+    }
+
+    const environmentError = getWebAuthnEnvironmentError();
+    if (environmentError) {
+      setError(environmentError);
       return;
     }
 
@@ -44,11 +54,14 @@ export const Login = ({ email, validateForm }: WebAuthnLoginProps) => {
       }
       router.push('/passwords');
     } catch (err) {
+      if (process.env.NODE_ENV !== 'production') {
+        console.error('[webauthn:login]', err);
+      }
       if (err instanceof Error && err.message.includes('timed out')) {
         setError('Tiempo agotado. Inténtalo nuevamente.');
         return;
       }
-      setError(err instanceof Error ? err.message : 'Error al iniciar sesión');
+      setError(describeWebAuthnError(err));
     } finally {
       setIsLoading(false);
     }
@@ -57,6 +70,7 @@ export const Login = ({ email, validateForm }: WebAuthnLoginProps) => {
   return (
     <div className="flex flex-col gap-1">
       <Button
+        id="login-submit"
         type="button"
         onClick={handleLoginWebauthn}
         disabled={isLoading}
@@ -88,9 +102,14 @@ export const Login = ({ email, validateForm }: WebAuthnLoginProps) => {
           'Acceder'
         )}
       </Button>
-      <div className="h-3 flex items-center text-center justify-center">
+      <div className="min-h-3 flex items-center text-center justify-center">
         {error && (
-          <p className="text-caption text-red-500 leading-none">{error}</p>
+          <p
+            role="alert"
+            className="text-caption text-red-500 leading-none text-balance"
+          >
+            {error}
+          </p>
         )}
       </div>
     </div>
