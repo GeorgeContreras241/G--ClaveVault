@@ -15,6 +15,26 @@ import { WebAuthnCredential } from './WebAuthnCredential';
 import { webauthnConfig } from '@/server/config';
 import { ChallengeService } from '@/server/features/challenge/ChallengeService';
 
+/**
+ * Los transports se guardan como texto separado por comas. Al leerlos hay
+ * que volver a convertirlos en una lista: pasarlos como un único string
+ * (`["internal,hybrid"]`) genera un valor inválido para SimpleWebAuthn.
+ */
+function parseTransports(
+  value: string | null | undefined
+): AuthenticatorTransportFuture[] | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  const transports = value
+    .split(',')
+    .map((transport) => transport.trim())
+    .filter(Boolean) as AuthenticatorTransportFuture[];
+
+  return transports.length > 0 ? transports : undefined;
+}
+
 export class AuthService {
   constructor(
     private userRepo: UserRepository,
@@ -116,9 +136,7 @@ export class AuthService {
       timeout: webauthnConfig.timeout,
       allowCredentials: credentials.map((cred) => ({
         id: cred.credentialId,
-        transports: cred.transports
-          ? ([cred.transports] as AuthenticatorTransportFuture[])
-          : undefined,
+        transports: parseTransports(cred.transports),
       })),
       userVerification: webauthnConfig.authenticatorSelection.userVerification,
     });
@@ -182,9 +200,7 @@ export class AuthService {
           storedCredential.publicKey
         ) as Uint8Array<ArrayBuffer>,
         counter: storedCredential.counter,
-        transports: storedCredential.transports
-          ? ([storedCredential.transports] as AuthenticatorTransportFuture[])
-          : undefined,
+        transports: parseTransports(storedCredential.transports),
       },
       requireUserVerification: true,
     });

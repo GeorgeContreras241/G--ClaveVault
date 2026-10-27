@@ -8,6 +8,7 @@ import { Delete } from '@/features/vault-management/components/icons/Delete';
 import { Star } from '@/features/vault-management/components/icons/Star';
 import { StarFilled } from '@/features/vault-management/components/icons/StarFilled';
 import { IconButton } from '@/features/vault-management/components/ui/IconButton';
+import { isSafeHttpUrl } from '@/commons/lib/validation/validateUrl';
 import type { PasswordCardProps } from '@/features/vault-management';
 
 export const PasswordCard = ({
@@ -29,6 +30,8 @@ export const PasswordCard = ({
     }
   };
 
+  const safeUrl = isSafeHttpUrl(password.url) ? password.url : null;
+
   return (
     <article className="vault-action-card vault-panel rounded-xl overflow-hidden">
       <div className="flex items-center gap-3 p-3 border-b border-border">
@@ -36,19 +39,24 @@ export const PasswordCard = ({
           {getCategoryIcon(password.category)}
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-display font-semibold text-subheading leading-heading tracking-heading truncate">
+          <h3 className="font-semibold text-subheading leading-heading tracking-heading truncate">
             {password.title}
           </h3>
-          {password.url && (
-            <a
-              href={password.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-caption leading-ui text-vault-amber hover:underline truncate block"
-            >
-              {password.url}
-            </a>
-          )}
+          {password.url &&
+            (safeUrl ? (
+              <a
+                href={safeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-caption leading-ui text-vault-amber hover:underline truncate block"
+              >
+                {password.url}
+              </a>
+            ) : (
+              <span className="text-caption leading-ui text-muted-foreground truncate block">
+                {password.url}
+              </span>
+            ))}
         </div>
         <IconButton
           label={
@@ -64,9 +72,9 @@ export const PasswordCard = ({
       <div className="p-3">
         <div className="flex flex-col sm:flex-row sm:items-center gap-2">
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <label className="text-meta font-medium leading-ui text-muted-foreground uppercase tracking-meta shrink-0">
+            <span className="text-meta font-medium leading-ui text-muted-foreground uppercase tracking-meta shrink-0">
               User
-            </label>
+            </span>
             <div className="relative flex-1 min-w-0">
               <span className="type-technical truncate bg-secondary px-2 py-1.5 rounded flex-1 pr-7 flex">
                 {password.username}
@@ -88,9 +96,9 @@ export const PasswordCard = ({
           </div>
 
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            <label className="text-meta font-medium leading-ui text-muted-foreground uppercase tracking-meta shrink-0">
+            <span className="text-meta font-medium leading-ui text-muted-foreground uppercase tracking-meta shrink-0">
               Pass
-            </label>
+            </span>
             <div className="relative flex-1 min-w-0">
               <span className="type-technical truncate bg-secondary px-2 py-1.5 rounded flex-1 pr-14 flex">
                 {showPasswords[password.id] ? password.password : '•••••••'}

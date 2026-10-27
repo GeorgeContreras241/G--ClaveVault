@@ -1,6 +1,42 @@
 import type { DecryptResult, VaultCipherPayload } from '@/types';
 import type { PasswordEntry } from '@/features/vault-management';
 
+/**
+ * Normaliza una entrada descifrada. Un `.enc` es un archivo externo: no se
+ * puede confiar en que tenga la forma exacta que genera la app. Se exigen
+ * los campos imprescindibles y se rellenan los opcionales con valores
+ * seguros para que un archivo manipulado no rompa el render.
+ */
+function normalizeEntry(value: unknown): PasswordEntry | null {
+  if (!value || typeof value !== 'object') {
+    return null;
+  }
+
+  const entry = value as Record<string, unknown>;
+
+  if (
+    typeof entry.id !== 'string' ||
+    typeof entry.title !== 'string' ||
+    typeof entry.username !== 'string' ||
+    typeof entry.password !== 'string'
+  ) {
+    return null;
+  }
+
+  return {
+    id: entry.id,
+    title: entry.title,
+    username: entry.username,
+    password: entry.password,
+    url: typeof entry.url === 'string' ? entry.url : '',
+    category:
+      typeof entry.category === 'string' && entry.category
+        ? entry.category
+        : 'web',
+    favorite: entry.favorite === true,
+  };
+}
+
 export const decrypt = async (
   key: CryptoKey,
   payload: VaultCipherPayload
@@ -49,9 +85,14 @@ export const decrypt = async (
       throw new Error('Formato de bóveda inválido');
     }
 
+    const entries = parsedData.map(normalizeEntry);
+    if (entries.some((entry) => entry === null)) {
+      throw new Error('Formato de bóveda inválido');
+    }
+
     return {
       status: true,
-      data: parsedData as PasswordEntry[],
+      data: entries as PasswordEntry[],
     };
   } catch (error: unknown) {
     const description =
@@ -65,7 +106,7 @@ export const decrypt = async (
         duration: 5000,
         fill: 'var(--color-bg-elevated)',
         styles: {
-          title: 'text-red! font-bold!',
+          title: 'text-red! font-semibold!',
           description: 'text-white! text-center!',
         },
       },
