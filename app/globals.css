@@ -10,34 +10,47 @@
 
   --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display:
-    var(--font-space-grotesk), var(--font-plex-sans), ui-sans-serif, system-ui,
+    var(--font-bricolage), var(--font-plex-sans), ui-sans-serif, system-ui,
     sans-serif;
   --font-mono:
     var(--font-plex-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  --text-display-xl: clamp(2rem, 4.5vw, 3.25rem);
+  --text-display-xl: clamp(2.5rem, 6vw, 4.5rem);
+  --text-display-lg: clamp(1.75rem, 3vw, 2.5rem);
   --text-display-md: 1.5rem;
-  --text-display-lg: clamp(1.75rem, 3vw, 2.25rem);
-  --text-heading: 1.25rem;
-  --text-subheading: 0.9375rem;
+  --text-heading: 1.375rem;
+  --text-subheading: 1rem;
   --text-body-lg: 1rem;
-  --text-body: 0.875rem;
+  --text-body: 0.9375rem;
   --text-label: 0.8125rem;
   --text-caption: 0.75rem;
   --text-meta: 0.6875rem;
   --text-technical: 0.8125rem;
   --text-button: 0.875rem;
 
-  --leading-display: 1.05;
-  --leading-heading: 1.2;
-  --leading-body: 1.6;
+  --text-display-xl--line-height: 1;
+  --text-display-lg--line-height: 1.08;
+  --text-display-md--line-height: 1.15;
+  --text-heading--line-height: 1.2;
+  --text-subheading--line-height: 1.35;
+  --text-body-lg--line-height: 1.65;
+  --text-body--line-height: 1.6;
+  --text-label--line-height: 1.35;
+  --text-caption--line-height: 1.5;
+  --text-meta--line-height: 1.4;
+  --text-technical--line-height: 1.35;
+  --text-button--line-height: 1.2;
+
+  --leading-display: 1;
+  --leading-heading: 1.15;
+  --leading-body: 1.65;
   --leading-ui: 1.35;
 
-  --tracking-display: -0.03em;
-  --tracking-heading: -0.015em;
-  --tracking-label: 0.01em;
-  --tracking-meta: 0.06em;
-  --tracking-eyebrow: 0.16em;
+  --tracking-display: -0.02em;
+  --tracking-heading: -0.01em;
+  --tracking-label: 0.005em;
+  --tracking-meta: 0.1em;
+  --tracking-eyebrow: 0.12em;
 }
 
 @utility type-technical {
@@ -168,7 +181,7 @@
   font-family: var(--font-sans);
   font-size: var(--text-meta);
   font-weight: 600;
-  line-height: var(--leading-ui);
+  line-height: 1.4;
   letter-spacing: var(--tracking-eyebrow);
   text-transform: uppercase;
   color: var(--color-vault-amber-dim);
@@ -240,7 +253,7 @@
   color: var(--color-vault-amber-dim);
   letter-spacing: var(--tracking-meta);
   font-size: var(--text-meta);
-  line-height: var(--leading-ui);
+  line-height: 1.4;
   font-weight: 500;
   text-transform: uppercase;
 }
@@ -249,7 +262,7 @@
   color: var(--color-zinc-500);
   letter-spacing: var(--tracking-meta);
   font-size: var(--text-meta);
-  line-height: var(--leading-ui);
+  line-height: 1.4;
   font-weight: 500;
   text-transform: uppercase;
 }
@@ -338,5 +351,6 @@
   }
   html {
     @apply font-sans;
+    font-optical-sizing: auto;
   }
 }

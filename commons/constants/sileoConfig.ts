@@ -4,7 +4,7 @@ export const sileoError = {
   duration: 5000,
   fill: 'var(--color-bg-elevated)',
   styles: {
-    title: 'text-red! font-bold!',
+    title: 'text-red! font-semibold!',
     description: 'text-white! text-center!',
   },
   button: {

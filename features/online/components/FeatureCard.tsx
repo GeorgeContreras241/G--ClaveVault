@@ -8,7 +8,7 @@ export function FeatureCard({ icon, title, description }: FeatureCardProps) {
         {icon}
       </div>
       <div className="flex flex-col">
-        <h3 className="font-display font-semibold text-subheading leading-heading tracking-heading mb-0.5 md:mb-1">
+        <h3 className="font-semibold text-subheading leading-heading tracking-heading mb-0.5 md:mb-1">
           {title}
         </h3>
         <p className="text-caption md:text-body text-muted-foreground leading-body">

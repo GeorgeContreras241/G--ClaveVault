@@ -1,5 +1,9 @@
 import type { Metadata, Viewport } from 'next';
-import { IBM_Plex_Mono, IBM_Plex_Sans, Space_Grotesk } from 'next/font/google';
+import {
+  Bricolage_Grotesque,
+  IBM_Plex_Mono,
+  IBM_Plex_Sans,
+} from 'next/font/google';
 import { WebApplicationJsonLd } from '@/commons/components/seo/JsonLd';
 import { SplitLayout } from '@/commons/components/layout/SplitLayout';
 import { siteConfig } from '@/commons/lib/site';
@@ -13,10 +17,12 @@ const plexSans = IBM_Plex_Sans({
   variable: '--font-plex-sans',
 });
 
-const spaceGrotesk = Space_Grotesk({
+const bricolage = Bricolage_Grotesque({
   subsets: ['latin'],
+  weight: 'variable',
+  axes: ['opsz'],
   display: 'swap',
-  variable: '--font-space-grotesk',
+  variable: '--font-bricolage',
 });
 
 const plexMono = IBM_Plex_Mono({
@@ -77,11 +83,7 @@ export default function RootLayout({
     <html
       lang="es"
       suppressHydrationWarning
-      className={cn(
-        plexSans.variable,
-        spaceGrotesk.variable,
-        plexMono.variable
-      )}
+      className={cn(plexSans.variable, bricolage.variable, plexMono.variable)}
     >
       <body className="font-sans antialiased bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 overflow-hidden">
         <WebApplicationJsonLd />

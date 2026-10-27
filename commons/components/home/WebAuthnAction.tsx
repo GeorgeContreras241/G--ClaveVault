@@ -16,7 +16,7 @@ export function WebAuthnAction() {
         duration: 4000,
         fill: 'var(--color-bg-elevated)',
         styles: {
-          title: 'text-vault-amber! font-bold!',
+          title: 'text-vault-amber! font-semibold!',
           description: 'text-white! text-center!',
         },
       });
@@ -38,7 +38,7 @@ export function WebAuthnAction() {
         <WebAuthn />
       </div>
       <div className="min-w-0 flex-1 space-y-1 text-start md:text-center md:space-y-1.5">
-        <h2 className="font-display text-subheading font-semibold leading-heading tracking-heading text-zinc-900 dark:text-zinc-50">
+        <h2 className="text-subheading font-semibold leading-heading tracking-heading text-zinc-900 dark:text-zinc-50">
           WebAuthn
         </h2>
         <p className="text-caption leading-ui text-zinc-600 dark:text-zinc-400 md:text-body">

@@ -4,7 +4,7 @@ export const CapabilityChip = ({ text }: { text: string }) => {
       className="group relative flex min-h-[2.75rem] items-center justify-center rounded-lg border px-2 py-2 text-center transition duration-300
       border-zinc-300 dark:border-zinc-700/80 bg-amber-50 dark:bg-vault-amber/5 hover:border-amber-400 dark:hover:border-vault-amber/35 sm:min-h-[3rem] sm:px-3"
     >
-      <span className="text-meta font-medium leading-ui tracking-label transition-colors duration-300 text-zinc-700 dark:text-zinc-300 group-hover:text-amber-600 dark:group-hover:text-vault-amber-dim">
+      <span className="text-meta font-medium leading-ui tracking-meta transition-colors duration-300 text-zinc-700 dark:text-zinc-300 group-hover:text-amber-600 dark:group-hover:text-vault-amber-dim">
         {text}
       </span>
       <span

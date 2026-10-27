@@ -17,10 +17,10 @@ export default function PasswordsError({
   return (
     <main className="grid min-h-dvh place-items-center px-4 py-12">
       <div className="vault-panel w-full max-w-md space-y-4 rounded-2xl p-6 text-center">
-        <h1 className="font-sora text-xl font-semibold text-zinc-900 dark:text-zinc-50">
+        <h1 className="font-display text-heading font-semibold leading-heading tracking-heading text-zinc-900 dark:text-zinc-50">
           Algo salió mal
         </h1>
-        <p className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p className="text-body leading-body text-zinc-600 dark:text-zinc-400">
           No se pudo cargar el gestor. Puedes intentar de nuevo o volver al
           inicio.
         </p>
@@ -28,13 +28,13 @@ export default function PasswordsError({
           <button
             type="button"
             onClick={reset}
-            className="rounded-xl bg-vault-amber px-4 py-2 text-sm font-medium text-zinc-900 transition hover:opacity-90"
+            className="rounded-xl bg-vault-amber px-4 py-2 text-button font-medium text-zinc-900 transition hover:opacity-90"
           >
             Reintentar
           </button>
           <Link
             href="/"
-            className="rounded-xl border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-700 transition hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            className="rounded-xl border border-zinc-300 px-4 py-2 text-button font-medium text-zinc-700 transition hover:bg-zinc-100 dark:border-zinc-600 dark:text-zinc-300 dark:hover:bg-zinc-800"
           >
             Ir al inicio
           </Link>

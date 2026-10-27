@@ -19,7 +19,7 @@ export default function Home() {
             <div className="flex flex-col gap-5">
               <div className="vault-rise vault-rise-delay-1 space-y-3">
                 <p className="vault-eyebrow">ClaveVault</p>
-                <h1 className="font-display text-start text-display-xl font-semibold leading-display tracking-display text-balance text-zinc-900 dark:text-zinc-50">
+                <h1 className="font-display text-start text-display-xl font-medium leading-display tracking-display text-balance text-zinc-900 dark:text-zinc-50">
                   Tu bóveda local de credenciales
                 </h1>
                 <p className="max-w-xl text-start text-body-lg leading-body text-pretty text-zinc-600 dark:text-zinc-400">
@@ -63,7 +63,7 @@ export default function Home() {
                 <Archive />
               </div>
               <div className="min-w-0 flex-1 space-y-1 text-start md:text-center md:space-y-1.5">
-                <h2 className="font-display text-subheading font-semibold leading-heading tracking-heading text-zinc-900 dark:text-zinc-50">
+                <h2 className="text-subheading font-semibold leading-heading tracking-heading text-zinc-900 dark:text-zinc-50">
                   Uso Offline
                 </h2>
                 <p className="text-caption leading-ui text-zinc-600 dark:text-zinc-400 md:text-body">

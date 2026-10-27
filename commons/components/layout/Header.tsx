@@ -1,13 +1,14 @@
 import Link from 'next/link';
+import { cn } from '@/commons/lib/utils';
 import { Arrow } from '../icons/Arrow';
 
 export const Header = ({ className }: { className?: string }) => {
   return (
     <header
-      className={
-        className ??
-        'flex w-full justify-center sticky top-0 z-50 px-4 py-5.5 md:px-6 rounded-lg'
-      }
+      className={cn(
+        'flex w-full justify-center sticky top-0 z-50 px-4 py-5.5 md:px-6 rounded-lg',
+        className
+      )}
       aria-label="Navegación principal"
     >
       <div className="w-full max-w-5xl grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4">
@@ -24,7 +25,7 @@ export const Header = ({ className }: { className?: string }) => {
             Volver
           </span>
         </Link>
-        <p className="font-display text-lg font-semibold leading-heading tracking-heading text-zinc-900 dark:text-zinc-50 justify-self-center">
+        <p className="font-display text-heading font-semibold leading-heading tracking-heading text-zinc-900 dark:text-zinc-50 justify-self-center">
           ClaveVault
         </p>
         <Link
