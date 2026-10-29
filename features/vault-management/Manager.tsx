@@ -124,7 +124,7 @@ export const Manager = ({ onLock }: ManagerProps) => {
         setDataPasswordDelete(id);
         sileo.success({
           title: 'Contraseña eliminada.',
-          duration: 1000,
+          duration: 5000,
         });
       } finally {
         setDeletingId(null);
