@@ -55,7 +55,6 @@ export const decrypt = async (
           title: 'Error al descifrar los datos',
           description: 'Key inválida',
           duration: 5000,
-          fill: 'var(--color-bg-elevated)',
         },
       };
     }
@@ -104,11 +103,6 @@ export const decrypt = async (
         title: 'Error al descifrar los datos',
         description,
         duration: 5000,
-        fill: 'var(--color-bg-elevated)',
-        styles: {
-          title: 'text-red! font-semibold!',
-          description: 'text-white! text-center!',
-        },
       },
     };
   }

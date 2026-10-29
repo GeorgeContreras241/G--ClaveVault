@@ -71,8 +71,8 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
           title: 'Error al exportar los datos',
           description: 'No se pudo derivar la clave',
           duration: 5000,
-          styles: { title: 'text-white!' },
         });
+
         return;
       }
 
@@ -81,7 +81,6 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
           title: 'Error al exportar',
           description: 'Salt no disponible',
           duration: 5000,
-          styles: { title: 'text-white!' },
         });
         return;
       }
@@ -94,7 +93,6 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
           title: 'Error al encriptar',
           description: 'No se pudo encriptar los datos',
           duration: 5000,
-          styles: { title: 'text-white!' },
         });
         return;
       }
@@ -109,7 +107,6 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
           title: 'Error al exportar',
           description: 'La bóveda tiene un formato inválido',
           duration: 5000,
-          styles: { title: 'text-white!' },
         });
         return;
       }
@@ -137,7 +134,6 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
         title: 'Error al exportar los datos',
         description: 'No se pudo generar el archivo',
         duration: 5000,
-        styles: { title: 'text-white!' },
       });
     }
   },
@@ -153,7 +149,6 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
             title: 'Error al cargar',
             description: 'No se pudo leer el archivo',
             duration: 5000,
-            styles: { title: 'text-white!' },
           },
         };
       }
@@ -167,7 +162,6 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
             title: 'Archivo inválido',
             description: 'El archivo no tiene el formato de bóveda esperado',
             duration: 5000,
-            styles: { title: 'text-white!' },
           },
         };
       }
@@ -181,7 +175,6 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
           message: {
             title: 'Error al derivar la clave',
             duration: 5000,
-            styles: { title: 'text-white!' },
           },
         };
       }
@@ -208,7 +201,6 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
         message: {
           title: 'Error al procesar el archivo',
           duration: 5000,
-          styles: { title: 'text-white!' },
         },
       };
     }

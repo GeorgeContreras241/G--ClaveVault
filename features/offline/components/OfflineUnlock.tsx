@@ -68,11 +68,6 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
       title: 'Confirmar',
       description: '¿Continuar sin archivo? Se creará una bóveda vacía.',
       duration: 8000,
-      fill: 'var(--color-bg-elevated)',
-      styles: {
-        title: 'text-red! font-semibold!',
-        description: 'text-white! text-center!',
-      },
       button: {
         onClick: async () => {
           setIsLoading(true);

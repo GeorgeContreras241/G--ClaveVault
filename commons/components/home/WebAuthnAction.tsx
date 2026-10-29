@@ -14,11 +14,6 @@ export function WebAuthnAction() {
         description:
           'Estamos trabajando en ello. Próximamente podrás acceder desde cualquier dispositivo.',
         duration: 4000,
-        fill: 'var(--color-bg-elevated)',
-        styles: {
-          title: 'text-vault-amber! font-semibold!',
-          description: 'text-white! text-center!',
-        },
       });
     }
   };
