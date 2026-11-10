@@ -131,7 +131,7 @@ export const VaultHeader = ({
             onClick={() => setSelectedCategory(button.value)}
             className={
               selectedCategory === button.value
-                ? 'bg-vault-amber text-black hover:bg-vault-amber/80'
+                ? 'bg-vault-amber text-vault-amber-foreground hover:bg-vault-amber/80'
                 : ''
             }
           >

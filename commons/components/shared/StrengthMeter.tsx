@@ -7,23 +7,23 @@ type StrengthMeterProps = {
 
 /** Color de los segmentos rellenos por score (0–4). */
 const SCORE_COLORS = [
-  'bg-red-500',
-  'bg-red-500',
-  'bg-amber-500',
-  'bg-emerald-500',
-  'bg-emerald-500',
+  'bg-destructive',
+  'bg-destructive',
+  'bg-warning',
+  'bg-success',
+  'bg-success',
 ];
 
 /** Color de la etiqueta de fuerza por score (0–4). */
 const LABEL_COLORS = [
-  'text-red-500',
-  'text-red-500',
-  'text-amber-500',
-  'text-emerald-500',
-  'text-emerald-500',
+  'text-destructive',
+  'text-destructive',
+  'text-warning',
+  'text-success',
+  'text-success',
 ];
 
-const EMPTY_SEGMENT = 'bg-zinc-200 dark:bg-zinc-700';
+const EMPTY_SEGMENT = 'bg-surface-strong';
 
 /**
  * Indicador de fuerza de la master key: 4 segmentos + etiqueta. Solo es
@@ -49,7 +49,7 @@ export const StrengthMeter = ({ validation }: StrengthMeterProps) => {
       >
         Fuerza: {strength}
         {warnings.length > 0 && (
-          <span className="font-normal text-zinc-500 dark:text-zinc-400">
+          <span className="font-normal text-muted-foreground">
             {' '}
             · {warnings[0]}
           </span>

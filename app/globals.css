@@ -7,6 +7,8 @@
 @theme {
   --color-vault-amber: oklch(65.443% 0.29681 264.478);
   --color-vault-amber-dim: oklch(75.443% 0.29681 264.478);
+  /* Texto sobre superficies de marca (vault-amber), que no cambian por tema */
+  --color-vault-amber-foreground: oklch(14.1% 0.005 285.823);
 
   --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display:
@@ -98,14 +100,28 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Superficies y estados (capa semántica sobre la paleta de Tailwind) */
+  --surface: oklch(96.7% 0.001 286.375); /* zinc-100 */
+  --surface-muted: oklch(98.5% 0 0); /* zinc-50 */
+  --surface-strong: oklch(92% 0.004 286.32); /* zinc-200 */
+  --surface-hover: oklch(96.7% 0.001 286.375); /* zinc-100 */
+  --border-strong: oklch(70.5% 0.015 286.067); /* zinc-400 */
+  --overlay: oklch(0% 0 0 / 0.6);
+
+  --success: oklch(59.6% 0.145 163.225); /* emerald-600 */
+  --success-muted: oklch(96.2% 0.044 156.743); /* green-100 */
+  --warning: oklch(66.6% 0.179 58.318); /* amber-600 */
+  --warning-muted: oklch(98.7% 0.022 95.277); /* amber-50 */
+  --info: oklch(54.6% 0.245 262.881); /* blue-600 */
 }
 
 .dark {
-  --vault-surface: rgba(9, 9, 11, 0.55);
-  --vault-border: rgba(148, 163, 184, 0.199);
-  --background: oklch(0.145 0 0);
+  --vault-surface: rgba(34, 34, 39, 0.55);
+  --vault-border: rgba(56, 78, 109, 0.199);
+  --background: oklch(21.342% 0.00002 271.152);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(25.954% 0.04288 20.379);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
@@ -134,6 +150,17 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  --surface: oklch(21% 0.006 285.885); /* zinc-900: fondo oscuro más suave */
+  --surface-muted: oklch(27.4% 0.006 286.033); /* zinc-800 */
+  --surface-strong: oklch(37% 0.013 285.805); /* zinc-700 */
+  --surface-hover: oklch(27.4% 0.006 286.033); /* zinc-800 */
+  --border-strong: oklch(44.2% 0.017 285.786); /* zinc-600 */
+  --success: oklch(76.5% 0.177 163.223); /* emerald-400 */
+  --warning: oklch(82.8% 0.189 84.429); /* amber-400 */
+  --success-muted: color-mix(in oklab, var(--success) 15%, transparent);
+  --warning-muted: color-mix(in oklab, var(--warning) 15%, transparent);
+  --info: oklch(70.7% 0.165 254.624); /* blue-400 */
 }
 
 @keyframes vault-rise {
@@ -259,7 +286,7 @@
 }
 
 .vault-status-soon {
-  color: var(--color-zinc-500);
+  color: var(--muted-foreground);
   letter-spacing: var(--tracking-meta);
   font-size: var(--text-meta);
   line-height: 1.4;
@@ -333,6 +360,17 @@
   --color-card: var(--card);
   --color-foreground: var(--foreground);
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-strong: var(--surface-strong);
+  --color-surface-hover: var(--surface-hover);
+  --color-border-strong: var(--border-strong);
+  --color-overlay: var(--overlay);
+  --color-success: var(--success);
+  --color-success-muted: var(--success-muted);
+  --color-warning: var(--warning);
+  --color-warning-muted: var(--warning-muted);
+  --color-info: var(--info);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -347,7 +385,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-surface text-foreground;
   }
   html {
     @apply font-sans;

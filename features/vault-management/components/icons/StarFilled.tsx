@@ -1,7 +1,7 @@
 export const StarFilled = () => {
   return (
     <svg
-      className="w-4 h-4 text-yellow-500"
+      className="w-4 h-4 text-warning"
       fill="currentColor"
       viewBox="0 0 20 20"
     >

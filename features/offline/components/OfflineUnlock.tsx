@@ -189,7 +189,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
     <div className="w-full flex flex-col items-center justify-center gap-8 py-12 px-3 relative">
       <Link
         href="/"
-        className="absolute top-4 left-4 flex h-9 w-9 items-center justify-center rounded-lg hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-600 dark:text-zinc-400 transition-all duration-300"
+        className="absolute top-4 left-4 flex h-9 w-9 items-center justify-center rounded-lg hover:bg-surface-hover text-muted-foreground transition-all duration-300"
         aria-label="Volver al inicio"
         title="Volver al inicio"
       >
@@ -206,21 +206,21 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
               aria-describedby="file-status"
             />
             <div
-              className="flex-1 h-48 border-2 border-dashed border-zinc-300 dark:border-zinc-500/30 rounded-xl bg-zinc-50 dark:bg-zinc-800/20 hover:bg-zinc-100 dark:hover:bg-zinc-800/40 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group"
+              className="flex-1 h-48 border-2 border-dashed border-border rounded-xl bg-surface-muted hover:bg-surface-hover shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group"
               onDrop={handleDrop}
               onDragOver={handleDragOver}
             >
               <label
                 htmlFor="file"
-                className="w-full h-full flex flex-col items-center justify-center cursor-pointer border rounded-lg border-zinc-300 dark:border-zinc-500/30"
+                className="w-full h-full flex flex-col items-center justify-center cursor-pointer border rounded-lg border-border"
               >
                 <div className="w-16 h-16 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform">
                   <Add />
                 </div>
-                <span className="text-body leading-ui text-zinc-800 dark:text-zinc-200 font-medium">
+                <span className="text-body leading-ui text-foreground font-medium">
                   Arrastra o haz clic para subir
                 </span>
-                <span className="text-caption leading-ui text-zinc-600 dark:text-zinc-400 mt-1">
+                <span className="text-caption leading-ui text-muted-foreground mt-1">
                   Solo archivos .enc
                 </span>
               </label>
@@ -229,11 +229,11 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
               <button
                 type="button"
                 onClick={handleClearFile}
-                className="grid place-content-center w-12 h-12 rounded-xl border border-zinc-300 dark:border-zinc-500/30 bg-zinc-100 dark:bg-zinc-800 cursor-pointer hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-all duration-300 group"
+                className="grid place-content-center w-12 h-12 rounded-xl border border-border bg-surface-hover cursor-pointer hover:bg-surface-strong transition-all duration-300 group"
                 title="Eliminar archivo"
               >
                 <svg
-                  className="w-5 h-5 text-zinc-600 dark:text-zinc-400 group-hover:text-red-500 dark:group-hover:text-red-400 group-hover:scale-110 transition-all"
+                  className="w-5 h-5 text-muted-foreground group-hover:text-destructive group-hover:scale-110 transition-all"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -254,8 +254,8 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
             aria-live="polite"
             className={`${
               file
-                ? 'text-green-700 dark:text-green-400 border-green-300 dark:border-green-400/50 bg-green-100 dark:bg-green-400/10'
-                : 'text-red-700 dark:text-red-400 border-red-300 dark:border-red-400/50 bg-red-100 dark:bg-red-400/10'
+                ? 'text-success border-success/50 bg-success-muted'
+                : 'text-destructive border-destructive/50 bg-destructive/10'
             }
                     text-body leading-ui border rounded px-2 py-1 w-full text-center transition-colors duration-300`}
           >
@@ -273,14 +273,14 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
           <div className="flex justify-between">
             <label
               htmlFor="password"
-              className="font-display text-display-md md:text-display-lg text-start font-semibold leading-display tracking-display text-zinc-900 dark:text-zinc-50"
+              className="font-display text-display-md md:text-display-lg text-start font-semibold leading-display tracking-display text-foreground"
             >
               Clave Maestra
             </label>
             {passwordError && (
               <span
                 id="password-error"
-                className="text-red-600 dark:text-red-400 text-caption mt-1"
+                className="text-destructive text-caption mt-1"
                 role="alert"
               >
                 {passwordError}
@@ -290,8 +290,10 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
           <div className="relative">
             <input
               type={viewPass ? 'text' : 'password'}
-              className={`w-full border rounded-lg px-4 py-2 type-technical pr-10 border-zinc-300 dark:border-zinc-500/30 bg-white dark:bg-zinc-800/50 backdrop-blur-sm placeholder:text-zinc-500 dark:placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-vault-amber/30 focus:border-vault-amber transition-all duration-300 ${
-                passwordError ? 'border-red-500 focus:ring-red-500/50' : ''
+              className={`w-full border rounded-lg px-4 py-2 type-technical pr-10 border-border bg-surface-muted backdrop-blur-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-vault-amber/30 focus:border-vault-amber transition-all duration-300 ${
+                passwordError
+                  ? 'border-destructive focus:ring-destructive/50'
+                  : ''
               }`}
               placeholder="Ingresa Aqui"
               id="password"
@@ -307,7 +309,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
             <button
               type="button"
               onClick={() => setViewPass(!viewPass)}
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded hover:bg-zinc-100 dark:hover:bg-zinc-700 text-zinc-600 dark:text-zinc-400 hover:text-vault-amber dark:hover:text-vault-amber transition-all duration-300"
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1.5 rounded hover:bg-surface-hover text-muted-foreground hover:text-vault-amber transition-all duration-300"
               aria-label={
                 viewPass ? 'Ocultar contraseña' : 'Mostrar contraseña'
               }
@@ -322,7 +324,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
             {isLoading ? 'Procesando…' : ''}
           </span>
           <button
-            className="w-full bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-white dark:text-zinc-900 rounded-lg p-3 cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-vault-amber/30 shadow-lg text-button font-medium tracking-label"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg p-3 cursor-pointer flex items-center justify-center gap-2 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-vault-amber/30 shadow-lg text-button font-medium tracking-label"
             type="submit"
             disabled={isLoading}
             aria-busy={isLoading}

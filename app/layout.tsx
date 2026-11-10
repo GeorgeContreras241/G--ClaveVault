@@ -85,7 +85,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn(plexSans.variable, bricolage.variable, plexMono.variable)}
     >
-      <body className="font-sans antialiased bg-zinc-100 text-zinc-900 dark:bg-zinc-950 dark:text-zinc-100 overflow-hidden">
+      <body className="font-sans antialiased overflow-hidden">
         <WebApplicationJsonLd />
         <SplitLayout>{children}</SplitLayout>
       </body>

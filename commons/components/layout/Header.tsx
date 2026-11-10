@@ -14,7 +14,7 @@ export const Header = ({ className }: { className?: string }) => {
       <div className="w-full max-w-5xl grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-4">
         <Link
           href="/"
-          className="flex items-center gap-2 justify-self-start text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-50 transition-colors duration-300 cursor-pointer"
+          className="flex items-center gap-2 justify-self-start text-muted-foreground hover:text-foreground transition-colors duration-300 cursor-pointer"
           aria-label="Volver al inicio"
           title="Volver al inicio"
         >
@@ -25,12 +25,12 @@ export const Header = ({ className }: { className?: string }) => {
             Volver
           </span>
         </Link>
-        <p className="font-display text-heading font-semibold leading-heading tracking-heading text-zinc-900 dark:text-zinc-50 justify-self-center">
+        <p className="font-display text-heading font-semibold leading-heading tracking-heading text-foreground justify-self-center">
           ClaveVault
         </p>
         <Link
           href="/#main-content"
-          className="justify-self-end whitespace-nowrap text-meta font-medium tracking-meta uppercase text-zinc-600 transition-colors duration-300 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-50 cursor-pointer"
+          className="justify-self-end whitespace-nowrap text-meta font-medium tracking-meta uppercase text-muted-foreground transition-colors duration-300 hover:text-foreground   cursor-pointer"
           aria-label="Acerca de ClaveVault"
           title="Acerca de ClaveVault"
         >

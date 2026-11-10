@@ -97,7 +97,7 @@ export const ChevronButton = ({
       <svg
         aria-hidden="true"
         className={cn(
-          'text-white transition-transform duration-200',
+          'text-inherit transition-transform duration-200',
           icon,
           open && 'rotate-180'
         )}

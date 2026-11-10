@@ -19,13 +19,13 @@ export default function Home() {
             <div className="flex flex-col gap-5">
               <div className="vault-rise vault-rise-delay-1 space-y-3">
                 <p className="vault-eyebrow">ClaveVault</p>
-                <h1 className="font-display text-start text-display-xl font-medium leading-display tracking-display text-balance text-zinc-900 dark:text-zinc-50">
+                <h1 className="font-display text-start text-display-xl font-medium leading-display tracking-display text-balance text-foreground">
                   Tu bóveda local de credenciales
                 </h1>
-                <p className="max-w-xl text-start text-body-lg leading-body text-pretty text-zinc-600 dark:text-zinc-400">
+                <p className="max-w-xl text-start text-body-lg leading-body text-pretty text-muted-foreground">
                   Almacena, organiza y protege tus claves en el navegador.
                   Cifrado en cliente,{' '}
-                  <strong className="font-semibold text-blue-700 dark:text-blue-400">
+                  <strong className="font-semibold text-info">
                     cero servidores
                   </strong>{' '}
                   y control total sobre tus datos.
@@ -52,7 +52,7 @@ export default function Home() {
             <Link
               href="/offline"
               title="Abrir gestor de contraseñas sin conexión"
-              className="group relative flex  items-center gap-4 rounded-2xl p-4 md:p-6 border border-zinc-300 dark:border-zinc-500/30 hover:border-zinc-400 dark:hover:border-zinc-500/80 cursor-pointer"
+              className="group relative flex  items-center gap-4 rounded-2xl p-4 md:p-6 border border-border hover:border-border-strong cursor-pointer"
               role="menuitem"
               aria-label="Uso Offline - Administrar claves sin conexión"
             >
@@ -63,10 +63,10 @@ export default function Home() {
                 <Archive />
               </div>
               <div className="min-w-0 flex-1 space-y-1 text-start md:text-center md:space-y-1.5">
-                <h2 className="text-subheading font-semibold leading-heading tracking-heading text-zinc-900 dark:text-zinc-50">
+                <h2 className="text-subheading font-semibold leading-heading tracking-heading text-foreground">
                   Uso Offline
                 </h2>
-                <p className="text-caption leading-ui text-zinc-600 dark:text-zinc-400 md:text-body">
+                <p className="text-caption leading-ui text-muted-foreground md:text-body">
                   Sin internet · archivo cifrado local
                 </p>
                 <span className="vault-status-live flex justify-start md:justify-center">

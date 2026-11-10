@@ -76,7 +76,7 @@ export const AuthScreen = () => {
                 placeholder="tu@email.com"
                 aria-invalid={Boolean(errors.email)}
                 aria-describedby={errors.email ? 'email-error' : undefined}
-                className={`h-10 pl-10 ${errors.email ? 'border-red-500 focus-visible:ring-red-500/20' : ''}`}
+                className={`h-10 pl-10 ${errors.email ? 'border-destructive focus-visible:ring-destructive/20' : ''}`}
               />
               <svg
                 className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground"
@@ -96,7 +96,7 @@ export const AuthScreen = () => {
               {errors.email && (
                 <p
                   id="email-error"
-                  className="text-caption text-red-500 leading-none text-end"
+                  className="text-caption text-destructive leading-none text-end"
                 >
                   {errors.email}
                 </p>

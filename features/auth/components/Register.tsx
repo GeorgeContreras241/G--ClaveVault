@@ -137,7 +137,10 @@ export const Register = ({ email, validateForm }: WebAuthnRegisterProps) => {
       </Button>
       <div className="min-h-3 flex items-center text-center justify-center">
         {error && (
-          <p role="alert" className="text-caption text-red-500 leading-none">
+          <p
+            role="alert"
+            className="text-caption text-destructive leading-none"
+          >
             {error}
           </p>
         )}

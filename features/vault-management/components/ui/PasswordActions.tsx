@@ -16,7 +16,7 @@ export const PasswordActions = ({
   <div className="absolute right-2 top-1/2 -translate-y-1/2 flex gap-1">
     <IconButton label="Generar contraseña" onClick={onGenerate}>
       <svg
-        className="w-3.5 h-3.5 text-white"
+        className="w-3.5 h-3.5 text-foreground"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -36,7 +36,7 @@ export const PasswordActions = ({
       onClick={onToggleVisibility}
     >
       <svg
-        className="w-3.5 h-3.5 text-white"
+        className="w-3.5 h-3.5 text-foreground"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -57,7 +57,7 @@ export const PasswordActions = ({
 
     <IconButton
       label="Copiar contraseña"
-      className="text-white"
+      className="text-foreground"
       onClick={onCopy}
     >
       <Copy />

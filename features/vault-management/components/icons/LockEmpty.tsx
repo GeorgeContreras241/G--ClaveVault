@@ -1,7 +1,7 @@
 export const LockEmpty = () => {
   return (
     <svg
-      className="w-12 h-12 text-blue-600 dark:text-blue-400"
+      className="w-12 h-12 text-info"
       fill="currentColor"
       viewBox="0 0 20 20"
       aria-hidden="true"

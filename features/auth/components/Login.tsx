@@ -106,7 +106,7 @@ export const Login = ({ email, validateForm }: WebAuthnLoginProps) => {
         {error && (
           <p
             role="alert"
-            className="text-caption text-red-500 leading-none text-balance"
+            className="text-caption text-destructive leading-none text-balance"
           >
             {error}
           </p>
