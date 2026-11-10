@@ -17,7 +17,6 @@ import { StrengthMeter } from '@/commons/components/shared/StrengthMeter';
 import type { OfflineUnlockProps } from '@/features/offline';
 import { generateSalt } from '@/commons/lib/crypto/generateSalt';
 import { deriveKey } from '@/commons/lib/crypto/kdfKey';
-import { Arrow } from '@/commons/components/icons/Arrow';
 import Link from 'next/link';
 
 const MAX_FILE_BYTES = 10 * 1024 * 1024;
@@ -194,9 +193,6 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
         aria-label="Volver al inicio"
         title="Volver al inicio"
       >
-        <span className="block h-4 w-4 rotate-180" aria-hidden="true">
-          <Arrow />
-        </span>
       </Link>
       <div className="offline w-full grid place-items-center rounded-3xl p-6 md:p-8">
         <div className="w-full grid place-items-center gap-2">
