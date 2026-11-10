@@ -1,5 +1,6 @@
 import type { DecryptResult, VaultCipherPayload } from '@/types';
 import type { PasswordEntry } from '@/features/vault-management';
+import { decryptFailed } from '@/commons/constants/alerts';
 
 /**
  * Normaliza una entrada descifrada. Un `.enc` es un archivo externo: no se
@@ -51,11 +52,7 @@ export const decrypt = async (
     ) {
       return {
         status: false,
-        message: {
-          title: 'Error al descifrar los datos',
-          description: 'Key inválida',
-          duration: 5000,
-        },
+        message: decryptFailed('Key inválida'),
       };
     }
 
@@ -99,11 +96,7 @@ export const decrypt = async (
 
     return {
       status: false,
-      message: {
-        title: 'Error al descifrar los datos',
-        description,
-        duration: 5000,
-      },
+      message: decryptFailed(description),
     };
   }
 };

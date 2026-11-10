@@ -1,5 +1,10 @@
 'use client';
 import { sileo } from 'sileo';
+import {
+  alerts,
+  copiedToClipboard,
+  saveFailed,
+} from '@/commons/constants/alerts';
 import { Button } from '@/commons/components/ui/button';
 import { useState } from 'react';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
@@ -81,30 +86,20 @@ export const EditPassword = ({
   const handleGeneratePassword = () => {
     const generated = generatePassword(passwordOptions);
     if (!generated) {
-      sileo.error({
-        title: 'Selecciona al menos un tipo de carácter',
-      });
+      sileo.error(alerts.selectCharType);
       return;
     }
     setKeys({ ...keys, password: generated });
     setErrors({ ...errors, password: undefined });
-    sileo.success({
-      title: 'Se ha generado una nueva contraseña.',
-      duration: 1000,
-    });
+    sileo.success(alerts.passwordGenerated);
   };
 
   const handleCopyToClipboard = async () => {
     const copied = await copyToClipboard(keys.password);
     if (copied) {
-      sileo.success({
-        title: 'Contraseña copiada al portapapeles.',
-        duration: 1000,
-      });
+      sileo.success(copiedToClipboard('Contraseña copiada al portapapeles.'));
     } else {
-      sileo.error({
-        title: 'No se pudo copiar al portapapeles',
-      });
+      sileo.error(alerts.copyFailed);
     }
   };
 
@@ -123,11 +118,7 @@ export const EditPassword = ({
     try {
       if (mode === 'online') {
         if (!derivedKey || !salt || !activeVaultId) {
-          sileo.error({
-            title: 'No se pudieron guardar los cambios',
-            description: 'La bóveda no está desbloqueada. Vuelve a abrirla.',
-            duration: 5000,
-          });
+          sileo.error(alerts.vaultLockedEdit);
           return;
         }
 
@@ -142,15 +133,13 @@ export const EditPassword = ({
           entries: next,
         });
         if (!result.ok) {
-          sileo.error({
-            title: result.conflict
-              ? 'La bóveda cambió en otra sesión'
-              : 'No se pudieron guardar los cambios',
-            description: result.conflict
-              ? 'Vuelve a abrir la bóveda para sincronizarla.'
-              : result.error,
-            duration: 5000,
-          });
+          sileo.error(
+            saveFailed({
+              conflict: result.conflict,
+              fallbackTitle: 'No se pudieron guardar los cambios',
+              error: result.error,
+            })
+          );
           if (result.conflict) {
             onLock?.();
           }
@@ -163,10 +152,7 @@ export const EditPassword = ({
       }
 
       onClose();
-      sileo.success({
-        title: 'Cambios guardados correctamente.',
-        duration: 1000,
-      });
+      sileo.success(alerts.passwordSaved);
     } finally {
       setIsSubmitting(false);
     }

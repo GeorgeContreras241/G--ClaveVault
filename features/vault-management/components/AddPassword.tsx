@@ -1,5 +1,10 @@
 'use client';
 import { sileo } from 'sileo';
+import {
+  alerts,
+  copiedToClipboard,
+  saveFailed,
+} from '@/commons/constants/alerts';
 import { Button } from '@/commons/components/ui/button';
 import { useState } from 'react';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
@@ -93,17 +98,12 @@ export const AddPassword = ({ onLock }: AddPasswordProps) => {
   const handleGeneratePassword = () => {
     const generated = generatePassword(passwordOptions);
     if (!generated) {
-      sileo.error({
-        title: 'Selecciona al menos un tipo de carácter',
-      });
+      sileo.error(alerts.selectCharType);
       return;
     }
     setKeys({ ...keys, password: generated });
     setErrors({ ...errors, password: undefined });
-    sileo.success({
-      title: 'Se ha generado una nueva contraseña.',
-      duration: 600,
-    });
+    sileo.success(alerts.passwordGenerated);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -128,11 +128,7 @@ export const AddPassword = ({ onLock }: AddPasswordProps) => {
     try {
       if (mode === 'online') {
         if (!derivedKey || !salt || !activeVaultId) {
-          sileo.error({
-            title: 'No se pudo guardar la contraseña',
-            description: 'La bóveda no está desbloqueada. Vuelve a abrirla.',
-            duration: 5000,
-          });
+          sileo.error(alerts.vaultLockedAdd);
           return;
         }
 
@@ -145,15 +141,13 @@ export const AddPassword = ({ onLock }: AddPasswordProps) => {
           entries: next,
         });
         if (!result.ok) {
-          sileo.error({
-            title: result.conflict
-              ? 'La bóveda cambió en otra sesión'
-              : 'No se pudo guardar la contraseña',
-            description: result.conflict
-              ? 'Vuelve a abrir la bóveda para sincronizarla.'
-              : result.error,
-            duration: 5000,
-          });
+          sileo.error(
+            saveFailed({
+              conflict: result.conflict,
+              fallbackTitle: 'No se pudo guardar la contraseña',
+              error: result.error,
+            })
+          );
           if (result.conflict) {
             onLock?.();
           }
@@ -167,10 +161,7 @@ export const AddPassword = ({ onLock }: AddPasswordProps) => {
 
       resetForm();
       setIsFormVisible(false);
-      sileo.success({
-        title: 'Contraseña agregada correctamente.',
-        duration: 600,
-      });
+      sileo.success(alerts.passwordAdded);
     } finally {
       setIsSubmitting(false);
     }
@@ -179,14 +170,9 @@ export const AddPassword = ({ onLock }: AddPasswordProps) => {
   const handlecopyToClipboard = async () => {
     const copied = await copyToClipboard(keys.password);
     if (copied) {
-      sileo.success({
-        title: 'Contraseña copiada al portapapeles.',
-        duration: 600,
-      });
+      sileo.success(copiedToClipboard('Contraseña copiada al portapapeles.'));
     } else {
-      sileo.error({
-        title: 'No se pudo copiar al portapapeles',
-      });
+      sileo.error(alerts.copyFailed);
     }
   };
 

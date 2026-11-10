@@ -6,6 +6,7 @@ import {
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { sileo } from 'sileo';
+import { alerts } from '@/commons/constants/alerts';
 import { Button } from '@/commons/components/ui/button';
 import { apiFetch } from '@/commons/lib/apiFetch';
 import {
@@ -82,21 +83,13 @@ export const Register = ({ email, validateForm }: WebAuthnRegisterProps) => {
           throw new Error(loginVerifyData.error);
         }
 
-        sileo.success({
-          title: 'Registro completado',
-          description: 'Bienvenido a ClaveVault.',
-          duration: 1500,
-        });
+        sileo.success(alerts.registerCompleted);
         router.push('/passwords');
       } catch (autoLoginError) {
         if (process.env.NODE_ENV !== 'production') {
           console.error('[webauthn:auto-login]', autoLoginError);
         }
-        sileo.success({
-          title: 'Registro exitoso',
-          description: 'Ya puedes acceder con tu huella o llave.',
-          duration: 4000,
-        });
+        sileo.success(alerts.registerSuccess);
       }
     } catch (err) {
       if (process.env.NODE_ENV !== 'production') {

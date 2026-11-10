@@ -1,7 +1,11 @@
 'use client';
 import { useEffect } from 'react';
 import Add from '@/features/offline/components/icons/Add';
-import { sileoError } from '@/commons/constants/sileoConfig';
+import {
+  alerts,
+  confirmEmptyVault,
+  validationError,
+} from '@/commons/constants/alerts';
 import { sileo } from 'sileo';
 import { useState } from 'react';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
@@ -61,37 +65,31 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
     if (!validation.success) {
       const message = validation.error ?? 'La contraseña es demasiado débil';
       setPasswordError(message);
-      sileo.error({ title: message });
+      sileo.error(validationError(message));
       return;
     }
-    sileo.warning({
-      title: 'Confirmar',
-      description: '¿Continuar sin archivo? Se creará una bóveda vacía.',
-      duration: 8000,
-      button: {
-        onClick: async () => {
-          setIsLoading(true);
-          try {
-            const saltGenerated = await generateSalt();
-            localStorage.setItem(
-              'salt',
-              JSON.stringify(Array.from(saltGenerated))
-            );
-            const drcKeyResult = await deriveKey(pass, saltGenerated);
-            setSalt(saltGenerated);
-            setDerivedKey(drcKeyResult);
-            setDataPasswordInit([]);
-            onSuccess(true);
-            sileo.clear();
-          } catch {
-            sileo.error({ title: 'Error al crear la bóveda local' });
-          } finally {
-            setIsLoading(false);
-          }
-        },
-        title: 'Aceptar',
-      },
-    });
+    sileo.warning(
+      confirmEmptyVault(async () => {
+        setIsLoading(true);
+        try {
+          const saltGenerated = await generateSalt();
+          localStorage.setItem(
+            'salt',
+            JSON.stringify(Array.from(saltGenerated))
+          );
+          const drcKeyResult = await deriveKey(pass, saltGenerated);
+          setSalt(saltGenerated);
+          setDerivedKey(drcKeyResult);
+          setDataPasswordInit([]);
+          onSuccess(true);
+          sileo.clear();
+        } catch {
+          sileo.error(alerts.localVaultError);
+        } finally {
+          setIsLoading(false);
+        }
+      })
+    );
   };
 
   const processFileImport = async (selectedFile: File, pass: string) => {
@@ -107,7 +105,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
       if (importResult.message) {
         sileo.error(importResult.message);
       } else {
-        sileo.error(sileoError);
+        sileo.error(alerts.genericError);
       }
       return false;
     }
@@ -127,7 +125,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
     const validatePasswordResult = validatePassword(pass);
     if (!validatePasswordResult.success) {
       setPasswordError(validatePasswordResult.error || '');
-      sileo.error(sileoError);
+      sileo.error(alerts.genericError);
       return;
     }
 
@@ -142,7 +140,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
         onSuccess(true);
       }
     } catch {
-      sileo.error({ title: 'Error al descifrar el archivo' });
+      sileo.error(alerts.decryptError);
     } finally {
       setIsLoading(false);
     }

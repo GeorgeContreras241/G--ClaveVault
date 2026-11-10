@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { AlertTriangle, ArrowLeft, KeyRound } from 'lucide-react';
 import { sileo } from 'sileo';
+import { alerts } from '@/commons/constants/alerts';
 import { Button } from '@/commons/components/ui/button';
 import { Input } from '@/commons/components/ui/input';
 import { Label } from '@/commons/components/ui/label';
@@ -90,11 +91,7 @@ export function CreateVaultForm({
       setVersion(result.vault.version);
       setActiveVault(result.vault);
 
-      sileo.success({
-        title: 'Bóveda creada.',
-        description: 'Ya puedes empezar a guardar contraseñas.',
-        duration: 1500,
-      });
+      sileo.success(alerts.vaultCreated);
 
       onCreated(result.vault);
     } catch {

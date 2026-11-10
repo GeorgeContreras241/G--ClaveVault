@@ -6,6 +6,7 @@ import { deriveKey } from '@/commons/lib/crypto/kdfKey';
 import { loadVault } from '@/commons/lib/vault/loadVault';
 import { decrypt } from '@/commons/lib/crypto/decryptData';
 import { sileo } from 'sileo';
+import { alerts } from '@/commons/constants/alerts';
 import type { PassStorage, ImportResult } from '@/types';
 import type { PasswordEntry } from '@/features/vault-management';
 
@@ -67,21 +68,13 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
 
     try {
       if (!derivedKey) {
-        sileo.error({
-          title: 'Error al exportar los datos',
-          description: 'No se pudo derivar la clave',
-          duration: 5000,
-        });
+        sileo.error(alerts.exportKeyError);
 
         return;
       }
 
       if (!salt) {
-        sileo.error({
-          title: 'Error al exportar',
-          description: 'Salt no disponible',
-          duration: 5000,
-        });
+        sileo.error(alerts.exportSaltError);
         return;
       }
 
@@ -89,11 +82,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
       const { iv, data } = encrypted;
 
       if (!iv || !data) {
-        sileo.error({
-          title: 'Error al encriptar',
-          description: 'No se pudo encriptar los datos',
-          duration: 5000,
-        });
+        sileo.error(alerts.encryptError);
         return;
       }
 
@@ -103,11 +92,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
         new Uint8Array(data)
       );
       if (!vaultFile) {
-        sileo.error({
-          title: 'Error al exportar',
-          description: 'La bóveda tiene un formato inválido',
-          duration: 5000,
-        });
+        sileo.error(alerts.exportFormatError);
         return;
       }
 
@@ -125,16 +110,9 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
       a.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 
-      sileo.success({
-        title: 'Bóveda exportada correctamente.',
-        duration: 1000,
-      });
+      sileo.success(alerts.exportSuccess);
     } catch {
-      sileo.error({
-        title: 'Error al exportar los datos',
-        description: 'No se pudo generar el archivo',
-        duration: 5000,
-      });
+      sileo.error(alerts.exportFileError);
     }
   },
 
@@ -145,11 +123,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
       if (!vaultData.state) {
         return {
           state: false,
-          message: {
-            title: 'Error al cargar',
-            description: 'No se pudo leer el archivo',
-            duration: 5000,
-          },
+          message: alerts.importReadError,
         };
       }
 
@@ -158,11 +132,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
       if (salt.length !== 16 || iv.length !== 12 || data.length < 16) {
         return {
           state: false,
-          message: {
-            title: 'Archivo inválido',
-            description: 'El archivo no tiene el formato de bóveda esperado',
-            duration: 5000,
-          },
+          message: alerts.importInvalidFormat,
         };
       }
 
@@ -172,10 +142,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
       } catch {
         return {
           state: false,
-          message: {
-            title: 'Error al derivar la clave',
-            duration: 5000,
-          },
+          message: alerts.importDeriveError,
         };
       }
 
@@ -198,10 +165,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
     } catch {
       return {
         state: false,
-        message: {
-          title: 'Error al procesar el archivo',
-          duration: 5000,
-        },
+        message: alerts.importProcessError,
       };
     }
   },

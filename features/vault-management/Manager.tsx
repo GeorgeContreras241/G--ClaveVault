@@ -1,6 +1,11 @@
 'use client';
 import { useCallback, useMemo, useState } from 'react';
 import { sileo } from 'sileo';
+import {
+  alerts,
+  confirmDeletePassword,
+  saveFailed,
+} from '@/commons/constants/alerts';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
 import { VaultHeader } from '@/features/vault-management/components/VaultHeader';
 import { copyToClipboard } from '@/commons/lib/password/copyToClipboard';
@@ -72,11 +77,7 @@ export const Manager = ({ onLock }: ManagerProps) => {
       }
 
       if (!derivedKey || !salt || !activeVaultId) {
-        sileo.error({
-          title: 'No se pudo guardar en el servidor',
-          description: 'La bóveda no está desbloqueada. Vuelve a abrirla.',
-          duration: 5000,
-        });
+        sileo.error(alerts.vaultLockedServer);
         return false;
       }
 
@@ -89,13 +90,14 @@ export const Manager = ({ onLock }: ManagerProps) => {
       });
 
       if (!result.ok) {
-        sileo.error({
-          title: result.conflict
-            ? 'La bóveda cambió en otra sesión'
-            : 'No se pudo guardar en el servidor',
-          description: result.error,
-          duration: 5000,
-        });
+        sileo.error(
+          saveFailed({
+            conflict: result.conflict,
+            fallbackTitle: 'No se pudo guardar en el servidor',
+            error: result.error,
+            conflictHint: false,
+          })
+        );
         if (result.conflict) {
           onLock?.();
         }
@@ -122,10 +124,7 @@ export const Manager = ({ onLock }: ManagerProps) => {
           return;
         }
         setDataPasswordDelete(id);
-        sileo.success({
-          title: 'Contraseña eliminada.',
-          duration: 5000,
-        });
+        sileo.success(alerts.passwordDeleted);
       } finally {
         setDeletingId(null);
       }
@@ -136,19 +135,11 @@ export const Manager = ({ onLock }: ManagerProps) => {
   const handleRequestDelete = useCallback(
     (id: string) => {
       const entry = dataPassword.find((p) => p.id === id);
-      sileo.warning({
-        title: 'Eliminar contraseña',
-        description: entry
-          ? `Se eliminará "${entry.title}". Esta acción no se puede deshacer.`
-          : 'Esta acción no se puede deshacer.',
-        duration: 8000,
-        button: {
-          title: 'Eliminar',
-          onClick: () => {
-            void handleDeletePassword(id);
-          },
-        },
-      });
+      sileo.warning(
+        confirmDeletePassword(() => {
+          void handleDeletePassword(id);
+        }, entry?.title)
+      );
     },
     [dataPassword, handleDeletePassword]
   );

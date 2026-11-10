@@ -1,5 +1,6 @@
 'use client';
 import { sileo } from 'sileo';
+import { alerts, copiedToClipboard } from '@/commons/constants/alerts';
 import { Copy } from '@/features/vault-management/components/icons/Copy';
 import { Eye } from '@/commons/components/icons/Eye';
 import { EyeClose } from '@/commons/components/icons/EyeClose';
@@ -24,9 +25,9 @@ export const PasswordCard = ({
   const handleCopy = async (text: string, title: string) => {
     const copied = await onCopyToClipboard(text);
     if (copied) {
-      sileo.success({ title, duration: 600 });
+      sileo.success(copiedToClipboard(title));
     } else {
-      sileo.error({ title: 'No se pudo copiar al portapapeles' });
+      sileo.error(alerts.copyFailed);
     }
   };
 

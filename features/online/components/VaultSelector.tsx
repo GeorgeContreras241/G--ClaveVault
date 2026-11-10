@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { KeyRound, LogOut, Plus } from 'lucide-react';
 import { sileo } from 'sileo';
+import { vaultDeleted } from '@/commons/constants/alerts';
 import { Button } from '@/commons/components/ui/button';
 import { Loading } from '@/commons/components/shared/Loading';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
@@ -77,11 +78,7 @@ export function VaultSelector({
       if (activeVaultId === deleteTarget.id) {
         await handleReset();
       }
-      sileo.success({
-        title: 'Bóveda eliminada.',
-        description: `«${deleteTarget.name}» se borró correctamente.`,
-        duration: 2000,
-      });
+      sileo.success(vaultDeleted(deleteTarget.name));
       setDeleteTarget(null);
     } else if (result.status === 401) {
       onLogout();
