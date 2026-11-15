@@ -5,7 +5,7 @@ import { buildVaultFile } from '@/commons/lib/vault/saveVault';
 import { deriveKey } from '@/commons/lib/crypto/kdfKey';
 import { loadVault } from '@/commons/lib/vault/loadVault';
 import { decrypt } from '@/commons/lib/crypto/decryptData';
-import { sileo } from 'sileo';
+import { toast } from '@/commons/lib/toast';
 import { alerts } from '@/commons/constants/alerts';
 import type { PassStorage, ImportResult } from '@/types';
 import type { PasswordEntry } from '@/features/vault-management';
@@ -68,13 +68,13 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
 
     try {
       if (!derivedKey) {
-        sileo.error(alerts.exportKeyError);
+        toast.error(alerts.exportKeyError);
 
         return;
       }
 
       if (!salt) {
-        sileo.error(alerts.exportSaltError);
+        toast.error(alerts.exportSaltError);
         return;
       }
 
@@ -82,7 +82,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
       const { iv, data } = encrypted;
 
       if (!iv || !data) {
-        sileo.error(alerts.encryptError);
+        toast.error(alerts.encryptError);
         return;
       }
 
@@ -92,7 +92,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
         new Uint8Array(data)
       );
       if (!vaultFile) {
-        sileo.error(alerts.exportFormatError);
+        toast.error(alerts.exportFormatError);
         return;
       }
 
@@ -110,9 +110,9 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
       a.remove();
       window.setTimeout(() => URL.revokeObjectURL(url), 1000);
 
-      sileo.success(alerts.exportSuccess);
+      toast.success(alerts.exportSuccess);
     } catch {
-      sileo.error(alerts.exportFileError);
+      toast.error(alerts.exportFileError);
     }
   },
 

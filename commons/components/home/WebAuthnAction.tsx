@@ -1,7 +1,7 @@
 'use client';
 import WebAuthn from '@/commons/components/icons/WebAuthn';
 import Link from 'next/link';
-import { sileo } from 'sileo';
+import { toast } from '@/commons/lib/toast';
 import { alerts } from '@/commons/constants/alerts';
 
 const ONLINE_ENABLED = true;
@@ -10,7 +10,7 @@ export function WebAuthnAction() {
   const handleClick = (e: React.MouseEvent) => {
     if (!ONLINE_ENABLED) {
       e.preventDefault();
-      sileo.warning(alerts.onlineUnavailable);
+      toast.warning(alerts.onlineUnavailable);
     }
   };
 

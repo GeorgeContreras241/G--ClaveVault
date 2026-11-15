@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { KeyRound, LogOut, Plus } from 'lucide-react';
-import { sileo } from 'sileo';
+import { toast } from '@/commons/lib/toast';
 import { vaultDeleted } from '@/commons/constants/alerts';
 import { Button } from '@/commons/components/ui/button';
 import { Loading } from '@/commons/components/shared/Loading';
@@ -78,7 +78,7 @@ export function VaultSelector({
       if (activeVaultId === deleteTarget.id) {
         await handleReset();
       }
-      sileo.success(vaultDeleted(deleteTarget.name));
+      toast.success(vaultDeleted(deleteTarget.name));
       setDeleteTarget(null);
     } else if (result.status === 401) {
       onLogout();

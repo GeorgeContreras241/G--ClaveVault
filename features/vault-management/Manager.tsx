@@ -1,6 +1,6 @@
 'use client';
 import { useCallback, useMemo, useState } from 'react';
-import { sileo } from 'sileo';
+import { toast } from '@/commons/lib/toast';
 import {
   alerts,
   confirmDeletePassword,
@@ -77,7 +77,7 @@ export const Manager = ({ onLock }: ManagerProps) => {
       }
 
       if (!derivedKey || !salt || !activeVaultId) {
-        sileo.error(alerts.vaultLockedServer);
+        toast.error(alerts.vaultLockedServer);
         return false;
       }
 
@@ -90,7 +90,7 @@ export const Manager = ({ onLock }: ManagerProps) => {
       });
 
       if (!result.ok) {
-        sileo.error(
+        toast.error(
           saveFailed({
             conflict: result.conflict,
             fallbackTitle: 'No se pudo guardar en el servidor',
@@ -124,7 +124,7 @@ export const Manager = ({ onLock }: ManagerProps) => {
           return;
         }
         setDataPasswordDelete(id);
-        sileo.success(alerts.passwordDeleted);
+        toast.success(alerts.passwordDeleted);
       } finally {
         setDeletingId(null);
       }
@@ -135,7 +135,7 @@ export const Manager = ({ onLock }: ManagerProps) => {
   const handleRequestDelete = useCallback(
     (id: string) => {
       const entry = dataPassword.find((p) => p.id === id);
-      sileo.warning(
+      toast.warning(
         confirmDeletePassword(() => {
           void handleDeletePassword(id);
         }, entry?.title)

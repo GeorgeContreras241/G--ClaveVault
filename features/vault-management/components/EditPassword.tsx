@@ -1,5 +1,5 @@
 'use client';
-import { sileo } from 'sileo';
+import { toast } from '@/commons/lib/toast';
 import {
   alerts,
   copiedToClipboard,
@@ -86,20 +86,20 @@ export const EditPassword = ({
   const handleGeneratePassword = () => {
     const generated = generatePassword(passwordOptions);
     if (!generated) {
-      sileo.error(alerts.selectCharType);
+      toast.error(alerts.selectCharType);
       return;
     }
     setKeys({ ...keys, password: generated });
     setErrors({ ...errors, password: undefined });
-    sileo.success(alerts.passwordGenerated);
+    toast.success(alerts.passwordGenerated);
   };
 
   const handleCopyToClipboard = async () => {
     const copied = await copyToClipboard(keys.password);
     if (copied) {
-      sileo.success(copiedToClipboard('Contraseña copiada al portapapeles.'));
+      toast.success(copiedToClipboard('Contraseña copiada al portapapeles.'));
     } else {
-      sileo.error(alerts.copyFailed);
+      toast.error(alerts.copyFailed);
     }
   };
 
@@ -118,7 +118,7 @@ export const EditPassword = ({
     try {
       if (mode === 'online') {
         if (!derivedKey || !salt || !activeVaultId) {
-          sileo.error(alerts.vaultLockedEdit);
+          toast.error(alerts.vaultLockedEdit);
           return;
         }
 
@@ -133,7 +133,7 @@ export const EditPassword = ({
           entries: next,
         });
         if (!result.ok) {
-          sileo.error(
+          toast.error(
             saveFailed({
               conflict: result.conflict,
               fallbackTitle: 'No se pudieron guardar los cambios',
@@ -152,7 +152,7 @@ export const EditPassword = ({
       }
 
       onClose();
-      sileo.success(alerts.passwordSaved);
+      toast.success(alerts.passwordSaved);
     } finally {
       setIsSubmitting(false);
     }

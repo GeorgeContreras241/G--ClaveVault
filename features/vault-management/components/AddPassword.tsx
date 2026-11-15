@@ -1,5 +1,5 @@
 'use client';
-import { sileo } from 'sileo';
+import { toast } from '@/commons/lib/toast';
 import {
   alerts,
   copiedToClipboard,
@@ -98,12 +98,12 @@ export const AddPassword = ({ onLock }: AddPasswordProps) => {
   const handleGeneratePassword = () => {
     const generated = generatePassword(passwordOptions);
     if (!generated) {
-      sileo.error(alerts.selectCharType);
+      toast.error(alerts.selectCharType);
       return;
     }
     setKeys({ ...keys, password: generated });
     setErrors({ ...errors, password: undefined });
-    sileo.success(alerts.passwordGenerated);
+    toast.success(alerts.passwordGenerated);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -128,7 +128,7 @@ export const AddPassword = ({ onLock }: AddPasswordProps) => {
     try {
       if (mode === 'online') {
         if (!derivedKey || !salt || !activeVaultId) {
-          sileo.error(alerts.vaultLockedAdd);
+          toast.error(alerts.vaultLockedAdd);
           return;
         }
 
@@ -141,7 +141,7 @@ export const AddPassword = ({ onLock }: AddPasswordProps) => {
           entries: next,
         });
         if (!result.ok) {
-          sileo.error(
+          toast.error(
             saveFailed({
               conflict: result.conflict,
               fallbackTitle: 'No se pudo guardar la contraseña',
@@ -161,7 +161,7 @@ export const AddPassword = ({ onLock }: AddPasswordProps) => {
 
       resetForm();
       setIsFormVisible(false);
-      sileo.success(alerts.passwordAdded);
+      toast.success(alerts.passwordAdded);
     } finally {
       setIsSubmitting(false);
     }
@@ -170,9 +170,9 @@ export const AddPassword = ({ onLock }: AddPasswordProps) => {
   const handlecopyToClipboard = async () => {
     const copied = await copyToClipboard(keys.password);
     if (copied) {
-      sileo.success(copiedToClipboard('Contraseña copiada al portapapeles.'));
+      toast.success(copiedToClipboard('Contraseña copiada al portapapeles.'));
     } else {
-      sileo.error(alerts.copyFailed);
+      toast.error(alerts.copyFailed);
     }
   };
 

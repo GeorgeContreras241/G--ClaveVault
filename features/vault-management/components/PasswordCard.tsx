@@ -1,5 +1,5 @@
 'use client';
-import { sileo } from 'sileo';
+import { toast } from '@/commons/lib/toast';
 import { alerts, copiedToClipboard } from '@/commons/constants/alerts';
 import { Copy } from '@/features/vault-management/components/icons/Copy';
 import { Eye } from '@/commons/components/icons/Eye';
@@ -25,9 +25,9 @@ export const PasswordCard = ({
   const handleCopy = async (text: string, title: string) => {
     const copied = await onCopyToClipboard(text);
     if (copied) {
-      sileo.success(copiedToClipboard(title));
+      toast.success(copiedToClipboard(title));
     } else {
-      sileo.error(alerts.copyFailed);
+      toast.error(alerts.copyFailed);
     }
   };
 

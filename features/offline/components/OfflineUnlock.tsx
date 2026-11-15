@@ -6,7 +6,7 @@ import {
   confirmEmptyVault,
   validationError,
 } from '@/commons/constants/alerts';
-import { sileo } from 'sileo';
+import { toast } from '@/commons/lib/toast';
 import { useState } from 'react';
 import { useStoragePass } from '@/commons/storage/useStoragePass';
 import { validateVaultInputs } from '@/features/offline/utils/validateVaultInputs';
@@ -64,10 +64,10 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
     if (!validation.success) {
       const message = validation.error ?? 'La contraseña es demasiado débil';
       setPasswordError(message);
-      sileo.error(validationError(message));
+      toast.error(validationError(message));
       return;
     }
-    sileo.warning(
+    toast.warning(
       confirmEmptyVault(async () => {
         setIsLoading(true);
         try {
@@ -81,9 +81,9 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
           setDerivedKey(drcKeyResult);
           setDataPasswordInit([]);
           onSuccess(true);
-          sileo.clear();
+          toast.clear();
         } catch {
-          sileo.error(alerts.localVaultError);
+          toast.error(alerts.localVaultError);
         } finally {
           setIsLoading(false);
         }
@@ -94,7 +94,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
   const processFileImport = async (selectedFile: File, pass: string) => {
     const validation = validateVaultInputs(pass);
     if (validation !== true) {
-      sileo.error(validation);
+      toast.error(validation);
       return false;
     }
 
@@ -102,9 +102,9 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
 
     if (importResult.state === false) {
       if (importResult.message) {
-        sileo.error(importResult.message);
+        toast.error(importResult.message);
       } else {
-        sileo.error(alerts.genericError);
+        toast.error(alerts.genericError);
       }
       return false;
     }
@@ -124,7 +124,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
     const validatePasswordResult = validatePassword(pass);
     if (!validatePasswordResult.success) {
       setPasswordError(validatePasswordResult.error || '');
-      sileo.error(alerts.genericError);
+      toast.error(alerts.genericError);
       return;
     }
 
@@ -139,7 +139,7 @@ export const OfflineUnlock = ({ onSuccess }: OfflineUnlockProps) => {
         onSuccess(true);
       }
     } catch {
-      sileo.error(alerts.decryptError);
+      toast.error(alerts.decryptError);
     } finally {
       setIsLoading(false);
     }

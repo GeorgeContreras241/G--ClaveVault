@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { AlertTriangle, ArrowLeft, KeyRound } from 'lucide-react';
-import { sileo } from 'sileo';
+import { toast } from '@/commons/lib/toast';
 import { alerts } from '@/commons/constants/alerts';
 import { Button } from '@/commons/components/ui/button';
 import { Input } from '@/commons/components/ui/input';
@@ -91,7 +91,7 @@ export function CreateVaultForm({
       setVersion(result.vault.version);
       setActiveVault(result.vault);
 
-      sileo.success(alerts.vaultCreated);
+      toast.success(alerts.vaultCreated);
 
       onCreated(result.vault);
     } catch {
