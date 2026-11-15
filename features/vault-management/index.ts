@@ -42,7 +42,7 @@ export interface EditPasswordProps {
 
 export interface PasswordCardProps {
   password: PasswordEntry;
-  showPasswords: ShowPasswords;
+  showPassword: boolean;
   onTogglePasswordVisibility: (id: string) => void;
   onCopyToClipboard: (text: string) => Promise<boolean>;
   onEditPassword: (password: PasswordEntry) => void;

@@ -1,4 +1,5 @@
 'use client';
+import { memo } from 'react';
 import { toast } from '@/commons/lib/toast';
 import { alerts, copiedToClipboard } from '@/commons/constants/alerts';
 import { Copy } from '@/features/vault-management/components/icons/Copy';
@@ -12,9 +13,9 @@ import { IconButton } from '@/features/vault-management/components/ui/IconButton
 import { isSafeHttpUrl } from '@/commons/lib/validation/validateUrl';
 import type { PasswordCardProps } from '@/features/vault-management';
 
-export const PasswordCard = ({
+const PasswordCardBase = ({
   password,
-  showPasswords,
+  showPassword,
   onTogglePasswordVisibility,
   onCopyToClipboard,
   onEditPassword,
@@ -102,19 +103,17 @@ export const PasswordCard = ({
             </span>
             <div className="relative flex-1 min-w-0">
               <span className="type-technical truncate bg-secondary px-2 py-1.5 rounded flex-1 pr-14 flex">
-                {showPasswords[password.id] ? password.password : '•••••••'}
+                {showPassword ? password.password : '•••••••'}
               </span>
               <div className="absolute right-1.5 top-1/2 -translate-y-1/2 flex gap-0.5">
                 <IconButton
                   size="xs"
                   label={
-                    showPasswords[password.id]
-                      ? 'Ocultar contraseña'
-                      : 'Mostrar contraseña'
+                    showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'
                   }
                   onClick={() => onTogglePasswordVisibility(password.id)}
                 >
-                  {showPasswords[password.id] ? <EyeClose /> : <Eye />}
+                  {showPassword ? <EyeClose /> : <Eye />}
                 </IconButton>
                 <IconButton
                   size="xs"
@@ -152,3 +151,9 @@ export const PasswordCard = ({
     </article>
   );
 };
+
+/**
+ * La lista se re-renderiza al buscar o al alternar la visibilidad de una
+ * contraseña. Con `memo` solo cambia la tarjeta afectada.
+ */
+export const PasswordCard = memo(PasswordCardBase);

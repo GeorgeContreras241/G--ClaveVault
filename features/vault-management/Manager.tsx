@@ -1,5 +1,5 @@
 'use client';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useDeferredValue, useMemo, useState } from 'react';
 import { toast } from '@/commons/lib/toast';
 import {
   alerts,
@@ -164,22 +164,36 @@ export const Manager = ({ onLock }: ManagerProps) => {
     [dataPassword, commitEntries, setDataPasswordInit]
   );
 
+  // Índice normalizado: evita repetir `toLowerCase` de todos los campos en
+  // cada tecla. Solo se recalcula cuando cambian las entradas.
+  const searchIndex = useMemo(
+    () =>
+      dataPassword.map((entry) => ({
+        entry,
+        haystack: `${entry.title} ${entry.username} ${entry.url}`.toLowerCase(),
+      })),
+    [dataPassword]
+  );
+
+  // `useDeferredValue` deja que el input responda al instante aunque haya
+  // muchas entradas y el filtrado tarde un frame en llegar.
+  const deferredSearch = useDeferredValue(searchTerm);
+
   const filteredPasswords = useMemo(() => {
-    const term = searchTerm.toLowerCase();
-    return dataPassword.filter((password) => {
-      const title = (password.title ?? '').toLowerCase();
-      const username = (password.username ?? '').toLowerCase();
-      const url = (password.url ?? '').toLowerCase();
-      const matchesSearch =
-        title.includes(term) || username.includes(term) || url.includes(term);
-      const matchesCategory =
-        selectedCategory === 'all' ||
-        (selectedCategory === 'favorites'
-          ? password.favorite
-          : password.category === selectedCategory);
-      return matchesSearch && matchesCategory;
-    });
-  }, [dataPassword, searchTerm, selectedCategory]);
+    const term = deferredSearch.trim().toLowerCase();
+
+    return searchIndex
+      .filter(({ entry, haystack }) => {
+        const matchesSearch = term === '' || haystack.includes(term);
+        const matchesCategory =
+          selectedCategory === 'all' ||
+          (selectedCategory === 'favorites'
+            ? entry.favorite
+            : entry.category === selectedCategory);
+        return matchesSearch && matchesCategory;
+      })
+      .map(({ entry }) => entry);
+  }, [searchIndex, deferredSearch, selectedCategory]);
 
   return (
     <div className="w-full flex-1">
@@ -211,7 +225,7 @@ export const Manager = ({ onLock }: ManagerProps) => {
                 <PasswordCard
                   key={password.id}
                   password={password}
-                  showPasswords={showPasswords}
+                  showPassword={Boolean(showPasswords[password.id])}
                   onTogglePasswordVisibility={togglePasswordVisibility}
                   onCopyToClipboard={copyToClipboard}
                   onEditPassword={setEditingPassword}
