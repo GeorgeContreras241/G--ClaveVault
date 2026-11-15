@@ -9,15 +9,21 @@
 const CHUNK_SIZE = 0x8000;
 
 function bytesToBinary(bytes: Uint8Array | number[]): string {
-  let out = '';
-  for (let i = 0; i < bytes.length; i += CHUNK_SIZE) {
-    const chunk = bytes.slice(i, i + CHUNK_SIZE) as ArrayLike<number>;
-    out += String.fromCharCode.apply(
-      null,
-      Array.from(chunk, (byte) => byte & 0xff)
+  const view = bytes instanceof Uint8Array ? bytes : Uint8Array.from(bytes);
+  const parts: string[] = [];
+
+  // `apply` acepta un array tipado como array-like: evita materializar un
+  // `number[]` nuevo por cada bloque.
+  for (let i = 0; i < view.length; i += CHUNK_SIZE) {
+    parts.push(
+      String.fromCharCode.apply(
+        null,
+        view.subarray(i, i + CHUNK_SIZE) as unknown as number[]
+      )
     );
   }
-  return out;
+
+  return parts.join('');
 }
 
 export function bytesToBase64(bytes: Uint8Array | number[]): string {
