@@ -86,11 +86,7 @@ export const useStoragePass = create<PassStorage>((set, get) => ({
         return;
       }
 
-      const vaultFile = buildVaultFile(
-        salt,
-        new Uint8Array(iv),
-        new Uint8Array(data)
-      );
+      const vaultFile = buildVaultFile(salt, iv, data);
       if (!vaultFile) {
         toast.error(alerts.exportFormatError);
         return;

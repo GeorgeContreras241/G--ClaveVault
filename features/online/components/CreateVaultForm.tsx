@@ -72,8 +72,8 @@ export function CreateVaultForm({
       const result = await createVault({
         name: trimmedName,
         salt,
-        iv: new Uint8Array(encrypted.iv),
-        encryptedData: new Uint8Array(encrypted.data),
+        iv: encrypted.iv,
+        encryptedData: encrypted.data,
       });
 
       if (!result.ok) {

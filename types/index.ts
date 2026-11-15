@@ -27,8 +27,8 @@ export type VaultCipherPayload = {
 };
 
 export type EncryptResult = {
-  iv: number[];
-  data: number[];
+  iv: Uint8Array;
+  data: Uint8Array;
 };
 
 type DecryptSuccess = {

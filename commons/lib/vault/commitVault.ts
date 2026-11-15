@@ -26,8 +26,8 @@ export async function commitVaultOnline(params: {
 
     const result = await updateVault(params.vaultId, {
       salt: params.salt,
-      iv: new Uint8Array(encrypted.iv),
-      encryptedData: new Uint8Array(encrypted.data),
+      iv: encrypted.iv,
+      encryptedData: encrypted.data,
       version: params.expectedVersion,
     });
 

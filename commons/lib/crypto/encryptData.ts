@@ -27,10 +27,10 @@ export const encrypt = async (
       encodedData
     );
 
-    const encryptedArray = Array.from(new Uint8Array(encryptedBuffer));
+    const encryptedArray = new Uint8Array(encryptedBuffer);
 
     return {
-      iv: Array.from(iv),
+      iv,
       data: encryptedArray,
     };
   } catch (error) {
