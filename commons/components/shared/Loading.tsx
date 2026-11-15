@@ -1,5 +1,3 @@
-'use client';
-
 interface LoadingProps {
   /** Texto alternativo para screen readers */
   label?: string;
