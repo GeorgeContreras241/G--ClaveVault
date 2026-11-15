@@ -6,6 +6,13 @@ import { useStoragePass } from '@/commons/storage/useStoragePass';
 const IDLE_LOCK_MS = 5 * 60 * 1000;
 
 /**
+ * Reiniciar el temporizador cuesta poco, pero `scroll` dispara decenas de
+ * eventos por segundo. Con marcar actividad una vez por segundo sobra para
+ * un contador de 5 minutos.
+ */
+const ACTIVITY_THROTTLE_MS = 1000;
+
+/**
  * Bloqueo automático: tras N minutos sin interacción limpia el store (clave
  * derivada y contraseñas en claro). `onLock` permite al contenedor reaccionar
  * (p. ej. volver al formulario de master key).
@@ -22,6 +29,7 @@ export function useAutoLock(onLock?: () => void, enabled = true) {
     }
 
     let timer: ReturnType<typeof setTimeout>;
+    let lastActivity = 0;
 
     const lock = () => {
       clearTimeout(timer);
@@ -34,18 +42,27 @@ export function useAutoLock(onLock?: () => void, enabled = true) {
       timer = setTimeout(lock, IDLE_LOCK_MS);
     };
 
+    const markActivity = () => {
+      const now = Date.now();
+      if (now - lastActivity < ACTIVITY_THROTTLE_MS) {
+        return;
+      }
+      lastActivity = now;
+      resetTimer();
+    };
+
     resetTimer();
-    window.addEventListener('pointerdown', resetTimer);
-    window.addEventListener('keydown', resetTimer);
+    window.addEventListener('pointerdown', markActivity);
+    window.addEventListener('keydown', markActivity);
     // `scroll` no burbujea: con captura se detecta también el scroll de
     // contenedores internos (SplitLayout, .vault-scroll), no solo el de window.
-    window.addEventListener('scroll', resetTimer, true);
+    window.addEventListener('scroll', markActivity, true);
 
     return () => {
       clearTimeout(timer);
-      window.removeEventListener('pointerdown', resetTimer);
-      window.removeEventListener('keydown', resetTimer);
-      window.removeEventListener('scroll', resetTimer, true);
+      window.removeEventListener('pointerdown', markActivity);
+      window.removeEventListener('keydown', markActivity);
+      window.removeEventListener('scroll', markActivity, true);
     };
   }, [enabled, handleReset, onLock]);
 }
