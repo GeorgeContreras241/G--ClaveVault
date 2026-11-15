@@ -217,6 +217,10 @@
 .vault-action-card {
   position: relative;
   overflow: hidden;
+  /* La lista puede tener decenas de tarjetas: un `backdrop-filter` por cada
+     una crea una capa de composición que se repinta al hacer scroll sobre el
+     vídeo. El desenfoque se reserva para los paneles grandes. */
+  backdrop-filter: none;
   transition:
     border-color 0.35s ease,
     box-shadow 0.35s ease,
